@@ -14,7 +14,7 @@ pub struct BarPlot<'a> {
     res: Option<(usize, usize)>,
     plot_window_scale: Option<(Percentage, Percentage, Percentage, Percentage)>,
     x_axis_tick_length: Option<Percentage>,
-    x_marks_middle: bool,
+    x_markers_set_middle: bool,
     y_axis_tick_length: Option<Percentage>,
     negative_bars_go_down: bool,
     window_border: bool,
@@ -30,7 +30,7 @@ impl <'a>BarPlot<'a> {
             res: None,
             plot_window_scale: None,
             x_axis_tick_length: None,
-            x_marks_middle: false,
+            x_markers_set_middle: false,
             y_axis_tick_length: None,
             negative_bars_go_down: false,
             window_border: false,
@@ -47,7 +47,6 @@ impl <'a>BarPlot<'a> {
     }
 
     pub fn scale_range(&mut self, min: isize, max: isize, step: usize) {
-        // assert!(self.plot_window_scale.is_some(), "plot_window_scale must be set before scale_range");
         self.scale_range = Some((min, max, step));
     }
 
@@ -55,8 +54,8 @@ impl <'a>BarPlot<'a> {
         self.bar_markers = Some(bar_markers);
     }
 
-    pub fn x_marks_middle(&mut self) {
-        self.x_marks_middle = true;
+    pub fn x_markers_set_middle(&mut self) {
+        self.x_markers_set_middle = true;
     }
 
     pub fn y_axis_tick_length(&mut self, offset: Percentage) {
@@ -103,7 +102,7 @@ mod tests {
         plot.plot_window_scale(95, 80, 90, 40);
         plot.scale_range(0, 100, 10);
         plot.x_axis_tick_length(10);
-        plot.x_marks_middle();
+        plot.x_markers_set_middle();
         plot.y_axis_tick_length(10);
         plot.window_border();
         plot.plot_border();

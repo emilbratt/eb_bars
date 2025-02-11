@@ -59,7 +59,7 @@ impl <'a>SvgGenerator<'a> {
     }
 
     fn set_plot_window(&mut self, x_size: Percentage, x_offset: Percentage, y_size: Percentage, y_offset: Percentage) {
-        // Calculate the plot window size and offset in x and y in percentage.
+        // Calculate the plot window size and offset for x and y in percentage.
         assert!(x_size <= 100 && x_offset <= 100, "x_size and x_offset cannot exceed 100%");
         assert!(y_size <= 100 && y_offset <= 100, "y_size and x_offset cannot exceed 100%");
 
@@ -83,7 +83,6 @@ impl <'a>SvgGenerator<'a> {
         assert!(x_length < self.svg_width(), "no room for y-axis");
         assert!(y_length < self.svg_width(), "no room for y-axis");
 
-        let color = "rgb(197, 197, 197)";
         let range = (max - min) as f64;
 
         let bar_window_offset = if min >= 0 {
@@ -102,10 +101,10 @@ impl <'a>SvgGenerator<'a> {
 
             let y = y_offset + y_length - ((n * unit) - bar_window_offset);
 
-            let text = tag::text(x1, y, color, self.get_base_font_size(), "end", &n.to_string());
+            let text = tag::text(x1, y, self.get_base_color(), self.get_base_font_size(), "end", &n.to_string());
             self.nodes.push(text);
 
-            let tick = tag::line(x1, x2, y, y, color, self.get_base_line_width()/10.0);
+            let tick = tag::line(x1, x2, y, y, self.get_base_color(), self.get_base_line_width()/10.0);
             self.nodes.push(tick);
         }
     }
@@ -117,6 +116,7 @@ impl <'a>SvgGenerator<'a> {
         let y = y_length + y_offset;
         let y_marker = (self.svg_height() + y_length + y_offset) / 2.0;
         let horizontal_move = x_length / self.values.len() as f64;
+        let y2 = y + ( (self.svg_height() - (y_length + y_offset)) / 100.0 * axis_offset);
 
         // We can have less markers than bars if we want to.
         let remainder = self.values.len() % x_markers.len();
@@ -125,8 +125,6 @@ impl <'a>SvgGenerator<'a> {
         } else {
             (self.values.len() / x_markers.len()) + 1
         };
-
-        let y2 = y + ( (self.svg_height() - (y_length + y_offset)) / 100.0 * axis_offset);
 
         let mut mark_index = 0;
         for i in 0..self.values.len() {
@@ -189,17 +187,12 @@ impl <'a>SvgGenerator<'a> {
                 else if bar >= &mean { "rgb(250, 210, 150)" }
                 else { "rgb(150, 250, 180)" };
 
+            // If negative bars go down, we need to adjust the y and height accordingly.
             let (y, height) = if negative_bars_go_down {
                 if bar >= &0.0 {
-                    if y_min >= 0.0 {
-                        let height = (bar * unit) - bar_window_offset;
-                        let y = base_y + bar_window_offset - (bar * unit);
-                        ( y, height )
-                    } else {
-                        let height = bar * unit;
-                        let y = base_y + bar_window_offset - height;
-                        ( y, height )
-                    }
+                    let height = bar * unit;
+                    let y = base_y + bar_window_offset - height;
+                    ( y, height )
                 } else {
                     let height = (bar * unit).abs();
                     let y = base_y + bar_window_offset;
@@ -261,8 +254,8 @@ pub fn render(bar_plot: &BarPlot) -> String {
 
     if let Some(markers) = bar_plot.bar_markers {
         match bar_plot.x_axis_tick_length {
-            Some(length) => svg.bar_markers(markers, length, bar_plot.x_marks_middle),
-            None => svg.bar_markers(markers, DEFAULT_X_AXIS_TICK_LENGTH, bar_plot.x_marks_middle),
+            Some(length) => svg.bar_markers(markers, length, bar_plot.x_markers_set_middle),
+            None => svg.bar_markers(markers, DEFAULT_X_AXIS_TICK_LENGTH, bar_plot.x_markers_set_middle),
         }
     }
 
@@ -280,7 +273,6 @@ pub fn render(bar_plot: &BarPlot) -> String {
     if bar_plot.plot_border {
         svg.set_plot_border();
     }
-
 
     svg.set_bars(bar_plot.negative_bars_go_down);
 
