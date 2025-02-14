@@ -13,9 +13,6 @@ const BIN_MARGIN_PERMILLIE: f64 = 5.0; // introduce a gap between bins.
 const DEFAULT_Y_AXIS_TICK_LENGTH: Percentage = 10;
 const DEFAULT_X_AXIS_TICK_LENGTH: Percentage = 10;
 
-const X_MARKER_IS_MIDDLE: bool = false; // wether each marker (label) is between two bars or directly unerneath one bar
-const X_TICK_IS_MIDDLE: bool = false; // wether each tick is between two bars or directly unerneath one bar
-
 struct SvgGenerator<'a> {
     values: &'a [f64],
     svg_window: (f64, f64), // (x_length, y_length)
@@ -44,16 +41,16 @@ impl <'a>SvgGenerator<'a> {
         }
     }
 
-    fn svg_width(&self) -> f64 {
+    fn get_svg_width(&self) -> f64 {
         self.svg_window.0
     }
 
-    fn svg_height(&self) -> f64 {
+    fn get_svg_height(&self) -> f64 {
         self.svg_window.1
     }
 
     fn get_base_line_width(&self) -> f64 {
-        (self.svg_width() * self.svg_height()).sqrt() / 100_f64
+        (self.get_svg_width() * self.get_svg_height()).sqrt() / 100_f64
     }
 
     fn get_base_color(&self) -> &str {
@@ -69,13 +66,13 @@ impl <'a>SvgGenerator<'a> {
     }
 
     fn set_background_color(&mut self, color: &str) {
-        let (width, height) = (self.svg_width(), self.svg_height());
+        let (width, height) = (self.get_svg_width(), self.get_svg_height());
         let rect = tag::rect(0.0, 0.0, width, height, 1.0, color);
         self.nodes.push(rect);
     }
 
     fn get_base_font_size(&self) -> f64 {
-        (self.svg_width() * self.svg_height()).sqrt() / 50_f64
+        (self.get_svg_width() * self.get_svg_height()).sqrt() / 50_f64
     }
 
     fn set_plot_window(&mut self, x_size: Percentage, x_offset: Percentage, y_size: Percentage, y_offset: Percentage) {
@@ -86,11 +83,11 @@ impl <'a>SvgGenerator<'a> {
         let (x_size, x_offset) = (x_size as f64, x_offset as f64);
         let (y_size, y_offset) = (y_size as f64, y_offset as f64);
 
-        let x_length = (self.svg_width() * x_size / 100_f64);
-        let x_offset = ((self.svg_width() * (1.0 - x_size / 100_f64)) / 100_f64) * x_offset;
+        let x_length = (self.get_svg_width() * x_size / 100_f64);
+        let x_offset = ((self.get_svg_width() * (1.0 - x_size / 100_f64)) / 100_f64) * x_offset;
 
-        let y_length = (self.svg_height() * y_size / 100_f64);
-        let y_offset = ((self.svg_height() * (1.0 - y_size / 100_f64)) / 100_f64) * y_offset;
+        let y_length = (self.get_svg_height() * y_size / 100_f64);
+        let y_offset = ((self.get_svg_height() * (1.0 - y_size / 100_f64)) / 100_f64) * y_offset;
 
         self.plot_window = (x_length, x_offset, y_length, y_offset);
     }
@@ -100,8 +97,8 @@ impl <'a>SvgGenerator<'a> {
         let axis_offset = (100 - axis_offset) as f64;
         self.scale_range = Some((min, max, step));
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
-        assert!(x_length < self.svg_width(), "no room for y-axis");
-        assert!(y_length < self.svg_width(), "no room for y-axis");
+        assert!(x_length < self.get_svg_width(), "no room for y-axis");
+        assert!(y_length < self.get_svg_width(), "no room for y-axis");
 
         let range = (max - min) as f64;
 
@@ -134,9 +131,9 @@ impl <'a>SvgGenerator<'a> {
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
 
         let y = y_length + y_offset;
-        let y_marker = (self.svg_height() + y_length + y_offset) / 2.0;
+        let y_marker = (self.get_svg_height() + y_length + y_offset) / 2.0;
         let horizontal_move = x_length / self.values.len() as f64;
-        let y2 = y + ( (self.svg_height() - (y_length + y_offset)) / 100.0 * axis_offset);
+        let y2 = y + ( (self.get_svg_height() - (y_length + y_offset)) / 100.0 * axis_offset);
 
         // We can have less markers than bars if we want to.
         let remainder = self.values.len() % x_markers.len();
@@ -148,7 +145,7 @@ impl <'a>SvgGenerator<'a> {
 
         let mut mark_index = 0;
         for i in 0..self.values.len() {
-            let x = if X_TICK_IS_MIDDLE {
+            let x = if x_marks_middle {
                 x_offset + (horizontal_move * i as f64) + (horizontal_move / 2.0)
             } else {
                 x_offset + (horizontal_move * i as f64)
@@ -239,9 +236,9 @@ impl <'a>SvgGenerator<'a> {
 
     fn set_svg_border(&mut self, color: &str) {
         let x1 = 0.0;
-        let x2 = self.svg_width();
+        let x2 = self.get_svg_width();
         let y1 = 0.0;
-        let y2 = self.svg_height();
+        let y2 = self.get_svg_height();
 
         self.nodes.push(tag::line(x1, x1, y1, y2, color, self.get_base_line_width())); // left
         self.nodes.push(tag::line(x1, x2, y1, y1, color, self.get_base_line_width())); // top
@@ -252,8 +249,8 @@ impl <'a>SvgGenerator<'a> {
     fn generate(&self) -> String {
         let svg = format!(
             r#"<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">"#,
-            width = self.svg_width(),
-            height = self.svg_height(),
+            width = self.get_svg_width(),
+            height = self.get_svg_height(),
         ) + &self.nodes.join("\n") + "\n</svg>";
 
         svg

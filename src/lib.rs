@@ -106,7 +106,13 @@ impl <'a>BarPlot<'a> {
 
 #[cfg(test)]
 mod tests {
+    use rand::Rng;
+
     use super::*;
+
+    fn rand_f64(start: i32, end_incl: i32) -> f64 {
+        rand::rng().random_range(start..=end_incl) as f64
+    }
 
     #[test]
     fn positive_values() {
@@ -120,7 +126,7 @@ mod tests {
         ];
 
         // Add every value from 0 to value.len() as a bar marker.
-        let bar_markers: Vec<String> = (0..values.len()).map(|i| i.to_string()).collect();
+        let bar_markers: Vec<String> = (0..values.len()/3).map(|i| (i*3).to_string()).collect();
 
         let mut plot = BarPlot::new(&values);
         plot.background_color("black");
@@ -128,7 +134,6 @@ mod tests {
         plot.scale_range(0, 100, 10);
         plot.line_color("rgb(213, 213, 113)");
         plot.x_axis_tick_length(10);
-        plot.x_markers_set_middle();
         plot.y_axis_tick_length(10);
         plot.window_border();
         plot.plot_border();
@@ -152,7 +157,7 @@ mod tests {
         ];
 
         // Add every third value from 0 to value.len() as a bar marker.
-        let bar_markers: Vec<String> = (0..values.len() / 3).map(|i| (i*3).to_string()).collect();
+        let bar_markers: Vec<String> = (1..=values.len()).map(|i| i.to_string()).collect();
 
         let mut plot = BarPlot::new(&values);
         plot.background_color("rgb(30, 35, 45)");
@@ -160,6 +165,7 @@ mod tests {
         plot.line_color("LightBlue");
         plot.plot_window_scale(90, 80, 85, 30);
         plot.scale_range(-80, 100, 10);
+        plot.x_markers_set_middle();
         plot.y_axis_tick_length(10);
         plot.negative_bars_go_down();
         plot.window_border();
@@ -170,5 +176,33 @@ mod tests {
         if let Err(e) = std::fs::write(&path, contents) {
             eprintln!("Error saving plot '{}' {}", path.display(), e);
         }
+    }
+
+    #[test]
+    fn a() {
+        let path = Path::new("a.svg");
+
+        // Values for the bars.
+        let mut rng = rand::rng();
+        let values: [f64; 24] = core::array::from_fn(|_| rng.random_range(-10_f64..10_f64));
+
+        // Add every third value from 0 to value.len() as a bar marker.
+        let bar_markers: Vec<String> = (0..values.len()/3+1).map(|i| (i*3).to_string()).collect();
+
+        let mut plot = BarPlot::new(&values);
+        plot.background_color("rgb(30, 35, 45)");
+        plot.plot_window_scale(95, 80, 90, 35);
+        plot.scale_range(-10, 10, 2);
+        plot.set_bar_markers(&bar_markers);
+        plot.x_axis_tick_length(30);
+        plot.y_axis_tick_length(30);
+        plot.plot_border();
+        let contents = plot.to_svg(420, 260);
+        if let Err(e) = std::fs::write(&path, contents) {
+            eprintln!("Error saving plot '{}' {}", path.display(), e);
+        }
+
+        let mut rng = rand::rng();
+        let tuple: (i32, i32, char) = rng.random();
     }
 }
