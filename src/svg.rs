@@ -2,11 +2,13 @@ mod tag;
 
 use std::path::Path;
 
+use crate::DEFAULT_BASE_COLOR;
+
 use super::{BarPlot, Percentage};
 
 const DEFAULT_RES: (usize, usize) = (1600, 1000);
 
-const BAR_MARGIN_PERMILLIE: f64 = 5.0; // introduce a gap between cans (bars).
+const BIN_MARGIN_PERMILLIE: f64 = 5.0; // introduce a gap between bins.
 
 const DEFAULT_Y_AXIS_TICK_LENGTH: Percentage = 10;
 const DEFAULT_X_AXIS_TICK_LENGTH: Percentage = 10;
@@ -20,6 +22,8 @@ struct SvgGenerator<'a> {
     plot_window: (f64, f64, f64, f64), // (x_length, x_offset, y_length, y_offset)
     scale_range: Option<(isize, isize, usize)>, // min, max, step
     nodes: Vec<String>,
+    line_color: &'a str,
+    tick_color: &'a str,
 }
 
 impl <'a>SvgGenerator<'a> {
@@ -35,6 +39,8 @@ impl <'a>SvgGenerator<'a> {
             plot_window,
             scale_range: None,
             nodes: Vec::with_capacity(200),
+            line_color: DEFAULT_BASE_COLOR,
+            tick_color: DEFAULT_BASE_COLOR,
         }
     }
 
@@ -52,6 +58,20 @@ impl <'a>SvgGenerator<'a> {
 
     fn get_base_color(&self) -> &str {
         "rgb(197, 197, 197)"
+    }
+
+    fn set_line_color(&mut self, color: &'a str) {
+        self.line_color = color;
+    }
+
+    fn set_tick_color(&mut self, color: &'a str) {
+        self.tick_color = color;
+    }
+
+    fn set_background_color(&mut self, color: &str) {
+        let (width, height) = (self.svg_width(), self.svg_height());
+        let rect = tag::rect(0.0, 0.0, width, height, 1.0, color);
+        self.nodes.push(rect);
     }
 
     fn get_base_font_size(&self) -> f64 {
@@ -104,7 +124,7 @@ impl <'a>SvgGenerator<'a> {
             let text = tag::text(x1, y, self.get_base_color(), self.get_base_font_size(), "end", &n.to_string());
             self.nodes.push(text);
 
-            let tick = tag::line(x1, x2, y, y, self.get_base_color(), self.get_base_line_width()/10.0);
+            let tick = tag::line(x1, x2, y, y, self.tick_color, self.get_base_line_width()/10.0);
             self.nodes.push(tick);
         }
     }
@@ -134,7 +154,7 @@ impl <'a>SvgGenerator<'a> {
                 x_offset + (horizontal_move * i as f64)
             };
 
-            let tick = tag::line(x, x, y, y2, self.get_base_color(), self.get_base_line_width()/10.0);
+            let tick = tag::line(x, x, y, y2, self.tick_color, self.get_base_line_width()/10.0);
             self.nodes.push(tick);
 
             // As stated above, we can have less markers than bars if we want to.
@@ -174,11 +194,11 @@ impl <'a>SvgGenerator<'a> {
 
         let unit = y_length / range;
         let bin_width = x_length / self.values.len() as f64;
-        let bar_margin = bin_width * (BAR_MARGIN_PERMILLIE / 1000_f64);
-        let width = bin_width - (bar_margin * 2.0);
+        let bin_margin = bin_width * (BIN_MARGIN_PERMILLIE / 1000_f64);
+        let width = bin_width - (bin_margin * 2.0);
 
         for (i, bar) in self.values.iter().enumerate() {
-            let x = (bin_width * i as f64) + x_offset + bar_margin;
+            let x = (bin_width * i as f64) + x_offset + bin_margin;
             let opacity = if true { 1.0 } else { 0.7 };
 
             let color =
@@ -208,25 +228,25 @@ impl <'a>SvgGenerator<'a> {
         }
     }
 
-    fn set_plot_border(&mut self) {
+    fn set_plot_border(&mut self, color: &str) {
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
         let (x1, x2, y1, y2) = (x_offset, x_offset + x_length, y_offset, y_length + y_offset);
-        self.nodes.push(tag::line(x1, x1, y1, y2, self.get_base_color(), self.get_base_line_width()/10.0)); // left
-        self.nodes.push(tag::line(x1, x2, y1, y1, self.get_base_color(), self.get_base_line_width()/10.0)); // top
-        self.nodes.push(tag::line(x2, x2, y1, y2, self.get_base_color(), self.get_base_line_width()/10.0)); // right
-        self.nodes.push(tag::line(x1, x2, y2, y2, self.get_base_color(), self.get_base_line_width()/10.0)); // bottom
+        self.nodes.push(tag::line(x1, x1, y1, y2, color, self.get_base_line_width()/10.0)); // left
+        self.nodes.push(tag::line(x1, x2, y1, y1, color, self.get_base_line_width()/10.0)); // top
+        self.nodes.push(tag::line(x2, x2, y1, y2, color, self.get_base_line_width()/10.0)); // right
+        self.nodes.push(tag::line(x1, x2, y2, y2, color, self.get_base_line_width()/10.0)); // bottom
     }
 
-    fn set_svg_border(&mut self) {
+    fn set_svg_border(&mut self, color: &str) {
         let x1 = 0.0;
         let x2 = self.svg_width();
         let y1 = 0.0;
         let y2 = self.svg_height();
 
-        self.nodes.push(tag::line(x1, x1, y1, y2, self.get_base_color(), self.get_base_line_width())); // left
-        self.nodes.push(tag::line(x1, x2, y1, y1, self.get_base_color(), self.get_base_line_width())); // top
-        self.nodes.push(tag::line(x2, x2, y1, y2, self.get_base_color(), self.get_base_line_width())); // right
-        self.nodes.push(tag::line(x1, x2, y2, y2, self.get_base_color(), self.get_base_line_width())); // bottom
+        self.nodes.push(tag::line(x1, x1, y1, y2, color, self.get_base_line_width())); // left
+        self.nodes.push(tag::line(x1, x2, y1, y1, color, self.get_base_line_width())); // top
+        self.nodes.push(tag::line(x2, x2, y1, y2, color, self.get_base_line_width())); // right
+        self.nodes.push(tag::line(x1, x2, y2, y2, color, self.get_base_line_width())); // bottom
     }
 
     fn generate(&self) -> String {
@@ -248,6 +268,14 @@ pub fn render(bar_plot: &BarPlot) -> String {
 
     let mut svg = SvgGenerator::new(width, height, bar_plot.values);
 
+    if let Some(color) = bar_plot.background_color {
+        svg.set_background_color(color);
+    }
+
+    svg.set_tick_color(bar_plot.tick_color);
+
+    svg.set_line_color(bar_plot.line_color);
+
     if let Some((x, x_offset, y, y_offset)) = bar_plot.plot_window_scale {
         svg.set_plot_window(x, x_offset, y, y_offset);
     }
@@ -267,11 +295,11 @@ pub fn render(bar_plot: &BarPlot) -> String {
     }
 
     if bar_plot.window_border {
-        svg.set_svg_border();
+        svg.set_svg_border(bar_plot.line_color);
     }
 
     if bar_plot.plot_border {
-        svg.set_plot_border();
+        svg.set_plot_border(bar_plot.line_color);
     }
 
     svg.set_bars(bar_plot.negative_bars_go_down);
