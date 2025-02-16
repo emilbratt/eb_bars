@@ -189,24 +189,22 @@ impl <'a>SvgGenerator<'a> {
         };
 
         let horizontal_move = x_length / self.values.len() as f64;
+        let to_middle = if x_marks_middle {
+            horizontal_move / 2.0
+        } else {
+            0.0
+        };
+
         let mut mark_index = 0;
         for i in 0..self.values.len() {
-            let x = if x_marks_middle {
-                x_offset + (horizontal_move * i as f64) + (horizontal_move / 2.0)
-            } else {
-                x_offset + (horizontal_move * i as f64)
-            };
+            let x = x_offset + (horizontal_move * i as f64) + to_middle;
 
             let tick = tag::line(x, x, y, y2, self.tick_color, self.get_base_line_width()/10.0);
             self.nodes.push(tick);
 
             // As stated above, we can have less markers than bars if we want to.
             if i % nth_marker == 0 {
-                let x = if x_marks_middle {
-                    x_offset + (horizontal_move * i as f64) + (horizontal_move / 2.0)
-                } else {
-                    x_offset + (horizontal_move * i as f64)
-                };
+                let x = x_offset + (horizontal_move * i as f64) + to_middle;
                 let text = tag::text(x, y2 + self.get_base_font_size(), self.text_color, self.get_base_font_size(), "middle", &x_markers[mark_index]);
                 self.nodes.push(text);
                 mark_index += 1;
@@ -237,13 +235,13 @@ impl <'a>SvgGenerator<'a> {
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
 
         let range = (y_max - y_min) as f64;
-        let bar_window_offset = y_min as f64 * y_length / range;
+        let top_offset = y_min as f64 * y_length / range;
         let base_y = y_length + y_offset; // X-AXIS e.g. the floor in bar window
 
         let vertical_move = y_length / range;
         let bin_width = x_length / self.values.len() as f64;
         let bin_margin = bin_width * (BIN_MARGIN_PERMILLIE / 1000_f64);
-        let width = bin_width - (bin_margin * 2.0);
+        let bar_width = bin_width - (bin_margin * 2.0);
 
         for (i, bar) in self.values.iter().enumerate() {
             let x = (bin_width * i as f64) + x_offset + bin_margin;
@@ -255,20 +253,20 @@ impl <'a>SvgGenerator<'a> {
             let (y, height) = if negative_bars_go_down {
                 if bar >= &0.0 {
                     let height = bar * vertical_move;
-                    let y = base_y + bar_window_offset - height;
+                    let y = base_y + top_offset - height;
                     ( y, height )
                 } else {
                     let height = (bar * vertical_move).abs();
-                    let y = base_y + bar_window_offset;
+                    let y = base_y + top_offset;
                     ( y, height )
                 }
             } else {
-                let height = (bar * vertical_move) - bar_window_offset;
+                let height = (bar * vertical_move) - top_offset;
                 let y = base_y - height;
                 ( y, height )
             };
 
-            self.nodes.push(tag::rect(x, y, width, height, opacity, color));
+            self.nodes.push(tag::rect(x, y, bar_width, height, opacity, color));
         }
     }
 
