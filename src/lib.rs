@@ -222,10 +222,10 @@ mod tests {
 
         // Values for the bars.
         let mut rng = rand::rng();
-        let values: [f64; 24] = core::array::from_fn(|_| rng.random_range(-10.0..10.0));
+        let values: [f64; 17] = core::array::from_fn(|_| rng.random_range(-10.0..10.0));
 
         // Add every third value from 0 to value.len() as a bar marker.
-        let bar_markers: Vec<String> = (0..values.len()/3+1).map(|i| (i*3).to_string()).collect();
+        let bar_markers: Vec<String> = (0..=values.len()/3).map(|i| (i*3).to_string()).collect();
 
         let mut plot = BarPlot::new(&values);
         plot.background_color("rgb(30, 35, 45)");
@@ -238,7 +238,7 @@ mod tests {
         plot.show_horizontal_lines();
         plot.show_vertical_lines();
 
-        let contents = plot.to_svg(420, 260);
+        let contents = plot.to_svg(840, 520);
         if let Err(e) = std::fs::write(&path, contents) {
             eprintln!("Error saving plot '{}' {}", path.display(), e);
         }

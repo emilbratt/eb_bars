@@ -145,6 +145,8 @@ impl <'a>SvgGenerator<'a> {
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
         assert!(x_length < self.get_svg_width(), "no room for axis, x_length is to high");
         assert!(y_length < self.get_svg_width(), "no room for axis, y_length is to high");
+        let line_width = self.get_base_line_width()/10.0;
+        let font_size = self.get_base_font_size();
 
         let x1 = (x_offset / 100.0) * (100 - axis_offset) as f64; // tick left end
         let x2 = x_offset; // tick right end
@@ -158,14 +160,15 @@ impl <'a>SvgGenerator<'a> {
                 y_offset + y_length - (n as f64 * vertical_move)
             };
 
-            let text = tag::text(x1-(self.get_base_font_size()/3.5), y + (self.get_base_font_size()/3.5), self.text_color, self.get_base_font_size(), "end", &n.to_string());
+            let mark = &n.to_string();
+            let text = tag::text(x1-(font_size/3.5), y + (font_size/3.5), self.text_color, font_size, "end", mark);
             self.nodes.push(text);
 
-            let tick = tag::line(x1, x2, y, y, self.tick_color, self.get_base_line_width()/10.0);
+            let tick = tag::line(x1, x2, y, y, self.tick_color, line_width);
             self.nodes.push(tick);
 
             if grid {
-                let line = tag::line(x1, x_length + x_offset, y, y, &self.tick_color, self.get_base_line_width()/10.0);
+                let line = tag::line(x1, x_length + x_offset, y, y, &self.tick_color, line_width);
                 self.nodes.push(line);
             }
         }
@@ -175,18 +178,16 @@ impl <'a>SvgGenerator<'a> {
         let axis_offset = axis_offset as f64;
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
 
+        let line_width = self.get_base_line_width()/10.0;
+        let font_size = self.get_base_font_size();
         let y = y_length + y_offset;
         let y_marker = (self.get_svg_height() + y_length + y_offset) / 2.0;
         let y2 = y + ( (self.get_svg_height() - (y_length + y_offset)) / 100.0 * axis_offset);
+        let y3 = y2 + self.get_base_font_size();
 
-        // We can have less markers than bars if we want to.
-        let remainder = self.values.len() % x_markers.len();
-        // FIXME: This is not thoroughly tested.
-        let nth_marker = if remainder == 0 {
-            (self.values.len() / x_markers.len())
-        } else {
-            (self.values.len() / x_markers.len()) + 1
-        };
+        // FIXME: This is not thoroughly tested yet.
+        let remainder = (self.values.len() % x_markers.len());
+        let nth_marker = (self.values.len() + remainder) / x_markers.len();
 
         let horizontal_move = x_length / self.values.len() as f64;
         let to_middle = if x_marks_middle {
@@ -199,19 +200,19 @@ impl <'a>SvgGenerator<'a> {
         for i in 0..self.values.len() {
             let x = x_offset + (horizontal_move * i as f64) + to_middle;
 
-            let tick = tag::line(x, x, y, y2, self.tick_color, self.get_base_line_width()/10.0);
+            let tick = tag::line(x, x, y, y2, self.tick_color, line_width);
             self.nodes.push(tick);
 
             // As stated above, we can have less markers than bars if we want to.
-            if i % nth_marker == 0 {
-                let x = x_offset + (horizontal_move * i as f64) + to_middle;
-                let text = tag::text(x, y2 + self.get_base_font_size(), self.text_color, self.get_base_font_size(), "middle", &x_markers[mark_index]);
+            if i % nth_marker == 0 && x_markers.len() > mark_index {
+                let mark = &x_markers[mark_index];
+                let text = tag::text(x, y3, self.text_color, font_size, "middle", mark);
                 self.nodes.push(text);
                 mark_index += 1;
             }
 
             if grid {
-                let line = tag::line(x, x, y_offset, y, &self.tick_color, self.get_base_line_width()/10.0);
+                let line = tag::line(x, x, y_offset, y, &self.tick_color, line_width);
                 self.nodes.push(line);
             }
         }
@@ -236,9 +237,9 @@ impl <'a>SvgGenerator<'a> {
 
         let range = (y_max - y_min) as f64;
         let top_offset = y_min as f64 * y_length / range;
-        let base_y = y_length + y_offset; // X-AXIS e.g. the floor in bar window
+        let y_floor = y_length + y_offset; // Indicates the floor in plot window.
 
-        let vertical_move = y_length / range;
+        let vertical_move: f64 = y_length / range;
         let bin_width = x_length / self.values.len() as f64;
         let bin_margin = bin_width * (BIN_MARGIN_PERMILLIE / 1000_f64);
         let bar_width = bin_width - (bin_margin * 2.0);
@@ -249,20 +250,21 @@ impl <'a>SvgGenerator<'a> {
 
             let color = self.get_bar_color(*bar);
 
-            // If negative bars go down, we need to adjust the y and height accordingly.
-            let (y, height) = if negative_bars_go_down {
+            // FIXME: Can this be written in a more compact way?
+            let (y, height) = if negative_bars_go_down && min < 0.0 {
                 if bar >= &0.0 {
                     let height = bar * vertical_move;
-                    let y = base_y + top_offset - height;
+                    let y = y_floor + top_offset - height;
                     ( y, height )
                 } else {
+                    // If negative bars go down, we need to adjust the y and height accordingly.
                     let height = (bar * vertical_move).abs();
-                    let y = base_y + top_offset;
+                    let y = y_floor + top_offset;
                     ( y, height )
                 }
             } else {
                 let height = (bar * vertical_move) - top_offset;
-                let y = base_y - height;
+                let y = y_floor - height;
                 ( y, height )
             };
 
@@ -285,10 +287,10 @@ impl <'a>SvgGenerator<'a> {
         let y1 = 0.0;
         let y2 = self.get_svg_height();
 
-        self.nodes.push(tag::line(x1, x1, y1, y2, color, self.get_base_line_width())); // left
-        self.nodes.push(tag::line(x1, x2, y1, y1, color, self.get_base_line_width())); // top
-        self.nodes.push(tag::line(x2, x2, y1, y2, color, self.get_base_line_width())); // right
-        self.nodes.push(tag::line(x1, x2, y2, y2, color, self.get_base_line_width())); // bottom
+        self.nodes.push(tag::line(x1, x1, y1, y2, color, self.get_base_line_width()/5.0)); // left
+        self.nodes.push(tag::line(x1, x2, y1, y1, color, self.get_base_line_width()/5.0)); // top
+        self.nodes.push(tag::line(x2, x2, y1, y2, color, self.get_base_line_width()/5.0)); // right
+        self.nodes.push(tag::line(x1, x2, y2, y2, color, self.get_base_line_width()/5.0)); // bottom
     }
 
     fn generate(&self) -> String {
@@ -340,11 +342,12 @@ pub fn render(bp: &BarPlot) -> String {
         svg.set_svg_border(bp.line_color);
     }
 
+    svg.set_bars(bp.negative_bars_go_down);
+
     if bp.plot_border {
         svg.set_plot_border(bp.line_color);
     }
 
-    svg.set_bars(bp.negative_bars_go_down);
 
     svg.generate()
 }
