@@ -6,6 +6,7 @@ mod svg;
 
 type Percentage = usize;
 
+const DEFAULT_BIN_MARGIN: Percentage = 2; // introduce a gap between bins.
 const DEFAULT_BASE_COLOR: &str = "rgb(197, 197, 197)";
 const DEFAULT_BAR_COLOR: &str = "rgb(112, 153, 182)";
 
@@ -17,7 +18,7 @@ pub struct BarPlot<'a> {
     res: Option<(usize, usize)>,
     plot_window_scale: Option<(Percentage, Percentage, Percentage, Percentage)>,
     x_axis_tick_length: Option<Percentage>,
-    x_markers_set_middle: bool,
+    x_markers_at_middle: bool,
     y_axis_tick_length: Option<Percentage>,
     negative_bars_go_down: bool,
     window_border: bool,
@@ -30,6 +31,7 @@ pub struct BarPlot<'a> {
     text_color: &'a str,
     bar_color: &'a str,
     bar_threshold_colors: Option<(&'a str, &'a str, &'a str, &'a str)>,
+    bin_margin: Percentage,
 }
 
 impl <'a>BarPlot<'a> {
@@ -41,7 +43,7 @@ impl <'a>BarPlot<'a> {
             res: None,
             plot_window_scale: None,
             x_axis_tick_length: None,
-            x_markers_set_middle: false,
+            x_markers_at_middle: false,
             y_axis_tick_length: None,
             negative_bars_go_down: false,
             window_border: false,
@@ -54,6 +56,7 @@ impl <'a>BarPlot<'a> {
             text_color: DEFAULT_BASE_COLOR,
             bar_color: DEFAULT_BAR_COLOR,
             bar_threshold_colors: None,
+            bin_margin: DEFAULT_BIN_MARGIN,
         }
     }
 
@@ -102,8 +105,12 @@ impl <'a>BarPlot<'a> {
         self.bar_markers = Some(bar_markers);
     }
 
-    pub fn x_markers_set_middle(&mut self) {
-        self.x_markers_set_middle = true;
+    pub fn set_x_markers_at_middle(&mut self) {
+        self.x_markers_at_middle = true;
+    }
+
+    pub fn set_bin_margin(&mut self, margin: Percentage) {
+        self.bin_margin = margin;
     }
 
     pub fn y_axis_tick_length(&mut self, p: Percentage) {
@@ -196,22 +203,23 @@ mod tests {
         plot.line_color("LightBlue");
         plot.plot_window_scale(90, 80, 85, 30);
         plot.scale_range(-80, 100, 10);
-        plot.x_markers_set_middle();
+        plot.set_x_markers_at_middle();
         plot.y_axis_tick_length(10);
         plot.negative_bars_go_down();
         plot.window_border();
         plot.show_vertical_lines();
         plot.plot_border();
+        plot.set_bin_margin(80);
 
         let light_blue = "rgb(130, 250, 255)";
         let light_green = "rgb(150, 250, 180)";
         let yellow = "rgb(250, 210, 150)";
         let red = "rgb(250, 144, 120)";
-        plot.bar_threshold_colors(&light_blue, &light_green, &yellow, red);
+        plot.bar_threshold_colors(light_blue, light_green, yellow, red);
         plot.set_bar_markers(&bar_markers);
 
         let contents = plot.to_svg(1600, 1000);
-        if let Err(e) = std::fs::write(&path, contents) {
+        if let Err(e) = std::fs::write(path, contents) {
             eprintln!("Error saving plot '{}' {}", path.display(), e);
         }
     }

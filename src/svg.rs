@@ -8,8 +8,6 @@ use super::{BarPlot, Percentage};
 
 const DEFAULT_RES: (usize, usize) = (1600, 1000);
 
-const BIN_MARGIN_PERMILLIE: f64 = 5.0; // introduce a gap between bins.
-
 const DEFAULT_Y_AXIS_TICK_LENGTH: Percentage = 10;
 const DEFAULT_X_AXIS_TICK_LENGTH: Percentage = 10;
 
@@ -27,6 +25,7 @@ struct SvgGenerator<'a> {
     text_color: &'a str,
     bar_color: &'a str,
     bar_threshold_colors: Option<(&'a str, &'a str, &'a str, &'a str)>,
+    bin_margin: Percentage,
 }
 
 impl <'a>SvgGenerator<'a> {
@@ -38,6 +37,7 @@ impl <'a>SvgGenerator<'a> {
         tick_color: &'a str,
         text_color: &'a str,
         bar_color: &'a str,
+        bin_margin: Percentage,
     ) -> Self {
         let (width, height) = (width as f64, height as f64);
         let svg_window = (width, height);
@@ -66,6 +66,7 @@ impl <'a>SvgGenerator<'a> {
             text_color,
             bar_color,
             bar_threshold_colors: None,
+            bin_margin,
         }
     }
 
@@ -241,11 +242,12 @@ impl <'a>SvgGenerator<'a> {
 
         let vertical_move: f64 = y_length / range;
         let bin_width = x_length / self.values.len() as f64;
-        let bin_margin = bin_width * (BIN_MARGIN_PERMILLIE / 1000_f64);
-        let bar_width = bin_width - (bin_margin * 2.0);
+        let margin = (self.bin_margin as f64 / 100_f64);
+        let bin_margin = bin_width * margin;
+        let bar_width = bin_width - bin_margin;
 
         for (i, bar) in self.values.iter().enumerate() {
-            let x = (bin_width * i as f64) + x_offset + bin_margin;
+            let x = (bin_width * i as f64) + x_offset + bin_margin - (bin_margin/2.0);
             let opacity = if true { 1.0 } else { 0.7 };
 
             let color = self.get_bar_color(*bar);
@@ -310,7 +312,16 @@ pub fn render(bp: &BarPlot) -> String {
         None => DEFAULT_RES,
     };
 
-    let mut svg = SvgGenerator::new(width, height, bp.values, bp.line_color, bp.tick_color, bp.text_color, bp.bar_color);
+    let mut svg = SvgGenerator::new(
+        width,
+        height,
+        bp.values,
+        bp.line_color,
+        bp.tick_color,
+        bp.text_color,
+        bp.bar_color,
+        bp.bin_margin
+    );
 
     if let Some(color) = bp.background_color {
         svg.set_background_color(color);
@@ -330,7 +341,7 @@ pub fn render(bp: &BarPlot) -> String {
 
     if let Some(markers) = bp.bar_markers {
         let length = bp.x_axis_tick_length.unwrap_or(DEFAULT_X_AXIS_TICK_LENGTH);
-        svg.bar_markers(markers, length, bp.x_markers_set_middle, bp.show_vertical_lines);
+        svg.bar_markers(markers, length, bp.x_markers_at_middle, bp.show_vertical_lines);
     }
 
     if let Some((min, max, step)) = bp.scale_range {
@@ -347,7 +358,6 @@ pub fn render(bp: &BarPlot) -> String {
     if bp.plot_border {
         svg.set_plot_border(bp.line_color);
     }
-
 
     svg.generate()
 }
