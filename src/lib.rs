@@ -7,6 +7,7 @@ mod svg;
 type Percentage = usize;
 
 const DEFAULT_BASE_COLOR: &str = "rgb(197, 197, 197)";
+const DEFAULT_BAR_COLOR: &str = "rgb(112, 153, 182)";
 
 #[derive(Debug)]
 pub struct BarPlot<'a> {
@@ -20,10 +21,15 @@ pub struct BarPlot<'a> {
     y_axis_tick_length: Option<Percentage>,
     negative_bars_go_down: bool,
     window_border: bool,
+    show_horizontal_lines: bool,
+    show_vertical_lines: bool,
     plot_border: bool,
     background_color: Option<&'a str>,
     line_color: &'a str,
     tick_color: &'a str,
+    text_color: &'a str,
+    bar_color: &'a str,
+    bar_threshold_colors: Option<(&'a str, &'a str, &'a str, &'a str)>,
 }
 
 impl <'a>BarPlot<'a> {
@@ -40,9 +46,14 @@ impl <'a>BarPlot<'a> {
             negative_bars_go_down: false,
             window_border: false,
             plot_border: false,
+            show_horizontal_lines: false,
+            show_vertical_lines: false,
             background_color: None,
             line_color: DEFAULT_BASE_COLOR,
             tick_color: DEFAULT_BASE_COLOR,
+            text_color: DEFAULT_BASE_COLOR,
+            bar_color: DEFAULT_BAR_COLOR,
+            bar_threshold_colors: None,
         }
     }
 
@@ -58,11 +69,28 @@ impl <'a>BarPlot<'a> {
         self.tick_color = color;
     }
 
+    pub fn text_color(&mut self, color: &'a str) {
+        self.text_color = color;
+    }
+
+    pub fn bar_threshold_colors(&mut self, min: &'a str, low: &'a str, high: &'a str, max: &'a str) {
+        self.bar_threshold_colors = Some((min, low, high, max));
+    }
+
+    pub fn show_horizontal_lines(&mut self) {
+        self.show_horizontal_lines = true;
+    }
+
+    pub fn show_vertical_lines(&mut self) {
+        self.show_vertical_lines = true;
+    }
+
     pub fn plot_window_scale(
         &mut self, x_length: Percentage, x_offset: Percentage, y_length: Percentage, y_offset: Percentage
     ) {
-        assert!(x_length <= 100 && x_offset <= 100, "values cannot exceed 100%");
-        assert!(y_length <= 100 && y_offset <= 100, "values cannot exceed 100%");
+        assert!(x_length <= 100 && x_offset <= 100, "plot window width cannot exceed 100%");
+        assert!(y_length <= 100 && y_offset <= 100, "plot window height cannot exceed 100%");
+
         self.plot_window_scale = Some((x_length, x_offset, y_length, y_offset));
     }
 
@@ -78,12 +106,12 @@ impl <'a>BarPlot<'a> {
         self.x_markers_set_middle = true;
     }
 
-    pub fn y_axis_tick_length(&mut self, offset: Percentage) {
-        self.y_axis_tick_length = Some(offset);
+    pub fn y_axis_tick_length(&mut self, p: Percentage) {
+        self.y_axis_tick_length = Some(p);
     }
 
-    pub fn x_axis_tick_length(&mut self, offset: Percentage) {
-        self.x_axis_tick_length = Some(offset);
+    pub fn x_axis_tick_length(&mut self, p: Percentage) {
+        self.x_axis_tick_length = Some(p);
     }
 
     pub fn negative_bars_go_down(&mut self) {
@@ -129,14 +157,17 @@ mod tests {
         let bar_markers: Vec<String> = (0..values.len()/3).map(|i| (i*3).to_string()).collect();
 
         let mut plot = BarPlot::new(&values);
-        plot.background_color("black");
+        plot.background_color("Black");
         plot.plot_window_scale(95, 80, 90, 40);
         plot.scale_range(0, 100, 10);
-        plot.line_color("rgb(213, 213, 113)");
+        plot.line_color("LightGreen");
+        plot.text_color("LightGreen");
+        plot.tick_color("LightGreen");
         plot.x_axis_tick_length(10);
         plot.y_axis_tick_length(10);
         plot.window_border();
         plot.plot_border();
+        plot.show_horizontal_lines();
         plot.set_bar_markers(&bar_markers);
 
         let contents = plot.to_svg(1600, 1000);
@@ -169,7 +200,14 @@ mod tests {
         plot.y_axis_tick_length(10);
         plot.negative_bars_go_down();
         plot.window_border();
+        plot.show_vertical_lines();
         plot.plot_border();
+
+        let light_blue = "rgb(130, 250, 255)";
+        let light_green = "rgb(150, 250, 180)";
+        let yellow = "rgb(250, 210, 150)";
+        let red = "rgb(250, 144, 120)";
+        plot.bar_threshold_colors(&light_blue, &light_green, &yellow, red);
         plot.set_bar_markers(&bar_markers);
 
         let contents = plot.to_svg(1600, 1000);
@@ -179,12 +217,12 @@ mod tests {
     }
 
     #[test]
-    fn a() {
-        let path = Path::new("a.svg");
+    fn shows_horizontal_lines_and_vertical_lines() {
+        let path = Path::new("shows_horizontal_lines_and_vertical_lines.svg");
 
         // Values for the bars.
         let mut rng = rand::rng();
-        let values: [f64; 24] = core::array::from_fn(|_| rng.random_range(-10_f64..10_f64));
+        let values: [f64; 24] = core::array::from_fn(|_| rng.random_range(-10.0..10.0));
 
         // Add every third value from 0 to value.len() as a bar marker.
         let bar_markers: Vec<String> = (0..values.len()/3+1).map(|i| (i*3).to_string()).collect();
@@ -197,12 +235,12 @@ mod tests {
         plot.x_axis_tick_length(30);
         plot.y_axis_tick_length(30);
         plot.plot_border();
+        plot.show_horizontal_lines();
+        plot.show_vertical_lines();
+
         let contents = plot.to_svg(420, 260);
         if let Err(e) = std::fs::write(&path, contents) {
             eprintln!("Error saving plot '{}' {}", path.display(), e);
         }
-
-        let mut rng = rand::rng();
-        let tuple: (i32, i32, char) = rng.random();
     }
 }
