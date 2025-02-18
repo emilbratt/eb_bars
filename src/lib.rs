@@ -10,6 +10,7 @@ const DEFAULT_BIN_MARGIN: Percentage = 2; // introduce a gap between bins.
 const DEFAULT_BASE_COLOR: &str = "rgb(197, 197, 197)";
 const DEFAULT_BAR_COLOR: &str = "rgb(112, 153, 182)";
 
+// FIXME: add default macro for all fields except "values".
 #[derive(Debug)]
 pub struct BarPlot<'a> {
     values: &'a [f64],

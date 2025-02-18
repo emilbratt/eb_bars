@@ -1,9 +1,5 @@
 mod tag;
 
-use std::path::Path;
-
-use crate::DEFAULT_BASE_COLOR;
-
 use super::{BarPlot, Percentage};
 
 const DEFAULT_RES: (usize, usize) = (1600, 1000);
@@ -89,7 +85,6 @@ impl <'a>SvgGenerator<'a> {
     fn get_bar_color(&self, val: f64) -> &'a str {
         match self.bar_threshold_colors {
             Some( (clr_min, clr_low, clr_high, clr_max) ) => {
-                // let (clr_min, clr_low, clr_high, clr_max) = bar_colors;
                 if val == self.max { clr_max }
                 else if val == self.min { clr_min }
                 else if val >= self.mean { clr_high }
@@ -122,7 +117,7 @@ impl <'a>SvgGenerator<'a> {
     }
 
     fn set_plot_window(&mut self, x_size: Percentage, x_offset: Percentage, y_size: Percentage, y_offset: Percentage) {
-        // Calculate the plot window size and offset for x and y from percentage.
+        // Calculate the plot window size and offset from given percentage.
         assert!(x_size <= 100 && x_offset <= 100, "x_size and or x_offset cannot exceed 100%");
         assert!(y_size <= 100 && y_offset <= 100, "y_size and or y_offset cannot exceed 100%");
 
@@ -138,9 +133,8 @@ impl <'a>SvgGenerator<'a> {
         self.plot_window = (x_length, x_offset, y_length, y_offset);
     }
 
-    // Produce axis containing the range of values
     fn set_scale_range(&mut self, min: isize, max: isize, step: usize, axis_offset: Percentage, grid: bool) {
-        // Needed for rendering bars.
+        // Needed when rendering bars.
         self.scale_range = Some((min, max, step));
 
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
@@ -254,7 +248,7 @@ impl <'a>SvgGenerator<'a> {
 
             // FIXME: Can this be written in a more compact way?
             let (y, height) = if negative_bars_go_down && min < 0.0 {
-                if bar >= &0.0 {
+                if *bar >= 0.0 {
                     let height = bar * vertical_move;
                     let y = y_floor + top_offset - height;
                     ( y, height )
