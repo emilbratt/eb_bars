@@ -1,11 +1,15 @@
+#![allow(unused_parens)]
+
 mod tag;
 
 use super::{BarPlot, Percentage};
 
-const DEFAULT_RES: (usize, usize) = (1600, 1000);
+const DEFAULT_RES: (u32, u32) = (1600, 1000);
 
-const DEFAULT_Y_AXIS_TICK_LENGTH: Percentage = 10;
-const DEFAULT_X_AXIS_TICK_LENGTH: Percentage = 10;
+const DEFAULT_TICK_LENGTH: Percentage = 10;
+const DEFAULT_TEXT_SIDE_OFFSET: Percentage = 35;
+
+enum Side { Left, Right, Top, Bottom }
 
 struct SvgGenerator<'a> {
     values: &'a [f64],
@@ -14,7 +18,7 @@ struct SvgGenerator<'a> {
     mean: f64,
     svg_window: (f64, f64), // (x_length, y_length)
     plot_window: (f64, f64, f64, f64), // (x_length, x_offset, y_length, y_offset)
-    scale_range: Option<(isize, isize, usize)>, // min, max, step
+    scale_range: Option<(i64, i64, usize)>, // min, max, step
     nodes: Vec<String>,
     line_color: &'a str,
     tick_color: &'a str,
@@ -25,31 +29,26 @@ struct SvgGenerator<'a> {
 }
 
 impl <'a>SvgGenerator<'a> {
-    fn new(
-        width: usize,
-        height: usize,
-        values: &'a [f64],
-        line_color: &'a str,
-        tick_color: &'a str,
-        text_color: &'a str,
-        bar_color: &'a str,
-        bin_margin: Percentage,
-    ) -> Self {
-        let (width, height) = (width as f64, height as f64);
+    fn new(bp: &'a BarPlot) -> Self {
+        let (width, height): (f64, f64) = match bp.res {
+            Some((w, h)) => (w as f64, h as f64),
+            None => (DEFAULT_RES.0 as f64, DEFAULT_RES.1 as f64),
+        };
         let svg_window = (width, height);
+
         // Unless changed, plot will take up the whole window.
         let plot_window = (width, 0.0, height, 0.0);
 
-        let (mut max, mut min, mut sum) = (values[0], values[0], values[0]);
-        for i in 1..values.len() {
-            min = min.min(values[i]);
-            max = max.max(values[i]);
-            sum = sum + values[i];
+        let (mut max, mut min, mut sum) = (bp.values[0], bp.values[0], bp.values[0]);
+        for i in 1..bp.values.len() {
+            min = min.min(bp.values[i]);
+            max = max.max(bp.values[i]);
+            sum = sum + bp.values[i];
         }
-        let mean = sum / values.len() as f64;
+        let mean = sum / bp.values.len() as f64;
 
         Self {
-            values,
+            values: bp.values,
             min,
             max,
             mean,
@@ -57,12 +56,12 @@ impl <'a>SvgGenerator<'a> {
             plot_window,
             scale_range: None,
             nodes: Vec::with_capacity(200),
-            line_color,
-            tick_color,
-            text_color,
-            bar_color,
+            line_color: bp.line_color,
+            tick_color: bp.tick_color,
+            text_color: bp.text_color,
+            bar_color: bp.bar_color,
             bar_threshold_colors: None,
-            bin_margin,
+            bin_margin: bp.bin_margin,
         }
     }
 
@@ -133,13 +132,13 @@ impl <'a>SvgGenerator<'a> {
         self.plot_window = (x_length, x_offset, y_length, y_offset);
     }
 
-    fn set_scale_range(&mut self, min: isize, max: isize, step: usize, axis_offset: Percentage, grid: bool) {
+    fn set_scale_range(&mut self, min: i64, max: i64, step: usize, axis_offset: Percentage, grid: bool) {
         // Needed when rendering bars.
         self.scale_range = Some((min, max, step));
 
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
         assert!(x_length < self.get_svg_width(), "no room for axis, x_length is to high");
-        assert!(y_length < self.get_svg_width(), "no room for axis, y_length is to high");
+        assert!(y_length < self.get_svg_height(), "no room for axis, y_length is to high");
         let line_width = self.get_base_line_width()/10.0;
         let font_size = self.get_base_font_size();
 
@@ -169,23 +168,22 @@ impl <'a>SvgGenerator<'a> {
         }
     }
 
-    fn bar_markers(&mut self, x_markers: &[String], axis_offset: Percentage, x_marks_middle: bool, grid: bool) {
+    fn bar_markers(&mut self, markers: &[String], axis_offset: Percentage, x_marks_middle: bool, grid: bool) {
         let axis_offset = axis_offset as f64;
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
 
         let line_width = self.get_base_line_width()/10.0;
         let font_size = self.get_base_font_size();
         let y = y_length + y_offset;
-        let y_marker = (self.get_svg_height() + y_length + y_offset) / 2.0;
         let y2 = y + ( (self.get_svg_height() - (y_length + y_offset)) / 100.0 * axis_offset);
         let y3 = y2 + self.get_base_font_size();
 
         // FIXME: This is not thoroughly tested yet.
-        let remainder = (self.values.len() % x_markers.len());
-        let nth_marker = (self.values.len() + remainder) / x_markers.len();
+        let remainder = (self.values.len() % markers.len());
+        let nth_marker = (self.values.len() + remainder) / markers.len();
 
         let horizontal_move = x_length / self.values.len() as f64;
-        let to_middle = if x_marks_middle {
+        let if_middle = if x_marks_middle {
             horizontal_move / 2.0
         } else {
             0.0
@@ -193,14 +191,14 @@ impl <'a>SvgGenerator<'a> {
 
         let mut mark_index = 0;
         for i in 0..self.values.len() {
-            let x = x_offset + (horizontal_move * i as f64) + to_middle;
+            let x = x_offset + (horizontal_move * i as f64) + if_middle;
 
             let tick = tag::line(x, x, y, y2, self.tick_color, line_width);
             self.nodes.push(tick);
 
             // As stated above, we can have less markers than bars if we want to.
-            if i % nth_marker == 0 && x_markers.len() > mark_index {
-                let mark = &x_markers[mark_index];
+            if i % nth_marker == 0 && markers.len() > mark_index {
+                let mark = &markers[mark_index];
                 let text = tag::text(x, y3, self.text_color, font_size, "middle", mark);
                 self.nodes.push(text);
                 mark_index += 1;
@@ -215,17 +213,9 @@ impl <'a>SvgGenerator<'a> {
 
     // Produce the bars in the plot window
     fn set_bars(&mut self, negative_bars_go_down: bool) {
-        let (mut max, mut min, mut sum) = (self.values[0], self.values[0], self.values[0]);
-        for i in 1..self.values.len() {
-            min = min.min(self.values[i]);
-            max = max.max(self.values[i]);
-            sum = sum + self.values[i];
-        }
-        let mean = sum / self.values.len() as f64;
-
         let (y_min, y_max) = match self.scale_range {
             Some((min, max, _)) => (min as f64, max as f64),
-            None => (min, max),
+            None => (self.min, self.max),
         };
 
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
@@ -241,31 +231,68 @@ impl <'a>SvgGenerator<'a> {
         let bar_width = bin_width - bin_margin;
 
         for (i, bar) in self.values.iter().enumerate() {
-            let x = (bin_width * i as f64) + x_offset + bin_margin - (bin_margin/2.0);
+            // FIXME: this is for highlighting a selected bar, but impl. is missing..
             let opacity = if true { 1.0 } else { 0.7 };
 
             let color = self.get_bar_color(*bar);
+            let x = (bin_width * i as f64) + x_offset + bin_margin - (bin_margin/2.0);
 
-            // FIXME: Can this be written in a more compact way?
-            let (y, height) = if negative_bars_go_down && min < 0.0 {
+            // FIXME: Can this be written in a more compact and simple way?
+            let (y, height) = if negative_bars_go_down && self.min < 0.0 {
                 if *bar >= 0.0 {
                     let height = bar * vertical_move;
                     let y = y_floor + top_offset - height;
-                    ( y, height )
+                    (y, height)
                 } else {
                     // If negative bars go down, we need to adjust the y and height accordingly.
                     let height = (bar * vertical_move).abs();
                     let y = y_floor + top_offset;
-                    ( y, height )
+                    (y, height)
                 }
             } else {
                 let height = (bar * vertical_move) - top_offset;
                 let y = y_floor - height;
-                ( y, height )
+                (y, height)
             };
 
             self.nodes.push(tag::rect(x, y, bar_width, height, opacity, color));
         }
+    }
+
+    fn set_text(&mut self, text: &str, side: Side, offset: Percentage) {
+        let offset = offset as f64;
+        let (x_length, x_offset, y_length, y_offset) = self.plot_window;
+
+        let svg_tag = match side {
+            Side::Left => {
+                assert!(x_length < self.get_svg_width(), "no room for left side text, x_length is to high");
+                let x = (x_offset / 100.0 * offset) + self.get_base_font_size() / 2.0;
+                let y = y_offset + (y_length / 1.1);
+                tag::text_bottom_up(x, y, self.text_color, self.get_base_font_size(), "start", text)
+            }
+            Side::Right => {
+                assert!(x_length < self.get_svg_width(), "no room for right side text, x_length is to high");
+                let shift = self.get_svg_width() - (x_length + x_offset);
+                let x = x_offset + x_length + (shift - (shift / 100.0 * offset));
+                let y = y_offset + (y_length - y_length / 1.1);
+                tag::text_top_down(x, y, self.text_color, self.get_base_font_size(), "start", text)
+            }
+            Side::Top => {
+                assert!(y_length < self.get_svg_height(), "no room for top side text, y_length is to high");
+                let x = x_offset + (x_length - x_length / 1.1);
+                let y = (y_offset / 100.0 * offset) + self.get_base_font_size() / 2.0;
+                tag::text(x, y, self.text_color, self.get_base_font_size(), "start", text)
+            }
+            Side::Bottom => {
+                assert!(y_length < self.get_svg_height(), "no room for bottom side text, y_length is to high");
+                let x = x_offset + (x_length - x_length / 1.1);
+                let shift = self.get_svg_height() - (y_length + y_offset);
+                let y = self.get_svg_height() - (shift / 100.0 * offset);
+                tag::text(x, y, self.text_color, self.get_base_font_size(), "start", text)
+            }
+        };
+
+        self.nodes.push(svg_tag);
     }
 
     fn set_plot_border(&mut self, color: &str) {
@@ -301,29 +328,15 @@ impl <'a>SvgGenerator<'a> {
 }
 
 pub fn render(bp: &BarPlot) -> String {
-    let (width, height) = match bp.res {
-        Some((w, h)) => (w, h),
-        None => DEFAULT_RES,
-    };
-
-    let mut svg = SvgGenerator::new(
-        width,
-        height,
-        bp.values,
-        bp.line_color,
-        bp.tick_color,
-        bp.text_color,
-        bp.bar_color,
-        bp.bin_margin
-    );
+    let mut svg = SvgGenerator::new(bp);
 
     if let Some(color) = bp.background_color {
         svg.set_background_color(color);
     }
 
-    svg.set_tick_color(bp.tick_color);
-
     svg.set_line_color(bp.line_color);
+    svg.set_text_color(bp.text_color);
+    svg.set_tick_color(bp.tick_color);
 
     if let Some((x, x_offset, y, y_offset)) = bp.plot_window_scale {
         svg.set_plot_window(x, x_offset, y, y_offset);
@@ -334,13 +347,33 @@ pub fn render(bp: &BarPlot) -> String {
     }
 
     if let Some(markers) = bp.bar_markers {
-        let length = bp.x_axis_tick_length.unwrap_or(DEFAULT_X_AXIS_TICK_LENGTH);
-        svg.bar_markers(markers, length, bp.x_markers_at_middle, bp.show_vertical_lines);
+        let axis_offset = bp.x_axis_tick_length.unwrap_or(DEFAULT_TICK_LENGTH);
+        svg.bar_markers(markers, axis_offset, bp.x_markers_at_middle, bp.show_vertical_lines);
     }
 
     if let Some((min, max, step)) = bp.scale_range {
-        let length = bp.y_axis_tick_length.unwrap_or(DEFAULT_Y_AXIS_TICK_LENGTH);
+        let length = bp.y_axis_tick_length.unwrap_or(DEFAULT_TICK_LENGTH);
         svg.set_scale_range(min, max, step, length, bp.show_horizontal_lines);
+    }
+
+    if let Some(text) = bp.plot_text.left {
+        let offset = bp.plot_text.left_offset.unwrap_or(DEFAULT_TEXT_SIDE_OFFSET);
+        svg.set_text(text, Side::Left, offset);
+    }
+
+    if let Some(text) = bp.plot_text.right {
+        let offset = bp.plot_text.right_offset.unwrap_or(DEFAULT_TEXT_SIDE_OFFSET);
+        svg.set_text(text, Side::Right, offset);
+    }
+
+    if let Some(text) = bp.plot_text.top {
+        let offset = bp.plot_text.top_offset.unwrap_or(DEFAULT_TEXT_SIDE_OFFSET);
+        svg.set_text(text, Side::Top, offset);
+    }
+
+    if let Some(text) = bp.plot_text.bottom {
+        let offset = bp.plot_text.bottom_offset.unwrap_or(DEFAULT_TEXT_SIDE_OFFSET);
+        svg.set_text(text, Side::Bottom, offset);
     }
 
     if bp.window_border {
