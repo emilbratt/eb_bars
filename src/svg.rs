@@ -255,7 +255,7 @@ impl <'a>SvgGenerator<'a> {
 
         let vertical_move: f64 = y_length / range;
         let bin_width = x_length / self.values.len() as f64;
-        let margin = (self.bin_margin / 100) as f64;
+        let margin = self.bin_margin as f64 / 100_f64;
         let bin_margin = bin_width * margin;
         let bar_width = bin_width - bin_margin;
 
