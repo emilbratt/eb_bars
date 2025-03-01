@@ -1,15 +1,17 @@
-#![allow(unused_parens)]
-
 mod tag;
 
 use super::{BarPlot, Percentage};
 
 const DEFAULT_RES: (u32, u32) = (1600, 1000);
-
 const DEFAULT_TICK_LENGTH: Percentage = 10;
 const DEFAULT_TEXT_SIDE_OFFSET: Percentage = 35;
 
-enum Side { Left, Right, Top, Bottom }
+enum Side {
+    Left,
+    Right,
+    Top,
+    Bottom,
+}
 
 struct SvgGenerator<'a> {
     values: &'a [f64],
@@ -73,6 +75,17 @@ impl <'a>SvgGenerator<'a> {
         self.svg_window.1
     }
 
+    fn get_svg_window(&self) -> (f64, f64, f64, f64) {
+        let (x1, x2, y1, y2) = (0.0, self.get_svg_width(), 0.0, self.get_svg_height());
+        (x1, x2, y1, y2)
+    }
+
+    fn get_plot_window(&self) -> (f64, f64, f64, f64) {
+        let (x_length, x_offset, y_length, y_offset) = self.plot_window;
+        let (x1, x2, y1, y2) = (x_offset, x_offset + x_length, y_offset, y_length + y_offset);
+        (x1, x2, y1, y2)
+    }
+
     fn get_base_line_width(&self) -> f64 {
         (self.get_svg_width() * self.get_svg_height()).sqrt() / 100.0
     }
@@ -123,19 +136,27 @@ impl <'a>SvgGenerator<'a> {
         let (x_size, x_offset) = (x_size as f64, x_offset as f64);
         let (y_size, y_offset) = (y_size as f64, y_offset as f64);
 
-        let x_length = (self.get_svg_width() * x_size / 100.0);
+        let x_length = self.get_svg_width() * x_size / 100.0;
         let x_offset = ((self.get_svg_width() * (1.0 - x_size / 100.0)) / 100.0) * x_offset;
 
-        let y_length = (self.get_svg_height() * y_size / 100.0);
+        let y_length = self.get_svg_height() * y_size / 100.0;
         let y_offset = ((self.get_svg_height() * (1.0 - y_size / 100.0)) / 100.0) * y_offset;
 
         self.plot_window = (x_length, x_offset, y_length, y_offset);
     }
 
-    fn set_scale_range(&mut self, min: i64, max: i64, step: usize, axis_offset: Percentage, grid: bool) {
+    fn set_scale_range(
+        &mut self,
+        min: i64,
+        max: i64,
+        step: usize,
+        axis_offset: Percentage,
+        show_horizontal_lines: bool
+    ) {
         // Needed when rendering bars.
         self.scale_range = Some((min, max, step));
 
+        // FIXME: implement use of self.get_plot_window().
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
         assert!(x_length < self.get_svg_width(), "no room for axis, x_length is to high");
         assert!(y_length < self.get_svg_height(), "no room for axis, y_length is to high");
@@ -154,22 +175,29 @@ impl <'a>SvgGenerator<'a> {
                 y_offset + y_length - (n as f64 * vertical_move)
             };
 
-            let mark = &n.to_string();
-            let text = tag::text(x1-(font_size/3.5), y + (font_size/3.5), self.text_color, font_size, "end", mark);
-            self.nodes.push(text);
+            let text = &n.to_string();
+            let tag = tag::text(x1 - (font_size/3.5), y + (font_size/3.5), self.text_color, font_size, "end", text);
+            self.nodes.push(tag);
 
-            let tick = tag::line(x1, x2, y, y, self.tick_color, line_width);
-            self.nodes.push(tick);
+            let tag = tag::line(x1, x2, y, y, self.tick_color, line_width);
+            self.nodes.push(tag);
 
-            if grid {
-                let line = tag::line(x1, x_length + x_offset, y, y, &self.tick_color, line_width);
-                self.nodes.push(line);
+            if show_horizontal_lines {
+                let tag = tag::line(x1, x_length + x_offset, y, y, &self.tick_color, line_width);
+                self.nodes.push(tag);
             }
         }
     }
 
-    fn bar_markers(&mut self, markers: &[String], axis_offset: Percentage, x_marks_middle: bool, grid: bool) {
+    fn bar_markers(
+            &mut self, markers: &[String],
+            axis_offset: Percentage,
+            x_markers_at_middle: bool,
+            show_vertical_lines: bool
+        ) {
         let axis_offset = axis_offset as f64;
+
+        // FIXME: implement use of self.get_plot_window().
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
 
         let line_width = self.get_base_line_width()/10.0;
@@ -179,11 +207,11 @@ impl <'a>SvgGenerator<'a> {
         let y3 = y2 + self.get_base_font_size();
 
         // FIXME: This is not thoroughly tested yet.
-        let remainder = (self.values.len() % markers.len());
+        let remainder = self.values.len() % markers.len();
         let nth_marker = (self.values.len() + remainder) / markers.len();
 
         let horizontal_move = x_length / self.values.len() as f64;
-        let if_middle = if x_marks_middle {
+        let if_middle = if x_markers_at_middle {
             horizontal_move / 2.0
         } else {
             0.0
@@ -193,20 +221,20 @@ impl <'a>SvgGenerator<'a> {
         for i in 0..self.values.len() {
             let x = x_offset + (horizontal_move * i as f64) + if_middle;
 
-            let tick = tag::line(x, x, y, y2, self.tick_color, line_width);
-            self.nodes.push(tick);
+            let tag = tag::line(x, x, y, y2, self.tick_color, line_width);
+            self.nodes.push(tag);
 
             // As stated above, we can have less markers than bars if we want to.
             if i % nth_marker == 0 && markers.len() > mark_index {
-                let mark = &markers[mark_index];
-                let text = tag::text(x, y3, self.text_color, font_size, "middle", mark);
-                self.nodes.push(text);
+                let text = &markers[mark_index];
+                let tag = tag::text(x, y3, self.text_color, font_size, "middle", text);
+                self.nodes.push(tag);
                 mark_index += 1;
             }
 
-            if grid {
-                let line = tag::line(x, x, y_offset, y, &self.tick_color, line_width);
-                self.nodes.push(line);
+            if show_vertical_lines {
+                let tag = tag::line(x, x, y_offset, y, &self.tick_color, line_width);
+                self.nodes.push(tag);
             }
         }
     }
@@ -218,6 +246,7 @@ impl <'a>SvgGenerator<'a> {
             None => (self.min, self.max),
         };
 
+        // FIXME: implement use of self.get_plot_window().
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
 
         let range = (y_max - y_min) as f64;
@@ -226,7 +255,7 @@ impl <'a>SvgGenerator<'a> {
 
         let vertical_move: f64 = y_length / range;
         let bin_width = x_length / self.values.len() as f64;
-        let margin = (self.bin_margin as f64 / 100_f64);
+        let margin = (self.bin_margin / 100) as f64;
         let bin_margin = bin_width * margin;
         let bar_width = bin_width - bin_margin;
 
@@ -255,15 +284,18 @@ impl <'a>SvgGenerator<'a> {
                 (y, height)
             };
 
-            self.nodes.push(tag::rect(x, y, bar_width, height, opacity, color));
+            let tag = tag::rect(x, y, bar_width, height, opacity, color);
+            self.nodes.push(tag);
         }
     }
 
     fn set_text(&mut self, text: &str, side: Side, offset: Percentage) {
         let offset = offset as f64;
+
+        // FIXME: implement use of self.get_plot_window().
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
 
-        let svg_tag = match side {
+        let tag = match side {
             Side::Left => {
                 assert!(x_length < self.get_svg_width(), "no room for left side text, x_length is to high");
                 let x = (x_offset / 100.0 * offset) + self.get_base_font_size() / 2.0;
@@ -292,12 +324,11 @@ impl <'a>SvgGenerator<'a> {
             }
         };
 
-        self.nodes.push(svg_tag);
+        self.nodes.push(tag);
     }
 
     fn set_plot_border(&mut self, color: &str) {
-        let (x_length, x_offset, y_length, y_offset) = self.plot_window;
-        let (x1, x2, y1, y2) = (x_offset, x_offset + x_length, y_offset, y_length + y_offset);
+        let (x1, x2, y1, y2) = self.get_plot_window();
         self.nodes.push(tag::line(x1, x1, y1, y2, color, self.get_base_line_width()/10.0)); // left
         self.nodes.push(tag::line(x1, x2, y1, y1, color, self.get_base_line_width()/10.0)); // top
         self.nodes.push(tag::line(x2, x2, y1, y2, color, self.get_base_line_width()/10.0)); // right
@@ -305,11 +336,7 @@ impl <'a>SvgGenerator<'a> {
     }
 
     fn set_svg_border(&mut self, color: &str) {
-        let x1 = 0.0;
-        let x2 = self.get_svg_width();
-        let y1 = 0.0;
-        let y2 = self.get_svg_height();
-
+        let (x1, x2, y1, y2) = self.get_svg_window();
         self.nodes.push(tag::line(x1, x1, y1, y2, color, self.get_base_line_width()/5.0)); // left
         self.nodes.push(tag::line(x1, x2, y1, y1, color, self.get_base_line_width()/5.0)); // top
         self.nodes.push(tag::line(x2, x2, y1, y2, color, self.get_base_line_width()/5.0)); // right
@@ -317,13 +344,11 @@ impl <'a>SvgGenerator<'a> {
     }
 
     fn generate(&self) -> String {
-        let svg = format!(
+        format!(
             r#"<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">"#,
             width = self.get_svg_width(),
             height = self.get_svg_height(),
-        ) + &self.nodes.join("\n") + "\n</svg>";
-
-        svg
+        ) + &self.nodes.join("\n") + "\n</svg>"
     }
 }
 

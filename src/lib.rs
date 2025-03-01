@@ -1,11 +1,12 @@
 // #![allow(unused)]
+
 mod svg;
 
 type Percentage = u16;
 
-const DEFAULT_BIN_MARGIN: Percentage = 2; // Distance/gap between bins.
-const DEFAULT_BASE_COLOR: &str = "rgb(197, 197, 197)";
 const DEFAULT_BAR_COLOR: &str = "rgb(112, 153, 182)";
+const DEFAULT_BASE_COLOR: &str = "rgb(197, 197, 197)";
+const DEFAULT_BIN_MARGIN: Percentage = 2;
 
 #[derive(Debug, Default)]
 struct PlotText<'a> {
