@@ -5,7 +5,7 @@ mod svg;
 type Percentage = i16;
 
 // FIXME: add test to verify matching version in Cargo.toml and here.
-const VERSION: &str = "0.2.0";
+const VERSION: &str = "0.3.0";
 // FIXME: add test to verify matching repository in Cargo.toml and here.
 const REPOSITORY: &str = "https://github.com/emilbratt/eb_bars";
 
