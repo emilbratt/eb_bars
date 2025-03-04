@@ -3,7 +3,7 @@ name = "eb_bars"
 version = "0.2.0"
 edition = "2021"
 
-description = "Tiny library for creating histograms or bar charts"
+description = "Tiny plot library for creating barcharts and histograms"
 readme = "README.md"
 
 authors = ["Emil Bratt <emilbratt@gmail.com>"]

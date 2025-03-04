@@ -1,3 +1,3 @@
 ### eb_bars
 
-Create histograms and bar charts
+Tiny plot library for creating barcharts and histograms
