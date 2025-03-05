@@ -11,8 +11,18 @@ const DEFAULT_BIN_MARGIN: Percentage = 10;
 const DEFAULT_BAR_MARGIN: Percentage = 0;
 
 const DEFAULT_TICK_LENGTH: Percentage = 10;
+const DEFAULT_FONT_SIZE: Percentage = 100;
 const DEFAULT_TEXT_SIDE_OFFSET: Percentage = 35;
 const DEFAULT_LEGEND_POSITION: (Percentage, Percentage) = (90, 20);
+
+
+#[derive(Debug, Default)]
+enum BinMarkerPosition {
+    Left,
+    #[default]
+    Middle,
+    Right,
+}
 
 #[derive(Debug, Default)]
 struct PlotLegend<'a> {
@@ -58,7 +68,7 @@ pub struct BarPlot<'a> {
     size: Option<(u32, u32)>,
     plot_window_scale: Option<(Percentage, Percentage, Percentage, Percentage)>,
     x_axis_tick_length: Option<Percentage>,
-    bin_markers_at_middle: bool,
+    bin_marker_position: BinMarkerPosition,
     y_axis_tick_length: Option<Percentage>,
     negative_bars_go_down: bool,
     show_window_border: bool,
@@ -72,6 +82,7 @@ pub struct BarPlot<'a> {
     bin_margin: Percentage,
     bar_margin: Percentage,
     plot_text: PlotText<'a>,
+    font_size: Percentage,
     enum_bar_colors: BarColors<'a>,
     bar_colors_override: Vec<(usize, usize, &'a str)>,
     legend: PlotLegend<'a>,
@@ -86,7 +97,7 @@ impl <'a>BarPlot<'a> {
             size: None,
             plot_window_scale: None,
             x_axis_tick_length: None,
-            bin_markers_at_middle: false,
+            bin_marker_position: BinMarkerPosition::default(),
             y_axis_tick_length: None,
             negative_bars_go_down: false,
             show_window_border: false,
@@ -100,6 +111,7 @@ impl <'a>BarPlot<'a> {
             bin_margin: DEFAULT_BIN_MARGIN,
             bar_margin: DEFAULT_BAR_MARGIN,
             plot_text: PlotText::default(),
+            font_size: DEFAULT_FONT_SIZE,
             enum_bar_colors: BarColors::default(),
             bar_colors_override: Vec::new(),
             legend: PlotLegend::default(),
@@ -166,7 +178,7 @@ impl <'a>BarPlot<'a> {
         // Will always select the bar from the last added category e.g. after most recent BarPlot.add_values() call.
         assert!(
             !self.values.is_empty(),
-            "Can't override bar '{bar}' with color '{color}', because no bars (values) have been previously added."
+            "Can't override bar '{bar}' with color '{color}', because no bars (values) have been added yet."
         );
 
         // We always use the index of last added values, meaning we select last added category.
@@ -203,8 +215,16 @@ impl <'a>BarPlot<'a> {
         self.bin_markers = Some(bin_markers);
     }
 
-    pub fn set_bin_markers_at_middle(&mut self) {
-        self.bin_markers_at_middle = true;
+    pub fn set_bin_markers_middle(&mut self) {
+        self.bin_marker_position = BinMarkerPosition::Middle;
+    }
+
+    pub fn set_bin_markers_left(&mut self) {
+        self.bin_marker_position = BinMarkerPosition::Left;
+    }
+
+    pub fn set_bin_markers_right(&mut self) {
+        self.bin_marker_position = BinMarkerPosition::Right;
     }
 
     pub fn set_bar_margin(&mut self, margin: Percentage) {
@@ -267,6 +287,10 @@ impl <'a>BarPlot<'a> {
         self.legend.position = Some((x,y));
     }
 
+    pub fn set_font_size(&mut self, p: Percentage) {
+        self.font_size = p;
+    }
+
     pub fn set_show_window_border(&mut self) {
         self.show_window_border = true;
     }
@@ -300,32 +324,30 @@ mod tests {
 
     use super::*;
 
-    fn _rand_f64(start: i32, end_incl: i32) -> f64 {
+    fn _rand_range_f64(start: i32, end_incl: i32) -> f64 {
         rand::rng().random_range(start..=end_incl) as f64
     }
 
     #[test]
-    fn positive_values() {
-        let path = Path::new("positive_values.svg");
+    fn side_text_and_predefined_colors() {
+        let path = Path::new("side_text_and_predefined_colors.svg");
 
         let values = [3.67, 6.99, 6.25, 4.07];
         let labels = ["A", "B", "C", "D"];
+        let markers = labels.into_iter().map(|s| s.to_owned()).collect::<Vec<String>>();
 
-        // Color can be written as color-name, rgb value, hex-value and hsl value :)
-        let red = "Red";
-        let yellow = "rgb(244, 244, 32)";
-        let blue = r"#1111FA";
-        let green = "hsl(115, 90.50%, 50.30%)";
+        // Different ways to express colors :)
+        let red = "Red"; // color-name
+        let yellow = "rgb(244, 244, 32)"; // rgb value
+        let blue = r"#1111FA"; // hex-value
+        let green = "hsl(115, 90.50%, 50.30%)"; // hsl value
+        // Putting them in an array with same length as our values.
         let colors = [red, yellow, blue , green];
 
         let mut plot = BarPlot::new();
         plot.add_values(&values);
-
-        let markers = labels.into_iter().map(|s| s.to_owned()).collect::<Vec<String>>();
         plot.set_bin_markers(&markers);
-
         plot.add_bar_colors_from_vec(colors.to_vec());
-
         plot.set_background_color("Black");
         plot.set_plot_window_size(90, 65, 85, 40);
         plot.set_scale_range(0, 10, 2);
@@ -360,7 +382,7 @@ mod tests {
 
         let mut plot = BarPlot::new();
         plot.set_negative_bars_go_down();
-        plot.set_bin_markers_at_middle();
+        plot.set_bin_markers_middle();
         plot.set_background_color("Black");
         plot.set_show_horizontal_lines();
         plot.set_bar_margin(40);
@@ -389,8 +411,8 @@ mod tests {
     }
 
     #[test]
-    fn shows_horizontal_lines_and_vertical_lines() {
-        let path = Path::new("shows_horizontal_lines_and_vertical_lines.svg");
+    fn marker_on_left_with_horizontal_and_vertical_grid_lines() {
+        let path = Path::new("marker_on_left_with_horizontal_and_vertical_grid_lines.svg");
 
         let mut rng = rand::rng();
         let values: [f64; 17] = core::array::from_fn(|_| rng.random_range(-50.0..50.0));
@@ -399,15 +421,18 @@ mod tests {
         let mut plot = BarPlot::new();
         plot.add_values(&values);
         plot.set_bin_markers(&markers);
+        plot.set_font_size(130);
         plot.set_background_color("Black");
-        plot.set_plot_window_size(95, 90, 90, 35);
-        plot.set_scale_range(-50, 50, 5);
+        plot.set_plot_window_size(90, 80, 83, 50);
+        plot.set_scale_range(-50, 50, 10);
         plot.set_x_axis_tick_length(30);
         plot.set_y_axis_tick_length(30);
         plot.set_show_plot_border();
         plot.set_show_horizontal_lines();
         plot.set_show_vertical_lines();
-        plot.set_bar_margin(10);
+        plot.set_bar_margin(25);
+        plot.set_bin_markers_left();
+        plot.set_text_top("This plot shows random values :)");
 
         let max_color = "rgb(107, 235, 255)";
         let high_color = "rgb(126, 255, 165)";
@@ -471,7 +496,7 @@ mod tests {
         plot.set_tick_color("LightGoldenRodYellow");
         plot.set_x_axis_tick_length(10);
         plot.set_y_axis_tick_length(10);
-        plot.set_bin_markers_at_middle();
+        plot.set_bin_markers_middle();
         plot.set_show_window_border();
         plot.set_show_plot_border();
         plot.set_show_horizontal_lines();
