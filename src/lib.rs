@@ -1,12 +1,8 @@
-// #![allow(unused)]
-
 mod svg;
 
 type Percentage = i16;
 
-// FIXME: add test to verify matching version in Cargo.toml and here.
 const VERSION: &str = "0.3.0";
-// FIXME: add test to verify matching repository in Cargo.toml and here.
 const REPOSITORY: &str = "https://github.com/emilbratt/eb_bars";
 
 const DEFAULT_BAR_COLOR: &str = "rgb(112, 153, 182)";
@@ -14,9 +10,13 @@ const DEFAULT_BASE_COLOR: &str = "rgb(197, 197, 197)";
 const DEFAULT_BIN_MARGIN: Percentage = 10;
 const DEFAULT_BAR_MARGIN: Percentage = 0;
 
+const DEFAULT_TICK_LENGTH: Percentage = 10;
+const DEFAULT_TEXT_SIDE_OFFSET: Percentage = 35;
+const DEFAULT_LEGEND_POSITION: (Percentage, Percentage) = (90, 20);
+
 #[derive(Debug, Default)]
 struct PlotLegend<'a> {
-    titles: Option<&'a[&'a str]>,
+    categories: Option<&'a[&'a str]>,
     position: Option<(Percentage, Percentage)>,
 }
 
@@ -61,10 +61,10 @@ pub struct BarPlot<'a> {
     bin_markers_at_middle: bool,
     y_axis_tick_length: Option<Percentage>,
     negative_bars_go_down: bool,
-    window_border: bool,
+    show_window_border: bool,
+    show_plot_border: bool,
     show_horizontal_lines: bool,
     show_vertical_lines: bool,
-    plot_border: bool,
     background_color: Option<&'a str>,
     line_color: &'a str,
     text_color: &'a str,
@@ -73,7 +73,7 @@ pub struct BarPlot<'a> {
     bar_margin: Percentage,
     plot_text: PlotText<'a>,
     enum_bar_colors: BarColors<'a>,
-    bar_colors_override: Vec<(usize, usize, &'a str)>, // (bar category, bar index) => color
+    bar_colors_override: Vec<(usize, usize, &'a str)>,
     legend: PlotLegend<'a>,
 }
 
@@ -89,8 +89,8 @@ impl <'a>BarPlot<'a> {
             bin_markers_at_middle: false,
             y_axis_tick_length: None,
             negative_bars_go_down: false,
-            window_border: false,
-            plot_border: false,
+            show_window_border: false,
+            show_plot_border: false,
             show_horizontal_lines: false,
             show_vertical_lines: false,
             background_color: None,
@@ -260,19 +260,19 @@ impl <'a>BarPlot<'a> {
     }
 
     pub fn set_legend(&mut self, categories: &'a [&'a str]) {
-        self.legend.titles = Some(categories);
+        self.legend.categories = Some(categories);
     }
 
     pub fn set_legend_position(&mut self, x: Percentage, y: Percentage) {
         self.legend.position = Some((x,y));
     }
 
-    pub fn set_window_border(&mut self) {
-        self.window_border = true;
+    pub fn set_show_window_border(&mut self) {
+        self.show_window_border = true;
     }
 
-    pub fn set_plot_border(&mut self) {
-        self.plot_border = true;
+    pub fn set_show_plot_border(&mut self) {
+        self.show_plot_border = true;
     }
 
     pub fn to_svg(&mut self, width: u32, height: u32) -> String {
@@ -293,8 +293,10 @@ impl <'a>BarPlot<'a> {
 #[cfg(test)]
 mod tests {
     use std::path::Path;
+    use std::fs;
 
     use rand::Rng;
+    use toml::Table;
 
     use super::*;
 
@@ -306,26 +308,33 @@ mod tests {
     fn positive_values() {
         let path = Path::new("positive_values.svg");
 
-        let values: Vec<f64> = vec![
-            29.67, 41.99, 64.25, 73.07, 59.71, 42.71, 65.15, 58.86,
-            9.52, 91.53, 77.34, 55.66, 11.30, 91.90, 43.09, 65.47,
-            66.84, 18.63, 13.42, 30.13, 1.94, 10.38, 58.25, 44.29,
-        ];
-        let bin_markers: Vec<String> = (0..values.len()/3).map(|i| (i*3).to_string()).collect();
+        let values = [3.67, 6.99, 6.25, 4.07];
+        let labels = ["A", "B", "C", "D"];
+
+        // Color can be written as color-name, rgb value, hex-value and hsl value :)
+        let red = "Red";
+        let yellow = "rgb(244, 244, 32)";
+        let blue = r"#1111FA";
+        let green = "hsl(115, 90.50%, 50.30%)";
+        let colors = [red, yellow, blue , green];
 
         let mut plot = BarPlot::new();
         plot.add_values(&values);
-        plot.set_bin_markers(&bin_markers);
-        plot.set_bar_colors_by_uniform("LightBlue");
+
+        let markers = labels.into_iter().map(|s| s.to_owned()).collect::<Vec<String>>();
+        plot.set_bin_markers(&markers);
+
+        plot.add_bar_colors_from_vec(colors.to_vec());
+
         plot.set_background_color("Black");
         plot.set_plot_window_size(90, 65, 85, 40);
-        plot.set_scale_range(0, 100, 10);
+        plot.set_scale_range(0, 10, 2);
         plot.set_line_color("LightGreen");
         plot.set_tick_color("LightGreen");
         plot.set_x_axis_tick_length(10);
         plot.set_y_axis_tick_length(10);
-        plot.set_window_border();
-        plot.set_plot_border();
+        plot.set_show_window_border();
+        plot.set_show_plot_border();
         plot.set_show_horizontal_lines();
         plot.set_text_color("LightGoldenRodYellow");
         plot.set_text_left("Left |_left Lorem Ipsum is simply dummy text of the..");
@@ -346,30 +355,34 @@ mod tests {
     #[test]
     fn negative_bars_go_down() {
         let path = Path::new("negative_bars_go_down.svg");
+        let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let temperatures = [-11.5, -3.5, 1.3, 5.6, 12.3, 21.0, 23.7, 22.5, 12.5, 9.3, 5.6, -2.3];
 
         let mut plot = BarPlot::new();
-
-        let values: Vec<f64> = vec![19.52, 91.53, -67.34, 55.66, -21.30, 43.09, -45.47];
-        plot.add_values(&values);
-
-        let colors = vec!["LightCoral", "LightBlue", "LightGreen", "LightYellow", "Pink", "Aqua", "Plum"];
-        plot.add_bar_colors_from_vec(colors);
-
-        let bin_markers: Vec<String> = (1..=values.len()).map(|i| i.to_string()).collect();
-        plot.set_bin_markers(&bin_markers);
-
-        plot.set_scale_range(-80, 100, 10);
-        plot.set_background_color("Black");
-        plot.set_plot_window_size(90, 80, 85, 30);
-        plot.set_bin_markers_at_middle();
-        plot.set_y_axis_tick_length(10);
         plot.set_negative_bars_go_down();
-        plot.set_window_border();
-        plot.set_show_vertical_lines();
-        plot.set_plot_border();
-        plot.set_bin_margin(80);
+        plot.set_bin_markers_at_middle();
+        plot.set_background_color("Black");
+        plot.set_show_horizontal_lines();
+        plot.set_bar_margin(40);
+        plot.add_values(&temperatures);
 
-        let contents = plot.to_svg(1600, 1000);
+        let min_color = "rgb(107, 235, 255)";
+        let low_color = "rgb(126, 255, 165)";
+        let high_color = "rgb(255, 233, 133)";
+        let max_color = "rgb(250, 107, 91)";
+        plot.set_bar_colors_by_threshold(min_color, low_color, high_color, max_color);
+
+        let markers = months.into_iter().map(|s| s.to_owned()).collect::<Vec<String>>();
+        plot.set_bin_markers(&markers);
+
+        plot.set_text_top("Mean temperature °C every month in some particular place for some particular year :)");
+        plot.set_text_top_offset(40);
+
+        plot.set_plot_window_size(95, 80, 87, 55);
+        plot.set_scale_range(-20, 30, 10);
+        plot.set_y_axis_tick_length(0);
+
+        let contents = plot.to_svg(1800, 1000);
         if let Err(e) = std::fs::write(path, contents) {
             eprintln!("Error saving plot '{}' {}", path.display(), e);
         }
@@ -381,28 +394,28 @@ mod tests {
 
         let mut rng = rand::rng();
         let values: [f64; 17] = core::array::from_fn(|_| rng.random_range(-50.0..50.0));
-        let bin_markers: Vec<String> = (0..values.len()).map(|i| (i).to_string()).collect();
+        let markers: Vec<String> = (0..values.len()).map(|i| (i).to_string()).collect();
 
         let mut plot = BarPlot::new();
         plot.add_values(&values);
-        plot.set_bin_markers(&bin_markers);
+        plot.set_bin_markers(&markers);
         plot.set_background_color("Black");
         plot.set_plot_window_size(95, 90, 90, 35);
         plot.set_scale_range(-50, 50, 5);
         plot.set_x_axis_tick_length(30);
         plot.set_y_axis_tick_length(30);
-        plot.set_plot_border();
+        plot.set_show_plot_border();
         plot.set_show_horizontal_lines();
         plot.set_show_vertical_lines();
         plot.set_bar_margin(10);
 
-        let blue = "rgb(107, 235, 255)";
-        let green = "rgb(126, 255, 165)";
-        let yellow = "rgb(255, 233, 133)";
-        let red = "rgb(250, 107, 91)";
-        plot.set_bar_colors_by_threshold(red, yellow, green, blue);
+        let max_color = "rgb(107, 235, 255)";
+        let high_color = "rgb(126, 255, 165)";
+        let low_color = "rgb(255, 233, 133)";
+        let min_color = "rgb(250, 107, 91)";
+        plot.set_bar_colors_by_threshold(min_color, low_color, high_color, max_color);
 
-        let contents = plot.to_svg(840, 520);
+        let contents = plot.to_svg(1600, 1000);
         if let Err(e) = std::fs::write(&path, contents) {
             eprintln!("Error saving plot '{}' {}", path.display(), e);
         }
@@ -411,34 +424,44 @@ mod tests {
     #[test]
     fn multiple_categories() {
         let path = Path::new("multiple_categories.svg");
-        let weekdays: [&str; 7] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satirday", "Sunday"];
+        let tomatoes = [29, 41, 64, 83, 59, 42, 65];
+        let apples = [9, 51, 67, 55, 11, 93, 43];
+        let eggplants = [18, 86, 13, 30, 1, 10, 58];
+        let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satirday", "Sunday"];
 
         let mut plot = BarPlot::new();
 
         // Category A.
-        let values_a: Vec<f64> = vec![29.67, 41.99, 64.25, 83.07, 59.71, 42.71, 65.15];
-        plot.add_values(&values_a);
+        let values = tomatoes.into_iter().map(|i| i as f64).collect::<Vec<f64>>();
+        plot.add_values(&values);
         plot.add_bar_colors_by_category("Red");
         plot.add_bar_color_override(3, "Tomato"); // Second bar from last added values 'values_a'.
 
         // Category B.
-        let values_b: Vec<f64> = vec![9.52, 51.53, 67.34, 55.66, 11.30, 93.90, 43.09];
-        plot.add_values(&values_b);
+        let values = apples.into_iter().map(|i| i as f64).collect::<Vec<f64>>();
+        plot.add_values(&values);
         plot.add_bar_colors_by_category("LawnGreen");
         plot.add_bar_color_override(5, "PaleGreen"); // Sixth bar from last added values 'values_b'.
 
         // Category C.
-        let values_c: Vec<f64> = vec![18.63, 86.84, 13.42, 30.13, 1.94, 10.38, 58.25];
-        plot.add_values(&values_c);
+        let values = eggplants.into_iter().map(|i| i as f64).collect::<Vec<f64>>();
+        plot.add_values(&values);
         plot.add_bar_colors_by_category("Blue");
         plot.add_bar_color_override(1, "LightSkyBlue"); // Second bar from last added values 'values_c'.
 
-        let categories = vec!["Tomatoes", "Apples", "Blueberries"];
+        let bin_markers: Vec<String> = weekdays.iter().map(|s| s.to_string()).collect();
+        plot.set_bin_markers(&bin_markers);
+
+        let categories = vec!["Tomatoes", "Apples", "Eggplants"];
         plot.set_legend(&categories);
         plot.set_legend_position(90, 22);
 
-        let bin_markers: Vec<String> = weekdays.iter().map(|s| s.to_string()).collect();
-        plot.set_bin_markers(&bin_markers);
+        plot.set_text_top("The highest value from each category have its color 'overriden' with a brighter color");
+        plot.set_text_top_offset(40);
+        plot.set_text_bottom("Day of harvest");
+        plot.set_text_bottom_offset(25);
+        plot.set_text_left("Total harvested.");
+        plot.set_text_left_offset(25);
 
         plot.set_background_color("Black");
         plot.set_plot_window_size(80, 30, 85, 40);
@@ -449,20 +472,28 @@ mod tests {
         plot.set_x_axis_tick_length(10);
         plot.set_y_axis_tick_length(10);
         plot.set_bin_markers_at_middle();
-        plot.set_window_border();
-        plot.set_plot_border();
+        plot.set_show_window_border();
+        plot.set_show_plot_border();
         plot.set_show_horizontal_lines();
         plot.set_bin_margin(15);
-        plot.set_text_top("The highest value from each category have its color 'overriden' with a brighter color");
-        plot.set_text_top_offset(40);
-        plot.set_text_bottom("Day of harvest");
-        plot.set_text_bottom_offset(25);
-        plot.set_text_left("Amount harvested in kg.");
-        plot.set_text_left_offset(25);
+
 
         let contents = plot.to_svg(1600, 1000);
         if let Err(e) = std::fs::write(&path, contents) {
             eprintln!("Error saving plot '{}' {}", path.display(), e);
         }
+    }
+
+    #[test]
+    fn version_and_repo() {
+        // When updating Cargo.toml, make sure to update corresponding values in src files as well.
+        let contents = fs::read_to_string("Cargo.toml").unwrap();
+        let value = contents.parse::<Table>().unwrap();
+
+        let version = value["package"]["version"].as_str().unwrap();
+        assert_eq!(version, VERSION);
+
+        let repository = value["package"]["repository"].as_str().unwrap();
+        assert_eq!(repository, REPOSITORY);
     }
 }

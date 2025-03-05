@@ -1,12 +1,19 @@
 mod tag;
 
-use super::{BarPlot, Percentage, BarColors, DEFAULT_BAR_COLOR, VERSION, REPOSITORY};
+use super::{
+    BarPlot,
+    BarColors,
+    Percentage,
+    DEFAULT_BAR_COLOR,
+    DEFAULT_TICK_LENGTH,
+    DEFAULT_TEXT_SIDE_OFFSET,
+    DEFAULT_LEGEND_POSITION,
+    VERSION,
+    REPOSITORY,
+};
 
 const LF: char = '\n';
 const DEFAULT_SVG_SIZE: (u32, u32) = (1600, 1000);
-const DEFAULT_TICK_LENGTH: Percentage = 10;
-const DEFAULT_TEXT_SIDE_OFFSET: Percentage = 35;
-const DEFAULT_LEGEND_POSITION: (Percentage, Percentage) = (90, 20);
 
 enum Side {
     Left,
@@ -16,18 +23,18 @@ enum Side {
 }
 
 struct SvgGenerator<'a> {
+    nodes: Vec<String>,
     min: f64,
     max: f64,
     mean: f64,
-    svg_window: (u32, u32), // (x_length, y_length)
-    plot_window: (f64, f64, f64, f64), // (x_length, x_offset, y_length, y_offset)
-    scale_range: Option<(i64, i64, usize)>, // min, max, step
+    svg_window: (u32, u32),
+    plot_window: (f64, f64, f64, f64),
+    scale_range: Option<(i64, i64, usize)>,
     line_color: &'a str,
     tick_color: &'a str,
     text_color: &'a str,
     bin_margin: Percentage,
     bar_margin: Percentage,
-    nodes: Vec<String>,
     values: &'a Vec<&'a [f64]>,
     enum_bar_colors: &'a BarColors<'a>,
     bar_colors_override: &'a Vec<(usize, usize, &'a str)>, // (bar category, bar index) => color
@@ -53,6 +60,7 @@ impl <'a>SvgGenerator<'a> {
         let mean = sum / bar_count as f64;
 
         Self {
+            nodes: Vec::with_capacity(200),
             min,
             max,
             mean,
@@ -64,7 +72,6 @@ impl <'a>SvgGenerator<'a> {
             text_color: bp.text_color,
             bin_margin: bp.bin_margin,
             bar_margin: bp.bar_margin,
-            nodes: Vec::with_capacity(200),
             values: &bp.values,
             enum_bar_colors: &bp.enum_bar_colors,
             bar_colors_override: &bp.bar_colors_override,
@@ -161,7 +168,7 @@ impl <'a>SvgGenerator<'a> {
         self.plot_window = (x_length, x_offset, y_length, y_offset);
     }
 
-    fn set_scale_range(
+    fn generate_scale_range(
         &mut self,
         min: i64,
         max: i64,
@@ -208,7 +215,7 @@ impl <'a>SvgGenerator<'a> {
         }
     }
 
-    fn set_bin_markers(
+    fn generate_bin_markers(
             &mut self, markers: &[String],
             axis_offset: Percentage,
             bin_markers_at_middle: bool,
@@ -313,7 +320,7 @@ impl <'a>SvgGenerator<'a> {
         }
     }
 
-    fn set_text(&mut self, text: &str, side: Side, offset: Percentage) {
+    fn generate_text(&mut self, text: &str, side: Side, offset: Percentage) {
         let offset = offset as f64;
 
         // FIXME: implement use of self.get_plot_window().
@@ -352,7 +359,7 @@ impl <'a>SvgGenerator<'a> {
         self.nodes.push(tag);
     }
 
-    fn set_legend(&mut self, titles: &[&str], x: Percentage, y: Percentage) {
+    fn generate_legend(&mut self, titles: &[&str], x: Percentage, y: Percentage) {
         let colors: &Vec<&str> = match self.enum_bar_colors {
             BarColors::Category(colors) => colors,
             _ => &vec![DEFAULT_BAR_COLOR; titles.len()],
@@ -373,7 +380,7 @@ impl <'a>SvgGenerator<'a> {
         }
     }
 
-    fn set_plot_border(&mut self, color: &str) {
+    fn generate_plot_border(&mut self, color: &str) {
         let (x1, x2, y1, y2) = self.get_plot_window();
         self.nodes.push(tag::line(x1, x1, y1, y2, color, self.get_base_line_width()/10.0)); // left
         self.nodes.push(tag::line(x1, x2, y1, y1, color, self.get_base_line_width()/10.0)); // top
@@ -381,7 +388,7 @@ impl <'a>SvgGenerator<'a> {
         self.nodes.push(tag::line(x1, x2, y2, y2, color, self.get_base_line_width()/10.0)); // bottom
     }
 
-    fn set_svg_border(&mut self, color: &str) {
+    fn generate_svg_border(&mut self, color: &str) {
         let (x1, x2, y1, y2) = self.get_svg_window();
         self.nodes.push(tag::line(x1, x1, y1, y2, color, self.get_base_line_width()/5.0)); // left
         self.nodes.push(tag::line(x1, x2, y1, y1, color, self.get_base_line_width()/5.0)); // top
@@ -389,7 +396,7 @@ impl <'a>SvgGenerator<'a> {
         self.nodes.push(tag::line(x1, x2, y2, y2, color, self.get_base_line_width()/5.0)); // bottom
     }
 
-    fn generate(&self) -> String {
+    fn generate_svg(&self) -> String {
         let doc_declaration = r#"<?xml version="1.0" encoding="UTF-8" standalone="no"?>"#;
         let doc_comment = format!("<!-- Created with eb_bars v{VERSION} ({REPOSITORY}) -->");
         let svg_open = format!(
@@ -422,48 +429,48 @@ pub fn render(bp: &BarPlot) -> String {
     if let Some(markers) = bp.bin_markers {
         assert!(!markers.is_empty());
         let axis_offset = bp.x_axis_tick_length.unwrap_or(DEFAULT_TICK_LENGTH);
-        svg.set_bin_markers(markers, axis_offset, bp.bin_markers_at_middle, bp.show_vertical_lines);
+        svg.generate_bin_markers(markers, axis_offset, bp.bin_markers_at_middle, bp.show_vertical_lines);
     }
 
     if let Some((min, max, step)) = bp.scale_range {
         let length = bp.y_axis_tick_length.unwrap_or(DEFAULT_TICK_LENGTH);
-        svg.set_scale_range(min, max, step, length, bp.show_horizontal_lines);
+        svg.generate_scale_range(min, max, step, length, bp.show_horizontal_lines);
     }
 
     if let Some(text) = bp.plot_text.left {
         let offset = bp.plot_text.left_offset.unwrap_or(DEFAULT_TEXT_SIDE_OFFSET);
-        svg.set_text(text, Side::Left, offset);
+        svg.generate_text(text, Side::Left, offset);
     }
 
     if let Some(text) = bp.plot_text.right {
         let offset = bp.plot_text.right_offset.unwrap_or(DEFAULT_TEXT_SIDE_OFFSET);
-        svg.set_text(text, Side::Right, offset);
+        svg.generate_text(text, Side::Right, offset);
     }
 
     if let Some(text) = bp.plot_text.top {
         let offset = bp.plot_text.top_offset.unwrap_or(DEFAULT_TEXT_SIDE_OFFSET);
-        svg.set_text(text, Side::Top, offset);
+        svg.generate_text(text, Side::Top, offset);
     }
 
     if let Some(text) = bp.plot_text.bottom {
         let offset = bp.plot_text.bottom_offset.unwrap_or(DEFAULT_TEXT_SIDE_OFFSET);
-        svg.set_text(text, Side::Bottom, offset);
+        svg.generate_text(text, Side::Bottom, offset);
     }
 
-    if bp.window_border {
-        svg.set_svg_border(bp.line_color);
+    if bp.show_window_border {
+        svg.generate_svg_border(bp.line_color);
     }
 
     svg.generate_bars(bp.negative_bars_go_down);
 
-    if let Some(titles) = bp.legend.titles {
+    if let Some(categories) = bp.legend.categories {
         let (x, y) = bp.legend.position.unwrap_or(DEFAULT_LEGEND_POSITION);
-        svg.set_legend(titles, x, y);
+        svg.generate_legend(categories, x, y);
     }
 
-    if bp.plot_border {
-        svg.set_plot_border(bp.line_color);
+    if bp.show_plot_border {
+        svg.generate_plot_border(bp.line_color);
     }
 
-    svg.generate()
+    svg.generate_svg()
 }
