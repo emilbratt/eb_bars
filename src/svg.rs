@@ -276,12 +276,11 @@ impl <'a>SvgGenerator<'a> {
             None => (self.min, self.max),
         };
 
-        // FIXME: implement use of self.get_plot_window().
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
 
         let range = y_max - y_min;
         let top_offset = y_min * y_length / range;
-        let y_floor = y_length + y_offset; // Indicates the floor in plot window.
+        let y_floor = y_length + y_offset; // Floor in plot window.
         let scale_unit = y_length / range;
 
         let bin_width = x_length / self.values[0].len() as f64;
@@ -290,7 +289,7 @@ impl <'a>SvgGenerator<'a> {
         let bar_width = (bin_width - bin_margin) / self.values.len() as f64;
         let bar_margin = (bin_width - bin_margin) / self.values.len() as f64 * (self.bar_margin as f64 / 100_f64);
 
-        // FIXME: this is for highlighting a selected bar, but impl. is missing..
+        // FIXME: Let user set custom opacity.
         let opacity = 1.0;
         for (category_index, values) in self.values.iter().enumerate() {
             let left_shift = bar_width * category_index as f64; // left_shift moves bars when more than one category.
