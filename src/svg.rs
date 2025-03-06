@@ -47,7 +47,7 @@ impl <'a>SvgGenerator<'a> {
         let svg_window = bp.size.unwrap_or(DEFAULT_SVG_SIZE);
 
         // Unless changed, plot will take up the whole window.
-        let plot_window = (svg_window.0 as f64, 0.0, svg_window.0 as f64, 0.0);
+        let plot_window = (svg_window.0 as f64, 0.0, svg_window.1 as f64, 0.0);
 
         let (mut max, mut min, mut sum) = (f64::MIN, f64::MAX, 0.0);
         let mut bar_count = 0;
