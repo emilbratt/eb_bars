@@ -59,7 +59,6 @@ struct PlotText<'a> {
     bottom_offset: Option<Percentage>,
 }
 
-// FIXME: add default macro for all fields".
 #[derive(Debug)]
 pub struct BarPlot<'a> {
     values: Vec<&'a [f64]>,
@@ -68,7 +67,6 @@ pub struct BarPlot<'a> {
     size: Option<(u32, u32)>,
     plot_window_scale: Option<(Percentage, Percentage, Percentage, Percentage)>,
     x_axis_tick_length: Option<Percentage>,
-    bin_marker_position: BinMarkerPosition,
     y_axis_tick_length: Option<Percentage>,
     negative_bars_go_down: bool,
     show_window_border: bool,
@@ -83,8 +81,9 @@ pub struct BarPlot<'a> {
     bar_margin: Percentage,
     plot_text: PlotText<'a>,
     font_size: Percentage,
-    enum_bar_colors: BarColors<'a>,
+    bar_color_variant: BarColors<'a>,
     bar_colors_override: Vec<(usize, usize, &'a str)>,
+    bin_marker_position: BinMarkerPosition,
     legend: PlotLegend<'a>,
 }
 
@@ -97,7 +96,6 @@ impl <'a>BarPlot<'a> {
             size: None,
             plot_window_scale: None,
             x_axis_tick_length: None,
-            bin_marker_position: BinMarkerPosition::default(),
             y_axis_tick_length: None,
             negative_bars_go_down: false,
             show_window_border: false,
@@ -112,8 +110,9 @@ impl <'a>BarPlot<'a> {
             bar_margin: DEFAULT_BAR_MARGIN,
             plot_text: PlotText::default(),
             font_size: DEFAULT_FONT_SIZE,
-            enum_bar_colors: BarColors::default(),
+            bar_color_variant: BarColors::default(),
             bar_colors_override: Vec::new(),
+            bin_marker_position: BinMarkerPosition::default(),
             legend: PlotLegend::default(),
         }
     }
@@ -151,26 +150,26 @@ impl <'a>BarPlot<'a> {
     }
 
     pub fn set_bar_colors_by_uniform(&mut self, color: &'a str) {
-        self.enum_bar_colors = BarColors::Uniform(color);
+        self.bar_color_variant = BarColors::Uniform(color);
     }
 
     pub fn set_bar_colors_by_threshold(&mut self, min: &'a str, low: &'a str, high: &'a str, max: &'a str) {
-        self.enum_bar_colors = BarColors::Threshold((min, low, high, max));
+        self.bar_color_variant = BarColors::Threshold((min, low, high, max));
     }
 
     pub fn add_bar_colors_by_category(&mut self, color: &'a str) {
-        if let BarColors::Category(ref mut v) = self.enum_bar_colors {
+        if let BarColors::Category(v) = &mut self.bar_color_variant {
             v.push(color);
         } else {
-            self.enum_bar_colors = BarColors::Category(vec![color]);
+            self.bar_color_variant = BarColors::Category(vec![color]);
         }
     }
 
     pub fn add_bar_colors_from_vec(&mut self, colors: Vec<&'a str>) {
-        if let BarColors::Indexed(ref mut v) = self.enum_bar_colors {
+        if let BarColors::Indexed(v) = &mut self.bar_color_variant {
             v.push(colors);
         } else {
-            self.enum_bar_colors = BarColors::Indexed(vec![colors]);
+            self.bar_color_variant = BarColors::Indexed(vec![colors]);
         }
     }
 
@@ -181,7 +180,7 @@ impl <'a>BarPlot<'a> {
             "Can't override bar '{bar}' with color '{color}', because no bars (values) have been added yet."
         );
 
-        // We always use the index of last added values, meaning we select last added category.
+        // We always use the index of last added values, e.g. we select last added category.
         let category = self.values.len() - 1;
         self.bar_colors_override.push((category, bar, color));
     }
@@ -302,11 +301,42 @@ impl <'a>BarPlot<'a> {
     pub fn to_svg(&mut self, width: u32, height: u32) -> String {
         assert!(!self.values.is_empty(), "Can not generate plot without any values..");
 
+        let n_categories = self.values.len();
+        match &mut self.bar_color_variant {
+            BarColors::Category(colors) => {
+                let n_colors = colors.len();
+                assert_eq!(
+                    n_categories,
+                    n_colors,
+                    "Got {n_categories} categories and {n_colors} colors.",
+                );
+            }
+            BarColors::Indexed(matrix) => {
+                let n_color_vectors = matrix.len();
+                assert_eq!(
+                    n_categories,
+                    n_color_vectors,
+                    "Got {n_categories} categories and {n_color_vectors} color vectors.",
+                );
+
+                for i in 0..n_categories {
+                    let values = self.values[i].len();
+                    let n_colors = matrix[i].len();
+                    assert_eq!(
+                        values,
+                        n_colors,
+                        "Got {values} values and {n_colors} colors for category {i}.",
+                    );
+                }
+            }
+            // No need to do assertion on remaining variants..
+            _ => (),
+        }
         // FIXME: add more assertions about colors..
-        if let BarColors::Category(colors) = &self.enum_bar_colors {
+        if let BarColors::Category(colors) = &self.bar_color_variant {
             let n = self.values.len();
             let n_colors = colors.len();
-            assert_eq!(n, n_colors, "Categories dont match colors. Got {n} categories and {n_colors} colors");
+            assert_eq!(n, n_colors, "Categories dont match colors. Got {n} categories and {n_colors} colors.");
         }
 
         self.size = Some((width, height));
