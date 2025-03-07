@@ -6,6 +6,58 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+//! EB - Bars: Plotting library for Rust providing a simple way to create barcharts in svg format.
+//!
+//! # Quick Start
+//!
+//! The simplest usecase (which you never really might want) is written like so.
+//! ```
+//! use eb_bars::BarPlot;
+//!
+//! // Start out with an empty plot.
+//! let mut plot = BarPlot::new();
+//!
+//! // Add a set of values.
+//! plot.add_values(&[5.0, 16.4, 17.1, 13.7, 8.9, 3.9, 6.3, 9.6]);
+//!
+//! // Render to svg format.
+//! let svg: String = plot.to_svg(1600, 1000);
+//! ```
+//!
+//! As the above example stands, the largest number will have its bar take up the whole window.
+//! Also, the lowest value will be a bar of zero length e.g. no bar at all.
+//! The problem is that we have not set a specific scaling for the values.
+//! This means that the bars are all scaled based on the minimum and maximum value.
+//! Let's improve it a bit in the next section by adding a scale.
+//!
+//! ```
+//! use eb_bars::BarPlot;
+//!
+//! let mut plot = BarPlot::new();
+//!
+//! // Add same values as before.
+//! plot.add_values(&[5.0, 16.4, 17.1, 13.7, 8.9, 3.9, 6.3, 9.6]);
+//!
+//! // Here, we are setting a scale range for better visibility/scaling of bars.
+//! plot.set_scale_range(0, 20, 2);
+//! // The bars will look better, but the numbers on the scale won't be visible.
+//! // We need to shrink the plot window relative to the full window.
+//! // Keep in mind that all size and offset values are based of a percentage.
+//! // Setting a width to 100 means it takes up the whole width.
+//! // Same goes for the height.
+//!
+//! // Let's shrink the plot size.
+//! plot.set_plot_window_size(95, 85, 93, 50);
+//! // We have now set the width at 95% and moved it 85% right from the left side.
+//! // We also set the height at 93% and moved it 50% down from the top.
+//! // First two parameters affect the width and the left/right offset respectively.
+//! // The last two parameters affect the height and the top/bottom offset respectively.
+//!
+//! // Let's render the svg.
+//! let svg: String = plot.to_svg(1600, 1000);
+//! ```
+
+
 mod svg;
 
 type Percentage = i16;
@@ -339,12 +391,6 @@ impl <'a>BarPlot<'a> {
             }
             // No need to do assertion on remaining variants..
             _ => (),
-        }
-        // FIXME: add more assertions about colors..
-        if let BarColors::Category(colors) = &self.bar_color_variant {
-            let n = self.values.len();
-            let n_colors = colors.len();
-            assert_eq!(n, n_colors, "Categories dont match colors. Got {n} categories and {n_colors} colors.");
         }
 
         self.size = Some((width, height));
