@@ -148,6 +148,16 @@ pub struct BarPlot<'a> {
 }
 
 impl <'a>BarPlot<'a> {
+
+    /// Instantiate a new plot.
+    /// 
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    /// 
+    /// let mut plot = BarPlot::new();
+    /// ```
     pub fn new() -> Self {
         Self {
             values: Vec::new(),
@@ -177,6 +187,51 @@ impl <'a>BarPlot<'a> {
         }
     }
 
+    /// Adding a set of values (bars) to the plot.
+    ///
+    /// # Takes an array slice of f64.
+    /// 
+    /// All valus must be f64.
+    /// If you have a `Vec<u32>`, make sure to convert it to a `Vec<f64>` before passing it.
+    /// Then you can pass the vector as a reference.
+    /// 
+    /// There must be at least one set of values to produce a plot. :)
+    /// 
+    /// # This method is required.
+    /// 
+    /// There must be at least one set of values to produce a plot. :)
+    /// 
+    /// # Grouped bars
+    ///
+    /// Calling this method more than once will create `groups` for the values.
+    /// This means that the first index of the added values will be the first group,
+    /// the second index will be the second group and so on..
+    /// E.g. calling this method 5 times will add groups of 5 bars in each bin.
+    /// 
+    /// * Must be called at least once. A plot without values does not make any sense.. :)
+    /// * If called multiple times, each bin will contain a group with values of the same index.
+    /// * All arrays passed after first call must be of the `exact` same length as the first array.
+    /// 
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    /// let mut plot = BarPlot::new();
+    ///
+    /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
+    /// let oranges: Vec<f64> = vec![7., 6., 7., 16., 9.];
+    /// assert_eq!(apples.len(), oranges.len());
+    /// 
+    /// // Add a set of values.
+    /// plot.add_values(&apples);
+    /// 
+    /// // Adding a second set of values. Now each group contains two values.
+    /// plot.add_values(&oranges);
+    /// 
+    /// // The first group contains 5 apples and 7 oranges.
+    /// // The next one 16 and 6.
+    /// // The last group contains 3 apples and 9 oranges.
+    /// ```
     pub fn add_values(&mut self, values: &'a [f64]) {
         if !self.values.is_empty() {
             // This makes sure that all new values are of same length e.g. same count as previous values.
@@ -193,26 +248,153 @@ impl <'a>BarPlot<'a> {
         self.values.push(values);
     }
 
+    /// Set a fill color as background.
+    ///
+    /// By default, the image will be fully transparent where there is nothing drawn on it.
+    /// Adding a background color might be a good idea for better visual presentation depending on usecase.
+    /// 
+    /// Accepted color conventions.
+    /// * As it's name such as "Red".
+    /// * As an RGB value such as "rgb(29, 28, 27)".
+    /// * As a HEX value such as "#1111FA".
+    /// * As an HSL value such as "hsl(30, 3.80%, 10.20%)".
+    /// 
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    /// 
+    /// let mut plot = BarPlot::new();
+    /// plot.set_background_color("Black");
+    /// ```
     pub fn set_background_color(&mut self, color: &'a str) {
         self.background_color = Some(color);
     }
 
+    /// Set color for the lines.
+    ///
+    /// By default, all lines are drawn with a `default` color.
+    /// You can `override` this by setting your own color.
+    /// 
+    /// Accepted color conventions.
+    /// * As it's name such as "Red".
+    /// * As an RGB value such as "rgb(29, 28, 27)".
+    /// * As a HEX value such as "#1111FA".
+    /// * As an HSL value such as "hsl(30, 3.80%, 10.20%)".
+    /// 
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    /// 
+    /// let mut plot = BarPlot::new();
+    /// plot.set_line_color("Yellow");
+    /// ```
     pub fn set_line_color(&mut self, color: &'a str) {
         self.line_color = color;
     }
 
+    /// Set color for text/numbers.
+    ///
+    /// By default, all text are drawn with a `default` color.
+    /// You can `override` this by setting your own color.
+    /// 
+    /// Accepted color conventions.
+    /// * As it's name such as "Red".
+    /// * As an RGB value such as "rgb(29, 28, 27)".
+    /// * As a HEX value such as "#1111FA".
+    /// * As an HSL value such as "hsl(30, 3.80%, 10.20%)".
+    /// 
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    /// 
+    /// let mut plot = BarPlot::new();
+    /// plot.set_text_color("LightBlue");
+    /// ```
     pub fn set_text_color(&mut self, color: &'a str) {
         self.text_color = color;
     }
 
+    /// Set color for x-ticks and y-ticks.
+    ///
+    /// By default, all ticks are drawn with a `default` color.
+    /// You can `override` this by setting your own color.
+    /// 
+    /// Accepted color conventions.
+    /// * As it's name such as "Red".
+    /// * As an RGB value such as "rgb(29, 28, 27)".
+    /// * As a HEX value such as "#1111FA".
+    /// * As an HSL value such as "hsl(30, 3.80%, 10.20%)".
+    /// 
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    /// 
+    /// let mut plot = BarPlot::new();
+    /// plot.set_text_color("LightBlue");
+    /// ```
     pub fn set_tick_color(&mut self, color: &'a str) {
         self.tick_color = color;
     }
 
+    /// Set a single color for all bars.
+    ///
+    /// By default, all bars are drawn with a `default` color.
+    /// You can `override` this by setting a new uniform color value.
+    /// 
+    /// Accepted color conventions.
+    /// * As it's name such as "Red".
+    /// * As an RGB value such as "rgb(29, 28, 27)".
+    /// * As a HEX value such as "#1111FA".
+    /// * As an HSL value such as "hsl(30, 3.80%, 10.20%)".
+    /// 
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    /// 
+    /// let mut plot = BarPlot::new();
+    /// plot.set_bar_colors_by_uniform("Green");
+    /// ```
     pub fn set_bar_colors_by_uniform(&mut self, color: &'a str) {
         self.bar_color_variant = BarColors::Uniform(color);
     }
 
+    /// Set bar colors by threshold.
+    ///
+    /// By default, all bars are drawn with a `default` color.
+    /// You can `override` this by setting different colors for different thresholds.
+    /// The threshold is as follows: minumum value, less than average, greater than or equal to average and max.
+    /// 
+    /// Accepted color conventions.
+    /// * As it's name such as "Red".
+    /// * As an RGB value such as "rgb(29, 28, 27)".
+    /// * As a HEX value such as "#1111FA".
+    /// * As an HSL value such as "hsl(30, 3.80%, 10.20%)".
+    /// 
+    /// # Avoid if having more than one set of values.
+    /// 
+    /// When you add multiple sets of values e.g. calling [`BarPlot::add_values`] multiple times,
+    /// then you might want to use [`BarPlot::add_bar_colors_by_category`] instead.
+    /// 
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    /// 
+    /// let mut plot = BarPlot::new();
+    /// 
+    /// // Each color represent how signifacant a value is.
+    /// let min = "Red"; // The lowest value will have its bar colored red.
+    /// let low = "Orange"; // Low values will have their bars be orange.
+    /// let high = "Yellow"; // High values will be yellow.
+    /// let max = "Green"; // Max value (tallest bar) will be green.
+    /// 
+    /// plot.set_bar_colors_by_threshold(min, low, high, max);
+    /// ```
     pub fn set_bar_colors_by_threshold(&mut self, min: &'a str, low: &'a str, high: &'a str, max: &'a str) {
         self.bar_color_variant = BarColors::Threshold((min, low, high, max));
     }
@@ -604,5 +786,18 @@ mod tests {
 
         let repository = value["package"]["repository"].as_str().unwrap();
         assert_eq!(repository, REPOSITORY);
+    }
+
+    #[test]
+    fn a() {
+        let mut plot = BarPlot::new();
+        plot.add_values(&[5.0, 16.4, 17.1, 13.7, 8.9, 3.9, 6.3, 9.6]);
+        plot.set_scale_range(0, 20, 2);
+        plot.set_plot_window_size(95, 85, 93, 50);
+        let svg = plot.to_svg(1600, 1000);
+        let path = Path::new("a.svg");
+        if let Err(e) = std::fs::write(&path, svg) {
+            eprintln!("Error saving plot '{}' {}", path.display(), e);
+        }
     }
 }
