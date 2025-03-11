@@ -24,6 +24,8 @@
 //! let svg: String = plot.to_svg(1600, 1000);
 //! ```
 //!
+//! # But the above "Quick Start" looks bad and boring
+//!
 //! As the above example stands, the largest number will have its bar take up the whole window.
 //! Also, the lowest value will be a bar of zero length e.g. no bar at all.
 //! The problem is that we have not set a specific scaling for the values.
@@ -57,9 +59,9 @@
 //! let svg: String = plot.to_svg(1600, 1000);
 //! ```
 //!
-//! # Important note
+//! It is still kinda boring, so please checkout all the tweaks available in [`BarPlot`].
 //!
-//! All configuration to the plot is done calling the methods found in [`BarPlot`].
+//! # Important note
 //!
 //! If the method name is prefixed `add_`, then calling it multiple times will _add_ stuff to the plot.
 //! This goes for adding multiple sets of values (categories) and adding colors to those values etc..
@@ -68,6 +70,16 @@
 //! You most certainly never want to call these more than once, unless there is a good reason to.
 //!
 //! Check out [`BarPlot`] for all implementations.
+//!
+//! # Panics and error handling.
+//!
+//! This library has very limited error handling at the moment. Actually, it has none.
+//! There are some assertions here and there that will provoke a panic on invalid input.
+//! That way, you can try-and-re-try your code until it works.
+//!
+//! Once everything works, it is very unlikely that it will panic on continous use in your application.
+//! However, if you pass values that are generated from a source that you do not have full control over,
+//! then the task of making sure the input is sanitized and double checked lies on your end and your code.
 
 mod svg;
 
@@ -1659,30 +1671,5 @@ mod tests {
 
         let repository = value["package"]["repository"].as_str().unwrap();
         assert_eq!(repository, REPOSITORY);
-    }
-
-    #[test]
-    fn invalid_input() {
-        let mut plot = BarPlot::new();
-        plot.add_values(&[f64::NAN]);
-        plot.to_svg(1600, 1000);
-    }
-
-    #[test]
-    fn a() {
-        let mut plot = BarPlot::new();
-        // plot.add_values(&[5.0, 16.4, 17.1, 13.7, 8.9, 3.9, 6.3, 9.6]);
-        plot.add_values(&[4.1, f64::NAN, -14.0, 5.1, -18., 7.1,]);
-        plot.set_scale_range(-20, 20, 2);
-        plot.set_plot_window_size(95, 85, 93, 50);
-        let markers: Vec<String> = vec!["Here".to_string(), "There".to_string(), "Everywhere".to_string()];
-        plot.set_y_axis_tick_length(10);
-        plot.set_bin_markers(&markers);
-        plot.set_negative_bars_go_down();
-        let svg: String = plot.to_svg(1600, 1000);
-
-        if let Err(e) = std::fs::write("a.svg", svg) {
-            eprintln!("Error saving plot '{}' {}", "a.svg", e);
-        }
     }
 }
