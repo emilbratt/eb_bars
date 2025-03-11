@@ -1037,7 +1037,7 @@ impl <'a>BarPlot<'a> {
     /// The offset is calculated percent wise from the frame towards the plot window.
     /// The higher the percentage the closer the text moves towards the plot window.
     ///
-    /// Note: you need to explicitly apply text first with [`BarPlot::set_text_left`] first.
+    /// Note: you need to explicitly apply text first with [`BarPlot::set_text_lef.
     ///
     /// # Example
     ///
@@ -1095,7 +1095,7 @@ impl <'a>BarPlot<'a> {
     /// The offset is calculated percent wise from the frame towards the plot window.
     /// The higher the percentage the closer the text moves towards the plot window.
     ///
-    /// Note: you need to explicitly apply text first with [`BarPlot::set_text_right`] first.
+    /// Note: you need to explicitly apply text first with [`BarPlot::set_text_right`].
     ///
     /// # Example
     ///
@@ -1153,7 +1153,7 @@ impl <'a>BarPlot<'a> {
     /// The offset is calculated percent wise from the frame towards the plot window.
     /// The higher the percentage the closer the text moves towards the plot window.
     ///
-    /// Note: you need to explicitly apply text first with [`BarPlot::set_text_bottom`] first.
+    /// Note: you need to explicitly apply text first with [`BarPlot::set_text_bottom`].
     ///
     /// # Example
     ///
@@ -1211,7 +1211,7 @@ impl <'a>BarPlot<'a> {
     /// The offset is calculated percent wise from the frame towards the plot window.
     /// The higher the percentage the closer the text moves towards the plot window.
     ///
-    /// Note: you need to explicitly apply text first with [`BarPlot::set_text_top`] first.
+    /// Note: you need to explicitly apply text first with [`BarPlot::set_text_top`].
     ///
     /// # Example
     ///
