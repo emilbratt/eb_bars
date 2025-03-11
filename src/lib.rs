@@ -56,6 +56,18 @@
 //! // Let's render the svg.
 //! let svg: String = plot.to_svg(1600, 1000);
 //! ```
+//!
+//! # Important note
+//!
+//! All configuration to the plot is done calling the methods found in [`BarPlot`].
+//!
+//! If the method name is prefixed `add_`, then calling it multiple times will _add_ stuff to the plot.
+//! This goes for adding multiple sets of values (categories) and adding colors to those values etc..
+//!
+//! If the method name is prefixed `set_`, then calling it multiple times will _override_ the previous one.
+//! You most certainly never want to call these more than once, unless there is a good reason to.
+//!
+//! Check out [`BarPlot`] for all implementations.
 
 mod svg;
 
@@ -219,7 +231,6 @@ impl <'a>BarPlot<'a> {
     ///
     /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
     /// let oranges: Vec<f64> = vec![7., 6., 7., 16., 9.];
-    /// assert_eq!(apples.len(), oranges.len());
     ///
     /// // Add a set of values.
     /// plot.add_values(&apples);
@@ -464,7 +475,6 @@ impl <'a>BarPlot<'a> {
     ///
     /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
     /// let oranges: Vec<f64> = vec![7., 6., 7., 16., 9.];
-    /// assert_eq!(apples.len(), oranges.len());
     ///
     /// // Add first set of values.
     /// plot.add_values(&apples);
@@ -505,10 +515,7 @@ impl <'a>BarPlot<'a> {
     /// * As a HEX value such as "#1111FA".
     /// * As an HSL value such as "hsl(30, 3.80%, 10.20%)".
     ///
-    /// # Avoid if having only one set of values.
-    ///
-    /// If you only add one set of values e.g. calling [`BarPlot::add_values`] one time,
-    /// then it makes no sense using this method. Use any of the other ways to set colors.
+    /// This method is meant for users that want full control over the bar colors.
     ///
     /// # Example
     ///
@@ -518,7 +525,6 @@ impl <'a>BarPlot<'a> {
     ///
     /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
     /// let oranges: Vec<f64> = vec![7., 6., 7., 16., 9.];
-    /// assert_eq!(apples.len(), oranges.len());
     ///
     /// // Add first set of values.
     /// plot.add_values(&apples);
@@ -577,7 +583,6 @@ impl <'a>BarPlot<'a> {
     ///
     /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
     /// let oranges: Vec<f64> = vec![7., 6., 7., 16., 9.];
-    /// assert_eq!(apples.len(), oranges.len());
     ///
     /// // Add first set of values.
     /// plot.add_values(&apples);
@@ -1219,26 +1224,194 @@ impl <'a>BarPlot<'a> {
         self.plot_text.top_offset = Some(offset);
     }
 
+    /// Apply a legend with category names and their corresponding colors.
+    ///
+    /// When calling [`BarPlot::add_values`] multiple times each time adding a set of values (categories),
+    /// you most likely want a legend to label each category by name and color.
+    ///
+    /// Note: The legend will use the colors added with [`BarPlot::add_bar_colors_by_category`],
+    /// remember to call this method once for each category added.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    /// let mut plot = BarPlot::new();
+    ///
+    /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
+    /// let oranges: Vec<f64> = vec![7., 6., 7., 16., 9.];
+    ///
+    /// // Add first set of values.
+    /// plot.add_values(&apples);
+    /// // Adding a second set of values.
+    /// plot.add_values(&oranges);
+    ///
+    /// // First call adds a color to the first category. Red bacuse apples are often red.
+    /// plot.add_bar_colors_by_category("Red");
+    /// // Second call adds a color to the second category. Orange because; oranges are orange. :)
+    /// plot.add_bar_colors_by_category("Orange");
+    ///
+    /// // Adding the labels (colors are already added) for legend.
+    /// let categories = ["Apples", "Oranges"];
+    /// // Applying the legend.
+    /// plot.set_legend(&categories);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_legend(&mut self, categories: &'a [&'a str]) {
         self.legend.categories = Some(categories);
     }
 
+    /// Set legend position.
+    ///
+    /// When calling [`BarPlot::set_legend`], its position is calculated using percentage.
+    /// By default, the legend is positioned on the far right side and close to the top.
+    /// You can override the default position by passing two values.
+    /// First value is the absolute offset from left to right,
+    /// the second value is the absolute offset from top to bottom.
+    ///
+    /// An offset X = 50 and offset Y = 50 will roughly position the legend in the center of the canvas.
+    /// More precisely, the top left corner of the legend itself will be pinned on that position.
+    ///
+    /// NOTE: you might want to resize the plot window to accomodate for the legend if you want it
+    /// to be drawn outside the plot, otherwise it will be drawn on top of the plot figure.
+    /// Check out [`BarPlot::set_plot_window_size`] for that.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    /// let mut plot = BarPlot::new();
+    ///
+    /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
+    /// let oranges: Vec<f64> = vec![7., 6., 7., 16., 9.];
+    ///
+    /// // Add first set of values.
+    /// plot.add_values(&apples);
+    /// // Adding a second set of values.
+    /// plot.add_values(&oranges);
+    ///
+    /// // First call adds a color to the first category. Red bacuse apples are often red.
+    /// plot.add_bar_colors_by_category("Red");
+    /// // Second call adds a color to the second category. Orange because; oranges are orange. :)
+    /// plot.add_bar_colors_by_category("Orange");
+    ///
+    /// // Adding the labels (colors are already added) for legend.
+    /// let categories = ["Apples", "Oranges"];
+    /// // Applying the legend.
+    /// plot.set_legend(&categories);
+    ///
+    /// // Make room for legend on the right side by shrinking plot window.
+    /// plot.set_plot_window_size(80, 30, 85, 40);
+    ///
+    /// let offset_x = 90;
+    /// let offset_y = 22;
+    /// plot.set_legend_position(offset_x, offset_y);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_legend_position(&mut self, x: Percentage, y: Percentage) {
         self.legend.position = Some((x,y));
     }
 
+    /// Apply a custom font-size for all text.
+    ///
+    /// By default, all text and numbers are rendered with a default font-size. This can be overriden.
+    /// The font-size is calculated using a percentage value.
+    /// A font-size of size 100 (100%) will not affect the text as it is the default.
+    /// You can either increase the size by passing a >100 value or decrease it with <100.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    /// plot.add_values(&[1., 2., 3.,]);
+    ///
+    /// // Scale down the plot figure size so text can become be visible.
+    /// plot.set_plot_window_size(85, 65, 80, 40);
+    ///
+    /// // Apply some text.
+    /// plot.set_text_left("This is some text.");
+    ///
+    /// // Increase font-size using a percentage greater than 100%.
+    /// let size = 130;
+    /// plot.set_font_size(size);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_font_size(&mut self, p: Percentage) {
         self.font_size = p;
     }
 
+    /// Apply a border around the canvas.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    ///
+    /// // Shrink plot so that it becomes clear that the border goes around the canvas.
+    /// plot.set_plot_window_size(80, 30, 85, 40);
+    ///
+    /// plot.set_show_window_border();
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_show_window_border(&mut self) {
         self.show_window_border = true;
     }
 
+    /// Apply a border around the plot.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    ///
+    /// // Shrink plot so that it becomes clear that the border goes around the plot window.
+    /// plot.set_plot_window_size(80, 30, 85, 40);
+    ///
+    /// plot.set_show_plot_border();
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_show_plot_border(&mut self) {
         self.show_plot_border = true;
     }
 
+    /// Generate the final svg image of all applied content.
+    ///
+    /// When you are satisfied with all the tweaks in above methods, it is time to generate the final svg.
+    /// Keep in mind that you can still add or re-apply changes on the same object after calling this method.
+    /// Changes will be applied and included on the following call to this method.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    ///
+    /// let mut svg: String = plot.to_svg(1600, 1000);
+    ///
+    /// // Add a new configuration (just resize plot window).
+    /// plot.set_plot_window_size(80, 30, 85, 40);
+    ///
+    /// // Lets overwrite the old plot with this new configuration.
+    /// svg = plot.to_svg(1600, 1000);
+    /// ```
     pub fn to_svg(&mut self, width: u32, height: u32) -> String {
         assert!(!self.values.is_empty(), "Can not generate plot without any values..");
 
@@ -1444,7 +1617,7 @@ mod tests {
         let bin_markers: Vec<String> = weekdays.iter().map(|s| s.to_string()).collect();
         plot.set_bin_markers(&bin_markers);
 
-        let categories = vec!["Tomatoes", "Apples", "Eggplants"];
+        let categories = ["Tomatoes", "Apples", "Eggplants"];
         plot.set_legend(&categories);
         plot.set_legend_position(90, 22);
 
