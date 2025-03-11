@@ -1,6 +1,6 @@
 mod tag;
 
-use super::{
+use crate::{
     BinMarkerPosition,
     BarPlot,
     BarColors,
@@ -34,8 +34,8 @@ struct SvgGenerator<'a> {
     line_color: &'a str,
     tick_color: &'a str,
     text_color: &'a str,
-    bin_margin: Percentage,
-    bar_margin: Percentage,
+    bin_gap: Percentage,
+    bar_gap: Percentage,
     font_size: Percentage,
     values: &'a Vec<&'a [f64]>,
     bar_color_variant: &'a BarColors<'a>,
@@ -72,8 +72,8 @@ impl <'a>SvgGenerator<'a> {
             line_color: bp.line_color,
             tick_color: bp.tick_color,
             text_color: bp.text_color,
-            bin_margin: bp.bin_margin,
-            bar_margin: bp.bar_margin,
+            bin_gap: bp.bin_gap,
+            bar_gap: bp.bar_gap,
             font_size: bp.font_size,
             values: &bp.values,
             bar_color_variant: &bp.bar_color_variant,
@@ -89,12 +89,12 @@ impl <'a>SvgGenerator<'a> {
         self.svg_window.1 as f64
     }
 
-    fn get_svg_window(&self) -> (f64, f64, f64, f64) {
+    fn get_svg_border_points(&self) -> (f64, f64, f64, f64) {
         let (x1, x2, y1, y2) = (0.0, self.get_svg_width(), 0.0, self.get_svg_height());
         (x1, x2, y1, y2)
     }
 
-    fn get_plot_window(&self) -> (f64, f64, f64, f64) {
+    fn get_plot_border_points(&self) -> (f64, f64, f64, f64) {
         let (x_length, x_offset, y_length, y_offset) = self.plot_window;
         let (x1, x2, y1, y2) = (x_offset, x_offset + x_length, y_offset, y_length + y_offset);
         (x1, x2, y1, y2)
@@ -182,11 +182,11 @@ impl <'a>SvgGenerator<'a> {
         // Needed for when calculating bars.
         self.scale_range = Some((min, max, step));
 
-        let (x1, x2, y1, y2) = self.get_plot_window();
+        let (x1, x2, y1, y2) = self.get_plot_border_points();
 
         let plot_height = y2 - y1;
         let x3 = (x1 / 100.0) * (100 - axis_offset) as f64; // tick left end
-        let range = (max - min) as f64;
+        let range = max as f64 - min as f64;
         let vertical_move = plot_height / range;
         let line_width = self.get_base_line_width() / 10.0;
         let font_size = self.get_font_size();
@@ -221,7 +221,7 @@ impl <'a>SvgGenerator<'a> {
             bin_marker_position: &BinMarkerPosition,
             show_vertical_lines: bool
         ) {
-        let (x1, x2, y1, y2) = self.get_plot_window();
+        let (x1, x2, y1, y2) = self.get_plot_border_points();
         let y3 = y2 + ((self.get_svg_height() - y2) / 100.0 * axis_offset as f64);
 
         let line_width = self.get_base_line_width() / 10.0;
@@ -269,7 +269,7 @@ impl <'a>SvgGenerator<'a> {
             Some((min, max, _)) => (min as f64, max as f64),
             None => (self.min, self.max),
         };
-        let (x1, x2, y1, y2) = self.get_plot_window();
+        let (x1, x2, y1, y2) = self.get_plot_border_points();
         let plot_height = y2 - y1;
 
         let range = y_max - y_min;
@@ -277,47 +277,46 @@ impl <'a>SvgGenerator<'a> {
         let scale_unit = plot_height / range;
 
         let bin_width = (x2 - x1) / self.values[0].len() as f64;
-        let bin_margin = bin_width * (self.bin_margin as f64 / 100.0);
+        let bin_margin = bin_width * (self.bin_gap as f64 / 100.0);
 
-        let bar_width = (bin_width - bin_margin) / self.values.len() as f64;
-        let bar_margin = (bin_width - bin_margin) / self.values.len() as f64 * (self.bar_margin as f64 / 100.0);
-        let cur_bar_width = bar_width - bar_margin;
+        let margined_bin_width = (bin_width - bin_margin) / self.values.len() as f64;
+        let bar_margin = (bin_width - bin_margin) / self.values.len() as f64 * (self.bar_gap as f64 / 100.0);
+        let bar_width = margined_bin_width - bar_margin;
 
         let x3 = x1 + bin_margin - (bin_margin/2.0) + (bar_margin/2.0);
         // FIXME: Let user set custom opacity.
         let opacity = 1.0;
         for (category_index, values) in self.values.iter().enumerate() {
-            let x4 = x3 + (bar_width * category_index as f64);
-            for (bar_index, bar_value) in values.iter().enumerate() {
-                let cur_x = x4 + (bin_width * bar_index as f64);
+            let x4 = x3 + (margined_bin_width * category_index as f64);
+            for (bar_index, bar_value) in values.iter().copied().enumerate() {
+                let bar_x = x4 + (bin_width * bar_index as f64);
 
                 // FIXME: Can this be written in a more compact and simple way?
-                let (cur_y, height) = if negative_bars_go_down && self.min < 0.0 {
-                    if *bar_value >= 0.0 {
-                        let height = bar_value * scale_unit;
-                        let cur_y = y2 + top_offset - height;
-                        (cur_y, height)
+                let (bar_y, bar_height) = if negative_bars_go_down && self.min < 0.0 {
+                    if bar_value >= 0.0 {
+                        let bar_height = bar_value * scale_unit;
+                        let bar_y = y2 + top_offset - bar_height;
+                        (bar_y, bar_height)
                     } else {
                         // If negative bars go down, we need to adjust "y" and "height" accordingly.
-                        let height = (bar_value * scale_unit).abs();
-                        let cur_y = y2 + top_offset;
-                        (cur_y, height)
+                        let bar_height = (bar_value * scale_unit).abs();
+                        let bar_y = y2 + top_offset;
+                        (bar_y, bar_height)
                     }
                 } else {
-                    let height = (bar_value * scale_unit) - top_offset;
-                    let cur_y = y2 - height;
-                    (cur_y, height)
+                    let bar_height = (bar_value * scale_unit) - top_offset;
+                    let bar_y = y2 - bar_height;
+                    (bar_y, bar_height)
                 };
-                let color = self.get_bar_color(category_index, bar_index, *bar_value);
-                let tag = tag::rect(cur_x, cur_y, cur_bar_width, height, opacity, color);
+                let color = self.get_bar_color(category_index, bar_index, bar_value);
+                let tag = tag::rect(bar_x, bar_y, bar_width, bar_height, opacity, color);
                 self.nodes.push(tag);
             }
-            // return;
         }
     }
 
     fn generate_text(&mut self, text: &str, side: Side, offset: Percentage) {
-        let (x1, x2, y1, y2) = self.get_plot_window();
+        let (x1, x2, y1, y2) = self.get_plot_border_points();
 
         let plot_width = x2 - x1;
         let plot_height = y2 - y1;
@@ -375,33 +374,35 @@ impl <'a>SvgGenerator<'a> {
     }
 
     fn generate_plot_border(&mut self, color: &str) {
-        let (x1, x2, y1, y2) = self.get_plot_window();
-        self.nodes.push(tag::line(x1, x1, y1, y2, color, self.get_base_line_width()/10.0)); // left
-        self.nodes.push(tag::line(x1, x2, y1, y1, color, self.get_base_line_width()/10.0)); // top
-        self.nodes.push(tag::line(x2, x2, y1, y2, color, self.get_base_line_width()/10.0)); // right
-        self.nodes.push(tag::line(x1, x2, y2, y2, color, self.get_base_line_width()/10.0)); // bottom
+        let (x1, x2, y1, y2) = self.get_plot_border_points();
+        let width = self.get_base_line_width() / 10.0;
+        self.nodes.push(tag::line(x1, x1, y1, y2, color, width)); // left
+        self.nodes.push(tag::line(x1, x2, y1, y1, color, width)); // top
+        self.nodes.push(tag::line(x2, x2, y1, y2, color, width)); // right
+        self.nodes.push(tag::line(x1, x2, y2, y2, color, width)); // bottom
     }
 
     fn generate_svg_border(&mut self, color: &str) {
-        let (x1, x2, y1, y2) = self.get_svg_window();
-        self.nodes.push(tag::line(x1, x1, y1, y2, color, self.get_base_line_width()/5.0)); // left
-        self.nodes.push(tag::line(x1, x2, y1, y1, color, self.get_base_line_width()/5.0)); // top
-        self.nodes.push(tag::line(x2, x2, y1, y2, color, self.get_base_line_width()/5.0)); // right
-        self.nodes.push(tag::line(x1, x2, y2, y2, color, self.get_base_line_width()/5.0)); // bottom
+        let (x1, x2, y1, y2) = self.get_svg_border_points();
+        let width = self.get_base_line_width() / 5.0;
+        self.nodes.push(tag::line(x1, x1, y1, y2, color, width)); // left
+        self.nodes.push(tag::line(x1, x2, y1, y1, color, width)); // top
+        self.nodes.push(tag::line(x2, x2, y1, y2, color, width)); // right
+        self.nodes.push(tag::line(x1, x2, y2, y2, color, width)); // bottom
     }
 
     fn generate_svg(&self) -> String {
         let doc_declaration = r#"<?xml version="1.0" encoding="UTF-8" standalone="no"?>"#;
-        let doc_comment = format!("<!-- Created with eb_bars v{VERSION} ({REPOSITORY}) -->");
+        let created_with = format!("<!-- Created with eb_bars v{VERSION} ({REPOSITORY}) -->");
         let svg_open = format!(
-            r#"<svg width="{}" height="{}" xmlns="http://www.w3.org/2000/svg">{LF}"#,
-            self.get_svg_width(),
-            self.get_svg_height(),
+            r#"<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">"#,
+            width = self.get_svg_width(),
+            height = self.get_svg_height(),
         );
         let svg_content = self.nodes.concat();
         let svg_close = "</svg>";
 
-        format!("{doc_declaration}{LF}{doc_comment}{LF}{LF}{svg_open}{svg_content}{svg_close}{LF}")
+        format!("{doc_declaration}{LF}{created_with}{LF}{LF}{svg_open}{LF}{svg_content}{svg_close}{LF}")
     }
 }
 

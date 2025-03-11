@@ -57,7 +57,6 @@
 //! let svg: String = plot.to_svg(1600, 1000);
 //! ```
 
-
 mod svg;
 
 type Percentage = i16;
@@ -67,8 +66,8 @@ const REPOSITORY: &str = "https://github.com/emilbratt/eb_bars";
 
 const DEFAULT_BAR_COLOR: &str = "rgb(112, 153, 182)";
 const DEFAULT_BASE_COLOR: &str = "rgb(197, 197, 197)";
-const DEFAULT_BIN_MARGIN: Percentage = 10;
-const DEFAULT_BAR_MARGIN: Percentage = 0;
+const DEFAULT_BIN_GAP: Percentage = 10;
+const DEFAULT_BAR_GAP: Percentage = 0;
 
 const DEFAULT_TICK_LENGTH: Percentage = 10;
 const DEFAULT_FONT_SIZE: Percentage = 100;
@@ -137,8 +136,8 @@ pub struct BarPlot<'a> {
     line_color: &'a str,
     text_color: &'a str,
     tick_color: &'a str,
-    bin_margin: Percentage,
-    bar_margin: Percentage,
+    bin_gap: Percentage,
+    bar_gap: Percentage,
     plot_text: PlotText<'a>,
     font_size: Percentage,
     bar_color_variant: BarColors<'a>,
@@ -176,8 +175,8 @@ impl <'a>BarPlot<'a> {
             line_color: DEFAULT_BASE_COLOR,
             text_color: DEFAULT_BASE_COLOR,
             tick_color: DEFAULT_BASE_COLOR,
-            bin_margin: DEFAULT_BIN_MARGIN,
-            bar_margin: DEFAULT_BAR_MARGIN,
+            bin_gap: DEFAULT_BIN_GAP,
+            bar_gap: DEFAULT_BAR_GAP,
             plot_text: PlotText::default(),
             font_size: DEFAULT_FONT_SIZE,
             bar_color_variant: BarColors::default(),
@@ -204,8 +203,8 @@ impl <'a>BarPlot<'a> {
     /// # Grouped bars
     ///
     /// Calling this method more than once will create `groups` for the values.
-    /// This means that the first index of the added values will be the first group,
-    /// the second index will be the second group and so on..
+    /// This means that the first datapoint of each added dataset will be the first group,
+    /// the second datapoint of each added dataset will be the second group and so on..
     /// E.g. calling this method 5 times will add groups of 5 bars in each bin.
     ///
     /// * Must be called at least once. A plot without values does not make any sense.. :)
@@ -231,6 +230,8 @@ impl <'a>BarPlot<'a> {
     /// // The first group contains 5 apples and 7 oranges.
     /// // The next one 16 and 6.
     /// // The last group contains 3 apples and 9 oranges.
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn add_values(&mut self, values: &'a [f64]) {
         if !self.values.is_empty() {
@@ -253,7 +254,8 @@ impl <'a>BarPlot<'a> {
     /// By default, the image will be fully transparent where there is nothing drawn on it.
     /// Adding a background color might be a good idea for better visual presentation depending on usecase.
     ///
-    /// Accepted color conventions.
+    /// # Accepted color conventions.
+    ///
     /// * As its name such as "Red".
     /// * As an RGB value such as "rgb(29, 28, 27)".
     /// * As a HEX value such as "#1111FA".
@@ -265,7 +267,11 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    /// plot.add_values(&[1., 2., 3.,]);
+    ///
     /// plot.set_background_color("Black");
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_background_color(&mut self, color: &'a str) {
         self.background_color = Some(color);
@@ -276,7 +282,8 @@ impl <'a>BarPlot<'a> {
     /// By default, all lines are drawn with a `default` color.
     /// You can `override` this by setting your own color.
     ///
-    /// Accepted color conventions.
+    /// # Accepted color conventions.
+    ///
     /// * As its name such as "Red".
     /// * As an RGB value such as "rgb(29, 28, 27)".
     /// * As a HEX value such as "#1111FA".
@@ -288,7 +295,11 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    /// plot.add_values(&[1., 2., 3.,]);
+    ///
     /// plot.set_line_color("Yellow");
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_line_color(&mut self, color: &'a str) {
         self.line_color = color;
@@ -299,7 +310,8 @@ impl <'a>BarPlot<'a> {
     /// By default, all text are drawn with a `default` color.
     /// You can `override` this by setting your own color.
     ///
-    /// Accepted color conventions.
+    /// # Accepted color conventions.
+    ///
     /// * As its name such as "Red".
     /// * As an RGB value such as "rgb(29, 28, 27)".
     /// * As a HEX value such as "#1111FA".
@@ -311,7 +323,11 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    /// plot.add_values(&[1., 2., 3.,]);
+    ///
     /// plot.set_text_color("LightBlue");
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_text_color(&mut self, color: &'a str) {
         self.text_color = color;
@@ -322,7 +338,8 @@ impl <'a>BarPlot<'a> {
     /// By default, all ticks are drawn with a `default` color.
     /// You can `override` this by setting your own color.
     ///
-    /// Accepted color conventions.
+    /// # Accepted color conventions.
+    ///
     /// * As its name such as "Red".
     /// * As an RGB value such as "rgb(29, 28, 27)".
     /// * As a HEX value such as "#1111FA".
@@ -334,7 +351,11 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    /// plot.add_values(&[1., 2., 3.,]);
+    ///
     /// plot.set_text_color("LightBlue");
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_tick_color(&mut self, color: &'a str) {
         self.tick_color = color;
@@ -345,7 +366,8 @@ impl <'a>BarPlot<'a> {
     /// By default, all bars are drawn with a `default` color.
     /// You can `override` this by setting a new uniform color value.
     ///
-    /// Accepted color conventions.
+    /// # Accepted color conventions.
+    ///
     /// * As its name such as "Red".
     /// * As an RGB value such as "rgb(29, 28, 27)".
     /// * As a HEX value such as "#1111FA".
@@ -357,7 +379,11 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    /// plot.add_values(&[1., 2., 3.,]);
+    ///
     /// plot.set_bar_colors_by_uniform("Green");
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_bar_colors_by_uniform(&mut self, color: &'a str) {
         self.bar_color_variant = BarColors::Uniform(color);
@@ -369,7 +395,8 @@ impl <'a>BarPlot<'a> {
     /// You can `override` this by setting different colors for different thresholds.
     /// The threshold is as follows: minumum value, less than average, greater than or equal to average and max.
     ///
-    /// Accepted color conventions.
+    /// # Accepted color conventions.
+    ///
     /// * As its name such as "Red".
     /// * As an RGB value such as "rgb(29, 28, 27)".
     /// * As a HEX value such as "#1111FA".
@@ -386,6 +413,7 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    /// plot.add_values(&[1., 2., 3.,]);
     ///
     /// // Each color represent how signifacant a value is.
     /// let min = "Red"; // The lowest value will have its bar colored red.
@@ -394,11 +422,62 @@ impl <'a>BarPlot<'a> {
     /// let max = "Green"; // Max value (tallest bar) will be green.
     ///
     /// plot.set_bar_colors_by_threshold(min, low, high, max);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_bar_colors_by_threshold(&mut self, min: &'a str, low: &'a str, high: &'a str, max: &'a str) {
         self.bar_color_variant = BarColors::Threshold((min, low, high, max));
     }
 
+    /// Add color to last added values.
+    ///
+    /// By default, all bars are drawn with a `default` color.
+    /// You can `override` this by setting different colors for different categories.
+    /// Keep in mind that this only make sens to use if you have called [`BarPlot::add_values`]
+    /// at least 2 times. The two datasets are treated as two distinct categories.
+    /// Note: see [`BarPlot::set_legend`] for displaying the names with their respective color.
+    ///
+    /// # How it operates
+    /// The category added first will have its bars colored first.
+    /// Then, any consecutive call will apply proportional to all consecutive calls to [`BarPlot::add_values`].
+    ///
+    /// In simple terms: if you call [`BarPlot::add_values`] 5 times, then it is required to call this method
+    /// `exactly` 5 times. Each time with its own particular color.
+    ///
+    /// # Accepted color conventions.
+    ///
+    /// * As its name such as "Red".
+    /// * As an RGB value such as "rgb(29, 28, 27)".
+    /// * As a HEX value such as "#1111FA".
+    /// * As an HSL value such as "hsl(30, 3.80%, 10.20%)".
+    ///
+    /// # Avoid if having only one set of values.
+    ///
+    /// If you only add one set of values e.g. calling [`BarPlot::add_values`] one time,
+    /// then it makes no sense using this method. Use any of the other ways to set colors.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    /// let mut plot = BarPlot::new();
+    ///
+    /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
+    /// let oranges: Vec<f64> = vec![7., 6., 7., 16., 9.];
+    /// assert_eq!(apples.len(), oranges.len());
+    ///
+    /// // Add first set of values.
+    /// plot.add_values(&apples);
+    /// // Adding a second set of values.
+    /// plot.add_values(&oranges);
+    ///
+    /// // First call adds a color to the first category. Red bacuse apples are often red.
+    /// plot.add_bar_colors_by_category("Red");
+    /// // Second call adds a color to the second category. Orange because; oranges are orange. :)
+    /// plot.add_bar_colors_by_category("Orange");
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn add_bar_colors_by_category(&mut self, color: &'a str) {
         if let BarColors::Category(v) = &mut self.bar_color_variant {
             v.push(color);
@@ -407,6 +486,54 @@ impl <'a>BarPlot<'a> {
         }
     }
 
+    /// Add a set of colors for every bar in last added category.
+    ///
+    /// By default, all bars are drawn with a `default` color.
+    /// You can `override` this by adding an array of colors which have same length as the values.
+    ///
+    /// # How it operates
+    /// The category added first will have its bars colored first.
+    /// Then, any consecutive call will apply proportional to all consecutive calls to [`BarPlot::add_values`].
+    ///
+    /// In simple terms: if you call [`BarPlot::add_values`] 5 times, then it is required to call this method
+    /// `exactly` 5 times. Each time with its own particular set of colors.
+    ///
+    /// # Accepted color conventions.
+    ///
+    /// * As its name such as "Red".
+    /// * As an RGB value such as "rgb(29, 28, 27)".
+    /// * As a HEX value such as "#1111FA".
+    /// * As an HSL value such as "hsl(30, 3.80%, 10.20%)".
+    ///
+    /// # Avoid if having only one set of values.
+    ///
+    /// If you only add one set of values e.g. calling [`BarPlot::add_values`] one time,
+    /// then it makes no sense using this method. Use any of the other ways to set colors.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    /// let mut plot = BarPlot::new();
+    ///
+    /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
+    /// let oranges: Vec<f64> = vec![7., 6., 7., 16., 9.];
+    /// assert_eq!(apples.len(), oranges.len());
+    ///
+    /// // Add first set of values.
+    /// plot.add_values(&apples);
+    /// // Adding a second set of values.
+    /// plot.add_values(&oranges);
+    ///
+    /// // First call adds a color to the first category. Red bacuse apples are often red.
+    /// let clr_red = vec!["Red", "Red", "Red", "Red", "Red"];
+    /// plot.add_bar_colors_from_vec(clr_red);
+    /// // Second call adds a color to the second category. Orange because; oranges are orange. :)
+    /// let clr_orange = vec!["Orange", "Orange", "Orange", "Orange", "Orange"];
+    /// plot.add_bar_colors_from_vec(clr_orange);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn add_bar_colors_from_vec(&mut self, colors: Vec<&'a str>) {
         if let BarColors::Indexed(v) = &mut self.bar_color_variant {
             v.push(colors);
@@ -415,26 +542,150 @@ impl <'a>BarPlot<'a> {
         }
     }
 
-    pub fn add_bar_color_override(&mut self, bar: usize, color: &'a str) {
+    /// Override any bar with any color.
+    ///
+    /// This one will override the category index and the value (bar) index with a color.
+    /// Say you added 3 sets of values by calling [`BarPlot::add_values`] 3 times.
+    /// This means you have 3 categories times `X` values where `X` is the length of array holding
+    /// each of set of values.
+    ///
+    /// # How it operates
+    /// The category added first will have its category and bars colored zero indexed.
+    /// The first bar in the first category will have index 0-0. The next bar will have 0-1.
+    /// You call this method as many times as you need, passing one color at the time.
+    ///
+    /// Calling [`BarPlot::add_values`] 5 times with 3 values for each set of values,
+    /// then the index for category will be 0-4 (5 indexes ) and the index for values will be 0-2 (3 indexes).
+    ///
+    /// # Accepted color conventions.
+    ///
+    /// * As its name such as "Red".
+    /// * As an RGB value such as "rgb(29, 28, 27)".
+    /// * As a HEX value such as "#1111FA".
+    /// * As an HSL value such as "hsl(30, 3.80%, 10.20%)".
+    ///
+    /// # Avoid if having only one set of values.
+    ///
+    /// If you only add one set of values e.g. calling [`BarPlot::add_values`] one time,
+    /// then it makes no sense using this method. Use any of the other ways to set colors.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    /// let mut plot = BarPlot::new();
+    ///
+    /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
+    /// let oranges: Vec<f64> = vec![7., 6., 7., 16., 9.];
+    /// assert_eq!(apples.len(), oranges.len());
+    ///
+    /// // Add first set of values.
+    /// plot.add_values(&apples);
+    /// // Adding a second set of values.
+    /// plot.add_values(&oranges);
+    ///
+    /// // First call adds a color to the first category. Red bacuse apples are often red.
+    /// let clr_red = vec!["Red", "Red", "Red", "Red", "Red"];
+    /// plot.add_bar_colors_from_vec(clr_red);
+    /// // Second call adds a color to the second category. Orange because; oranges are orange. :)
+    /// let clr_orange = vec!["Orange", "Orange", "Orange", "Orange", "Orange"];
+    /// plot.add_bar_colors_from_vec(clr_orange);
+    ///
+    /// // Setting the first apple = green.
+    /// plot.add_bar_color_override(0, 0, "Green");
+    /// // Setting the last orange to blue.. :)
+    /// plot.add_bar_color_override(1, 4, "Blue");
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
+    pub fn add_bar_color_override(&mut self, category: usize, bar: usize, color: &'a str) {
         // Will always select the bar from the last added category e.g. after most recent BarPlot.add_values() call.
         assert!(
             !self.values.is_empty(),
             "Can't override bar '{bar}' with color '{color}', because no bars (values) have been added yet."
         );
-
-        // We always use the index of last added values, e.g. we select last added category.
-        let category = self.values.len() - 1;
         self.bar_colors_override.push((category, bar, color));
     }
 
+    /// Show horizontal grid lines.
+    ///
+    /// NOTE: Call [`BarPlot::set_scale_range`] first, otherwise there are no values to base the grid on.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    /// plot.add_values(&[5.0, 16.4, 17.1, 13.7, 8.9, 3.9, 6.3, 9.6]);
+    ///
+    /// // Needed for horizontal (y-grid) lines.
+    /// plot.set_scale_range(0, 20, 2);
+    ///
+    /// plot.set_show_horizontal_lines();
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_show_horizontal_lines(&mut self) {
         self.show_horizontal_lines = true;
     }
 
+    /// Show vertical grid lines.
+    ///
+    /// NOTE: Call [`BarPlot::set_bin_markers`] first, otherwise there are no values to base the grid on.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// let values = [5.0, 16.4, 17.1, 13.7, 8.9, 3.9, 6.3, 9.6];
+    /// plot.add_values(&values);
+    ///
+    /// // Needed for vertical (x-grid) lines.
+    /// let markers: Vec<String> = (0..values.len()).map(|i| (i).to_string()).collect();
+    /// plot.set_bin_markers(&markers);
+    ///
+    /// plot.set_show_vertical_lines();
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_show_vertical_lines(&mut self) {
         self.show_vertical_lines = true;
     }
 
+    /// Set size of the barplot size (relative to the canvas/frame).
+    ///
+    /// By default, the barchart part of the image will take up the full width and length of the frame.
+    /// However, by adding literally anything to the barplot, you most likely want to change the size of the plot.
+    /// If you skip this method, the text, ticks, markers, legend etc. will not be inside the viewbox of the canvas.
+    ///
+    /// # How it operates
+    ///
+    /// We only work with percentage values when defining sizes. A width of 100 means it takes up 100% of the width.
+    /// A height of 100 will do the same, but for height.
+    /// Same goes for offset. A horizontal offset of 10 means that the offset is pushed 10% from the left.
+    /// A vertical offset of 10 means that the offset is pushed 10% from the top.
+    /// An offset with value 100 means the offset is pushed all the way to the right (horizontal) or bottom (vertical).
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    /// plot.add_values(&[1., 2., 3.,]);
+    ///
+    /// let width = 90; // Set width to 90%,
+    /// let horizontal_offset = 65; // Move 65% right
+    /// let height = 85; // Set height to 85%
+    /// let vertical_offset = 40; // Move 40% down.
+    /// plot.set_plot_window_size(width, horizontal_offset, height, vertical_offset);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_plot_window_size(
         &mut self,
         x_length: Percentage,
@@ -448,74 +699,522 @@ impl <'a>BarPlot<'a> {
         self.plot_window_scale = Some((x_length, x_offset, y_length, y_offset));
     }
 
+    /// Set a scale for the barchart.
+    ///
+    /// By default, the scale is calculated using the maximum and minimum value throughout all data.
+    /// However, by setting the scale manually we get a more presentable plot.
+    /// Pass whole numbers (can be negative) as the scale minimum and scale maximum.
+    /// The 3rd parameter is the gap between each number on the scale e.g. the step.
+    /// The step must be a positive number as it is an increasing number starting from minimum.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[5.0, 16.4, 17.1, 13.7, 8.9, 3.9, 6.3, 9.6]);
+    ///
+    /// let min = 0;
+    /// let max = 20;
+    /// let step = 2;
+    ///
+    /// plot.set_scale_range(min, max, step);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_scale_range(&mut self, min: i64, max: i64, step: u64) {
         self.scale_range = Some((min, max, step as usize));
     }
 
+    /// Set the labels and markers for each bin/bucket on the x-axis.
+    ///
+    /// Note: Passing an array with fewer bin markers than added values will cause some bins to be un-labeled.
+    /// To make sure everything is correct, it is recommended to pass the same amount of markers as values.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// let absence_boys = [5., 3., 8., 4., 7.];
+    /// let absence_girls = [4., 1., 2., 3., 1.];
+    /// let weekdays = vec![
+    ///     "Monday".to_string(),
+    ///     "Tuesday".to_string(),
+    ///     "Wednesday".to_string(),
+    ///     "Thursday".to_string(),
+    ///     "Friday".to_string(),
+    /// ];
+    ///
+    /// plot.add_values(&absence_boys);
+    /// plot.add_values(&absence_girls);
+    /// plot.set_bin_markers(&weekdays);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_bin_markers(&mut self, bin_markers: &'a [String]) {
         self.bin_markers = Some(bin_markers);
     }
 
+    /// Place the bin markers at the middle of each bin/bucket instead of to the left.
+    ///
+    /// By default, the bin markers are placed on the left side in between each bin.
+    /// You can have the markers placed either `left`, `middle` or `right` depending on usecase.
+    ///
+    /// Note: check out [`BarPlot::set_bin_markers_left`] and [`BarPlot::set_bin_markers_right`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// let values = [1., 2., 3.];
+    /// plot.add_values(&values);
+    ///
+    /// let markers: Vec<String> = (0..values.len()).map(|i| (i).to_string()).collect();
+    /// plot.set_bin_markers(&markers);
+    ///
+    /// plot.set_bin_markers_middle();
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_bin_markers_middle(&mut self) {
         self.bin_marker_position = BinMarkerPosition::Middle;
     }
 
+    /// Place the bin markers to the left of each bin/bucket.
+    ///
+    /// By default, the bin markers are already placed on the left side in between each bin.
+    /// This method can be used to _reset_ an eventual change.
+    /// You can have the markers placed either `left`, `middle` or `right` depending on usecase.
+    ///
+    /// Note: check out [`BarPlot::set_bin_markers_middle`] and [`BarPlot::set_bin_markers_right`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// let values = [1., 2., 3.];
+    /// plot.add_values(&values);
+    ///
+    /// let markers: Vec<String> = (0..values.len()).map(|i| (i).to_string()).collect();
+    /// plot.set_bin_markers(&markers);
+    ///
+    /// // Setting markers at middle.
+    /// plot.set_bin_markers_middle();
+    /// // Then back to left side.
+    /// plot.set_bin_markers_left();
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_bin_markers_left(&mut self) {
         self.bin_marker_position = BinMarkerPosition::Left;
     }
 
+    /// Place the bin markers to the right of each bin/bucket instead of to the left.
+    ///
+    /// By default, the bin markers are placed on the left side in between each bin.
+    /// You can have the markers placed either `left`, `middle` or `right` depending on usecase.
+    ///
+    /// Note: check out [`BarPlot::set_bin_markers_left`] and [`BarPlot::set_bin_markers_middle`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// let values = [1., 2., 3.];
+    /// plot.add_values(&values);
+    ///
+    /// let markers: Vec<String> = (0..values.len()).map(|i| (i).to_string()).collect();
+    /// plot.set_bin_markers(&markers);
+    ///
+    /// plot.set_bin_markers_right();
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_bin_markers_right(&mut self) {
         self.bin_marker_position = BinMarkerPosition::Right;
     }
 
-    pub fn set_bar_margin(&mut self, margin: Percentage) {
-        self.bar_margin = margin;
+    /// Introduce a `gap` between every bar.
+    ///
+    /// The gap is calculated using a percentage.
+    /// A gap of 0 means there is no gap/air between bars.
+    /// A gap of 50 means that the bar and the gap will take up the same width.
+    /// A gap of 100 means that the gap will take up all space and so the bar becomes invisible.
+    ///
+    /// Note: check out [`BarPlot::set_bin_gap`] for gap only betweem bins.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    /// plot.add_values(&[4., 5., 6.]);
+    ///
+    /// let gap = 30; // The gap will take up 30% of the space, leaving 70% for bar.
+    /// plot.set_bar_gap(gap);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
+    pub fn set_bar_gap(&mut self, gap: Percentage) {
+        self.bar_gap = gap;
     }
 
-    pub fn set_bin_margin(&mut self, margin: Percentage) {
-        self.bin_margin = margin;
+    /// Introduce a `gap` between every bin/bucket.
+    ///
+    /// The gap is calculated using a percentage.
+    /// A gap of 0 means there is no gap/air between bins.
+    /// A gap of 50 means that the bin and the gap will take up the same width.
+    /// A gap of 100 means that the gap will take up all space and so the bin squashed into nothing.
+    ///
+    /// Note: check out [`BarPlot::set_bar_gap`] for gap betweem bars.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    /// plot.add_values(&[4., 5., 6.]);
+    ///
+    /// let gap = 30; // The gap will take up 30% of the space, leaving 70% for bin.
+    /// plot.set_bin_gap(gap);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
+    pub fn set_bin_gap(&mut self, gap: Percentage) {
+        self.bin_gap = gap;
     }
 
+    /// Set length for ticks on the y axis.
+    ///
+    /// The length is calculated using a percentage.
+    /// A length of 0 means the tick will not be generated.
+    /// A length of 10 means that the tick will be of a _somewhat_ _normal_ length.
+    /// A length of greater than 10 means that the tick will be long.
+    /// Try different lengths to find the best length for your usecase.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    ///
+    /// let len = 20; // The tick length will be of considerate length.
+    /// plot.set_y_axis_tick_length(len);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_y_axis_tick_length(&mut self, p: Percentage) {
         self.y_axis_tick_length = Some(p);
     }
 
+    /// Set length for ticks on the x axis.
+    ///
+    /// The length is calculated using a percentage.
+    /// A length of 0 means the tick will not be generated.
+    /// A length of 10 means that the tick will be of a _somewhat_ _normal_ length.
+    /// A length of greater than 10 means that the tick will be long.
+    /// Try different lengths to find the best length for your usecase.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    ///
+    /// let len = 20; // The tick length will be of considerate length.
+    /// plot.set_x_axis_tick_length(len);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_x_axis_tick_length(&mut self, p: Percentage) {
         self.x_axis_tick_length = Some(p);
     }
 
+    /// Anchor bars at zero so that all negative values point downwards.
+    ///
+    /// By default, bars are anchored at the floor of the barchart.
+    /// However, you might want negative values to stand out by having them point downwards.
+    /// This method will apply that configuration for you.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[5.0, -16.4, 17.1, 13.7, 8.9, 3.9, -6.3, 9.6]);
+    ///
+    /// // Adding some extra tweaks that makes this example more clear.
+    /// let min = 0;
+    /// let max = 20;
+    /// let step = 2;
+    /// plot.set_scale_range(min, max, step);
+    /// plot.set_plot_window_size(90, 80, 83, 50);
+    ///
+    /// // Negative bars will now grow downwards instead of upwards. :)
+    /// plot.set_negative_bars_go_down();
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_negative_bars_go_down(&mut self) {
         self.negative_bars_go_down = true;
     }
 
+    /// Apply text on the left side of the plot window.
+    ///
+    /// By default, the plot window takes up the whole window.
+    /// For the text to be visible, we need to scale down the plot first with [`BarPlot::set_plot_window_size`].
+    ///
+    /// The text will by default be offset from the plot window with a sane value.
+    /// If you want to override this value, you can set a custom offset with [`BarPlot::set_text_left_offset`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    ///
+    /// // Scale down the plot figure size so text can become be visible.
+    /// plot.set_plot_window_size(85, 65, 80, 40);
+    ///
+    /// plot.set_text_left("This is some text.");
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_text_left(&mut self, text: &'a str) {
         self.plot_text.left = Some(text);
     }
 
+    /// Apply offset for text on the left side of the plot window.
+    ///
+    /// The offset is calculated percent wise from the frame towards the plot window.
+    /// The higher the percentage the closer the text moves towards the plot window.
+    ///
+    /// Note: you need to explicitly apply text first with [`BarPlot::set_text_left`] first.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    ///
+    /// // Scale down the plot figure size so text can become be visible.
+    /// plot.set_plot_window_size(85, 65, 80, 40);
+    ///
+    /// plot.set_text_left("This is some text.");
+    ///
+    /// let percent = 30;
+    /// plot.set_text_left_offset(percent);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_text_left_offset(&mut self, offset: Percentage) {
         self.plot_text.left_offset = Some(offset);
     }
 
+    /// Apply text on the right side of the plot window.
+    ///
+    /// By default, the plot window takes up the whole window.
+    /// For the text to be visible, we need to scale down the plot first with [`BarPlot::set_plot_window_size`].
+    ///
+    /// The text will by default be offset from the plot window with a sane value.
+    /// If you want to override this value, you can set a custom offset with [`BarPlot::set_text_right_offset`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    ///
+    /// // Scale down the plot figure size so text can become be visible.
+    /// plot.set_plot_window_size(85, 65, 80, 40);
+    ///
+    /// plot.set_text_right("This is some text.");
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_text_right(&mut self, text: &'a str) {
         self.plot_text.right = Some(text);
     }
 
+    /// Apply offset for text on the right side of the plot window.
+    ///
+    /// The offset is calculated percent wise from the frame towards the plot window.
+    /// The higher the percentage the closer the text moves towards the plot window.
+    ///
+    /// Note: you need to explicitly apply text first with [`BarPlot::set_text_right`] first.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    ///
+    /// // Scale down the plot figure size so text can become be visible.
+    /// plot.set_plot_window_size(85, 65, 80, 40);
+    ///
+    /// plot.set_text_right("This is some text.");
+    ///
+    /// let percent = 30;
+    /// plot.set_text_right_offset(percent);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_text_right_offset(&mut self, offset: Percentage) {
         self.plot_text.right_offset = Some(offset);
     }
 
+    /// Apply text underneath the plot window.
+    ///
+    /// By default, the plot window takes up the whole window.
+    /// For the text to be visible, we need to scale down the plot first with [`BarPlot::set_plot_window_size`].
+    ///
+    /// The text will by default be offset from the plot window with a sane value.
+    /// If you want to override this value, you can set a custom offset with [`BarPlot::set_text_bottom_offset`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    ///
+    /// // Scale down the plot figure size so text can become be visible.
+    /// plot.set_plot_window_size(85, 65, 80, 40);
+    ///
+    /// plot.set_text_bottom("This is some text.");
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_text_bottom(&mut self, text: &'a str) {
         self.plot_text.bottom = Some(text);
     }
 
+    /// Apply offset for text underneath the plot window.
+    ///
+    /// The offset is calculated percent wise from the frame towards the plot window.
+    /// The higher the percentage the closer the text moves towards the plot window.
+    ///
+    /// Note: you need to explicitly apply text first with [`BarPlot::set_text_bottom`] first.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    ///
+    /// // Scale down the plot figure size so text can become be visible.
+    /// plot.set_plot_window_size(85, 65, 80, 40);
+    ///
+    /// plot.set_text_bottom("This is some text.");
+    ///
+    /// let percent = 30;
+    /// plot.set_text_bottom_offset(percent);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_text_bottom_offset(&mut self, offset: Percentage) {
         self.plot_text.bottom_offset = Some(offset);
     }
 
+    /// Apply text above the plot window.
+    ///
+    /// By default, the plot window takes up the whole window.
+    /// For the text to be visible, we need to scale down the plot first with [`BarPlot::set_plot_window_size`].
+    ///
+    /// The text will by default be offset from the plot window with a sane value.
+    /// If you want to override this value, you can set a custom offset with [`BarPlot::set_text_top_offset`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    ///
+    /// // Scale down the plot figure size so text can become be visible.
+    /// plot.set_plot_window_size(85, 65, 80, 40);
+    ///
+    /// plot.set_text_top("This is some text.");
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_text_top(&mut self, text: &'a str) {
         self.plot_text.top = Some(text);
     }
 
+    /// Apply offset for text above the plot window.
+    ///
+    /// The offset is calculated percent wise from the frame towards the plot window.
+    /// The higher the percentage the closer the text moves towards the plot window.
+    ///
+    /// Note: you need to explicitly apply text first with [`BarPlot::set_text_top`] first.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// plot.add_values(&[1., 2., 3.]);
+    ///
+    /// // Scale down the plot figure size so text can become be visible.
+    /// plot.set_plot_window_size(85, 65, 80, 40);
+    ///
+    /// plot.set_text_top("This is some text.");
+    ///
+    /// let percent = 30;
+    /// plot.set_text_top_offset(percent);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
     pub fn set_text_top_offset(&mut self, offset: Percentage) {
         self.plot_text.top_offset = Some(offset);
     }
@@ -625,7 +1324,7 @@ mod tests {
         plot.set_show_plot_border();
         plot.set_show_horizontal_lines();
         plot.set_text_color("LightGoldenRodYellow");
-        plot.set_text_left("Left |_left Lorem Ipsum is simply dummy text of the..");
+        plot.set_text_left("Left text | Lorem Ipsum is simply dummy text of the..");
         plot.set_text_left_offset(20);
         plot.set_text_bottom("Bottom text | Lorem Ipsum is simply dummy text of the printing and typesetting industry.");
         plot.set_text_bottom_offset(25);
@@ -651,7 +1350,7 @@ mod tests {
         plot.set_bin_markers_middle();
         plot.set_background_color("Black");
         plot.set_show_horizontal_lines();
-        plot.set_bar_margin(40);
+        plot.set_bar_gap(40);
         plot.add_values(&temperatures);
 
         let min_color = "rgb(107, 235, 255)";
@@ -696,7 +1395,7 @@ mod tests {
         plot.set_show_plot_border();
         plot.set_show_horizontal_lines();
         plot.set_show_vertical_lines();
-        plot.set_bar_margin(25);
+        plot.set_bar_gap(25);
         plot.set_bin_markers_left();
         plot.set_text_top("This plot shows random values :)");
 
@@ -718,7 +1417,7 @@ mod tests {
         let tomatoes = [29, 41, 64, 83, 59, 42, 65];
         let apples = [9, 51, 67, 55, 11, 93, 43];
         let eggplants = [18, 86, 13, 30, 1, 10, 58];
-        let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satirday", "Sunday"];
+        let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
         let mut plot = BarPlot::new();
 
@@ -726,19 +1425,21 @@ mod tests {
         let values = tomatoes.into_iter().map(|i| i as f64).collect::<Vec<f64>>();
         plot.add_values(&values);
         plot.add_bar_colors_by_category("Red");
-        plot.add_bar_color_override(3, "Tomato"); // Second bar from last added values 'values_a'.
 
         // Category B.
         let values = apples.into_iter().map(|i| i as f64).collect::<Vec<f64>>();
         plot.add_values(&values);
         plot.add_bar_colors_by_category("LawnGreen");
-        plot.add_bar_color_override(5, "PaleGreen"); // Sixth bar from last added values 'values_b'.
 
         // Category C.
         let values = eggplants.into_iter().map(|i| i as f64).collect::<Vec<f64>>();
         plot.add_values(&values);
         plot.add_bar_colors_by_category("Blue");
-        plot.add_bar_color_override(1, "LightSkyBlue"); // Second bar from last added values 'values_c'.
+
+        // Override some colors.
+        plot.add_bar_color_override(0, 3, "Tomato"); // Second bar from first added values 'values_a'.
+        plot.add_bar_color_override(1, 5, "PaleGreen"); // Sixth bar from second added values 'values_b'.
+        plot.add_bar_color_override(2, 1, "LightSkyBlue"); // Second bar from last added values 'values_c'.
 
         let bin_markers: Vec<String> = weekdays.iter().map(|s| s.to_string()).collect();
         plot.set_bin_markers(&bin_markers);
@@ -766,8 +1467,7 @@ mod tests {
         plot.set_show_window_border();
         plot.set_show_plot_border();
         plot.set_show_horizontal_lines();
-        plot.set_bin_margin(15);
-
+        plot.set_bin_gap(15);
 
         let contents = plot.to_svg(1600, 1000);
         if let Err(e) = std::fs::write(&path, contents) {
@@ -789,15 +1489,27 @@ mod tests {
     }
 
     #[test]
+    fn invalid_input() {
+        let mut plot = BarPlot::new();
+        plot.add_values(&[f64::NAN]);
+        plot.to_svg(1600, 1000);
+    }
+
+    #[test]
     fn a() {
         let mut plot = BarPlot::new();
-        plot.add_values(&[5.0, 16.4, 17.1, 13.7, 8.9, 3.9, 6.3, 9.6]);
-        plot.set_scale_range(0, 20, 2);
+        // plot.add_values(&[5.0, 16.4, 17.1, 13.7, 8.9, 3.9, 6.3, 9.6]);
+        plot.add_values(&[4.1, f64::NAN, -14.0, 5.1, -18., 7.1,]);
+        plot.set_scale_range(-20, 20, 2);
         plot.set_plot_window_size(95, 85, 93, 50);
-        let svg = plot.to_svg(1600, 1000);
-        let path = Path::new("a.svg");
-        if let Err(e) = std::fs::write(&path, svg) {
-            eprintln!("Error saving plot '{}' {}", path.display(), e);
+        let markers: Vec<String> = vec!["Here".to_string(), "There".to_string(), "Everywhere".to_string()];
+        plot.set_y_axis_tick_length(10);
+        plot.set_bin_markers(&markers);
+        plot.set_negative_bars_go_down();
+        let svg: String = plot.to_svg(1600, 1000);
+
+        if let Err(e) = std::fs::write("a.svg", svg) {
+            eprintln!("Error saving plot '{}' {}", "a.svg", e);
         }
     }
 }
