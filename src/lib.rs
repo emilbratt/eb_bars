@@ -224,10 +224,12 @@ impl <'a>BarPlot<'a> {
     ///
     /// # Grouped bars
     ///
-    /// Calling this method more than once will create `groups` for the values.
+    /// Calling this method more than once will create `groups` for values of same index.
     /// This means that the first datapoint of each added dataset will be the first group,
     /// the second datapoint of each added dataset will be the second group and so on..
     /// E.g. calling this method 5 times will add groups of 5 bars in each bin.
+    /// 
+    /// # Short summary
     ///
     /// * Must be called at least once. A plot without values does not make any sense.. :)
     /// * If called multiple times, each bin will contain a group with values of the same index.
@@ -237,10 +239,10 @@ impl <'a>BarPlot<'a> {
     ///
     /// ```
     /// use eb_bars::BarPlot;
+    ///
     /// let mut plot = BarPlot::new();
     ///
     /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
-    /// // Adding more than one set of values will group the same positional values together.
     /// let oranges: Vec<f64> = vec![7., 6., 7., 16., 9.];
     /// // The first group contains 5 apples and 7 oranges.
     /// // The second one 16 and 6 respectively.
@@ -288,6 +290,7 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    ///
     /// plot.add_values(&[1., 2., 3.,]);
     ///
     /// plot.set_background_color("Black");
@@ -316,6 +319,7 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    ///
     /// plot.add_values(&[1., 2., 3.,]);
     ///
     /// plot.set_line_color("Yellow");
@@ -344,6 +348,7 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    ///
     /// plot.add_values(&[1., 2., 3.,]);
     ///
     /// plot.set_text_color("LightBlue");
@@ -372,6 +377,7 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    ///
     /// plot.add_values(&[1., 2., 3.,]);
     ///
     /// plot.set_text_color("LightBlue");
@@ -400,6 +406,7 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    ///
     /// plot.add_values(&[1., 2., 3.,]);
     ///
     /// plot.set_bar_colors_by_uniform("Green");
@@ -434,6 +441,7 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    ///
     /// plot.add_values(&[1., 2., 3.,]);
     ///
     /// // Each color represent how signifacant a value is.
@@ -481,6 +489,7 @@ impl <'a>BarPlot<'a> {
     ///
     /// ```
     /// use eb_bars::BarPlot;
+    ///
     /// let mut plot = BarPlot::new();
     ///
     /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
@@ -531,6 +540,7 @@ impl <'a>BarPlot<'a> {
     ///
     /// ```
     /// use eb_bars::BarPlot;
+    ///
     /// let mut plot = BarPlot::new();
     ///
     /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
@@ -589,6 +599,7 @@ impl <'a>BarPlot<'a> {
     ///
     /// ```
     /// use eb_bars::BarPlot;
+    ///
     /// let mut plot = BarPlot::new();
     ///
     /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
@@ -634,6 +645,7 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    ///
     /// plot.add_values(&[5.0, 16.4, 17.1, 13.7, 8.9, 3.9, 6.3, 9.6]);
     ///
     /// // Needed for horizontal (y-grid) lines.
@@ -695,6 +707,7 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    ///
     /// plot.add_values(&[1., 2., 3.,]);
     ///
     /// let width = 90; // Set width to 90%,
@@ -1259,6 +1272,7 @@ impl <'a>BarPlot<'a> {
     ///
     /// ```
     /// use eb_bars::BarPlot;
+    ///
     /// let mut plot = BarPlot::new();
     ///
     /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
@@ -1304,6 +1318,7 @@ impl <'a>BarPlot<'a> {
     ///
     /// ```
     /// use eb_bars::BarPlot;
+    ///
     /// let mut plot = BarPlot::new();
     ///
     /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
@@ -1350,6 +1365,7 @@ impl <'a>BarPlot<'a> {
     /// use eb_bars::BarPlot;
     ///
     /// let mut plot = BarPlot::new();
+    ///
     /// plot.add_values(&[1., 2., 3.,]);
     ///
     /// // Scale down the plot figure size so text can become be visible.
