@@ -85,7 +85,7 @@ mod svg;
 
 type Percentage = i16;
 
-const VERSION: &str = "0.4.3";
+const VERSION: &str = "0.5.0";
 const REPOSITORY: &str = "https://github.com/emilbratt/eb_bars";
 
 const DEFAULT_BAR_COLOR: &str = "rgb(112, 153, 182)";
