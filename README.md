@@ -17,3 +17,31 @@ Simple barchart library for Rust with a focus on customizing the chart to look n
 - having bars with negative values be drawn downwards.
 - setting a custom resolution.
 - resizing the plot/figure and move it in all directions for best fit.
+
+### Showcase
+
+Click on any of the images below to view the code.
+
+<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L133">
+    <img src="https://github.com/emilbratt/eb_bars/blob/main/image/fruit_picking.svg" width=400px></img>
+</a>
+
+<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L14">
+    <img src="https://github.com/emilbratt/eb_bars/blob/main/image/bar_colors.svg" width=400px></img>
+</a>
+
+<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L58">
+    <img src="https://github.com/emilbratt/eb_bars/blob/main/image/temperature.svg" width=400px></img>
+</a>
+
+<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L94">
+    <img src="https://github.com/emilbratt/eb_bars/blob/main/image/random_values.svg" width=400px></img>
+</a>
+
+### Getting Started
+
+For now, refer to [crate docs] for how to produce nice looking plots or simply take a look at all the [tests]. :relaxed:
+
+[tests]: https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs
+
+[crate docs]: https://docs.rs/eb_bars/latest/eb_bars/
