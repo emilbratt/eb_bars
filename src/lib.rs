@@ -624,7 +624,9 @@ impl <'a>BarPlot<'a> {
 
     /// Show horizontal grid lines.
     ///
-    /// NOTE: Call [`BarPlot::set_scale_range`] first, otherwise there are no values to base the grid on.
+    /// # Important
+    ///
+    /// Call [`BarPlot::set_scale_range`] first, otherwise there are no values to base the grid on.
     ///
     /// # Example
     ///
@@ -647,7 +649,9 @@ impl <'a>BarPlot<'a> {
 
     /// Show vertical grid lines.
     ///
-    /// NOTE: Call [`BarPlot::set_bin_markers`] first, otherwise there are no values to base the grid on.
+    /// # Important
+    ///
+    ///  Call [`BarPlot::set_bin_markers`] first, otherwise there are no values to base the grid on.
     ///
     /// # Example
     ///
@@ -1292,7 +1296,7 @@ impl <'a>BarPlot<'a> {
     /// An offset X = 50 and offset Y = 50 will roughly position the legend in the center of the canvas.
     /// More precisely, the top left corner of the legend itself will be pinned on that position.
     ///
-    /// NOTE: you might want to resize the plot window to accomodate for the legend if you want it
+    /// Note: you might want to resize the plot window to accomodate for the legend if you want it
     /// to be drawn outside the plot, otherwise it will be drawn on top of the plot figure.
     /// Check out [`BarPlot::set_plot_window_size`] for that.
     ///
