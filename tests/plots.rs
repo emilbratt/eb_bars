@@ -11,11 +11,11 @@ fn _rand_range_f64(start: i32, end_incl: i32) -> f64 {
 }
 
 #[test]
-fn side_text_and_predefined_colors() {
-    let path = Path::new("side_text_and_predefined_colors.svg");
+fn bar_colors() {
+    let path = Path::new("bar_colors.svg");
 
     let values = [3.67, 6.99, 6.25, 4.07];
-    let labels = ["A", "B", "C", "D"];
+    let labels = ["RED", "YELLOW", "BLUE", "GREEN"];
     let markers = labels.into_iter().map(|s| s.to_owned()).collect::<Vec<String>>();
 
     // Different ways to express colors :)
@@ -57,10 +57,10 @@ fn side_text_and_predefined_colors() {
 }
 
 #[test]
-fn negative_bars_go_down() {
-    let path = Path::new("negative_bars_go_down.svg");
+fn temperature() {
+    let path = Path::new("temperature.svg");
     let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    let temperatures = [-11.5, -3.5, 1.3, 5.6, 12.3, 21.0, 23.7, 22.5, 12.5, 9.3, 5.6, -2.3];
+    let recordings = [-11.5, -3.5, 1.3, 5.6, 12.3, 21.0, 23.7, 22.5, 12.5, 9.3, 5.6, -2.3];
 
     let mut plot = BarPlot::new();
     plot.set_negative_bars_go_down();
@@ -68,7 +68,7 @@ fn negative_bars_go_down() {
     plot.set_background_color("Black");
     plot.set_show_horizontal_lines();
     plot.set_bar_gap(40);
-    plot.add_values(&temperatures);
+    plot.add_values(&recordings);
 
     let min_color = "rgb(107, 235, 255)";
     let low_color = "rgb(126, 255, 165)";
@@ -93,16 +93,18 @@ fn negative_bars_go_down() {
 }
 
 #[test]
-fn marker_on_left_with_horizontal_and_vertical_grid_lines() {
-    let path = Path::new("marker_on_left_with_horizontal_and_vertical_grid_lines.svg");
+fn random_values() {
+    let path = Path::new("random_values.svg");
 
     let mut rng = rand::rng();
-    let values: [f64; 17] = core::array::from_fn(|_| rng.random_range(-50.0..50.0));
-    let markers: Vec<String> = (0..values.len()).map(|i| (i).to_string()).collect();
-
     let mut plot = BarPlot::new();
+
+    let values: [f64; 10] = core::array::from_fn(|_| rng.random_range(-45_f64..45_f64));
     plot.add_values(&values);
+
+    let markers: Vec<String> = (0..values.len()).map(|i| (i).to_string()).collect();
     plot.set_bin_markers(&markers);
+
     plot.set_font_size(130);
     plot.set_background_color("Black");
     plot.set_plot_window_size(90, 80, 83, 50);
@@ -129,8 +131,8 @@ fn marker_on_left_with_horizontal_and_vertical_grid_lines() {
 }
 
 #[test]
-fn multiple_categories() {
-    let path = Path::new("multiple_categories.svg");
+fn fruit_picking() {
+    let path = Path::new("fruit_picking.svg");
     let tomatoes = [29, 41, 64, 83, 59, 42, 65];
     let apples = [9, 51, 67, 55, 11, 93, 43];
     let eggplants = [18, 86, 13, 30, 1, 10, 58];
