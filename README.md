@@ -23,19 +23,19 @@ Simple barchart library for Rust with a focus on customizing the chart to look n
 Click on any of the images below to view the code.
 
 <a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L133">
-    <img src="https://github.com/emilbratt/eb_bars/blob/main/image/fruit_picking.svg" width=400px></img>
+    <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/fruit_picking.svg" width=400px></img>
 </a>
 
 <a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L14">
-    <img src="https://github.com/emilbratt/eb_bars/blob/main/image/bar_colors.svg" width=400px></img>
+    <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/bar_colors.svg" width=400px></img>
 </a>
 
 <a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L58">
-    <img src="https://github.com/emilbratt/eb_bars/blob/main/image/temperature.svg" width=400px></img>
+    <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/temperature.svg" width=400px></img>
 </a>
 
 <a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L94">
-    <img src="https://github.com/emilbratt/eb_bars/blob/main/image/random_values.svg" width=400px></img>
+    <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/random_values.svg" width=400px></img>
 </a>
 
 ### Getting Started
