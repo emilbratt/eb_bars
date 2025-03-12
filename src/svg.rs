@@ -199,7 +199,7 @@ impl <'a>SvgGenerator<'a> {
             };
 
             if show_horizontal_lines {
-                let tag = tag::line(x1, x2, cur_y, cur_y, &self.line_color, line_width);
+                let tag = tag::line(x1, x2, cur_y, cur_y, self.line_color, line_width);
                 self.nodes.push(tag);
             }
 
@@ -243,7 +243,7 @@ impl <'a>SvgGenerator<'a> {
             let cur_x = x1 + (scale_unit * i as f64) + marker_shift;
 
             if show_vertical_lines {
-                let tag = tag::line(cur_x, cur_x, y1, y2, &self.line_color, line_width);
+                let tag = tag::line(cur_x, cur_x, y1, y2, self.line_color, line_width);
                 self.nodes.push(tag);
             }
 

@@ -121,7 +121,7 @@ enum BarColors<'a> {
     Uniform(&'a str), // All bars are the same color.
 }
 
-impl <'a>Default for BarColors<'a> {
+impl Default for BarColors<'_> {
     fn default() -> Self {
         Self::Uniform(DEFAULT_BAR_COLOR)
     }
@@ -170,6 +170,8 @@ pub struct BarPlot<'a> {
     legend: PlotLegend<'a>,
 }
 
+// FIXME: add new with default, allow for now with attribute below..
+#[allow(clippy::new_without_default)]
 impl <'a>BarPlot<'a> {
 
     /// Instantiate a new plot.
@@ -1472,9 +1474,9 @@ impl <'a>BarPlot<'a> {
                     "Got {n_categories} categories and {n_color_vectors} color vectors.",
                 );
 
-                for i in 0..n_categories {
+                for (i, colors) in matrix.iter().enumerate() {
                     let values = self.values[i].len();
-                    let n_colors = matrix[i].len();
+                    let n_colors = colors.len();
                     assert_eq!(
                         values,
                         n_colors,
