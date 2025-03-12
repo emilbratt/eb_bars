@@ -26,7 +26,7 @@ fn bar_colors() {
     let values_b = [5.7, 3.9, 8.2, 7.0];
     let colors_b = ["Pink", "Orange", "Purple" , "Cyan"];
 
-    let labels = ["RED and Pink", "Yellow and Orange", "Blue and Purple", "Green and Cyan"];
+    let labels = ["Red and Pink", "Yellow and Orange", "Blue and Purple", "Green and Cyan"];
     let markers = labels.into_iter().map(|s| s.to_owned()).collect::<Vec<String>>();
 
     let mut plot = BarPlot::new();

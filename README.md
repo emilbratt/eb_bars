@@ -6,7 +6,7 @@ Simple barchart library for Rust with a focus on customizing the chart to look n
 - you can _only_ create barcharts and or histograms.
 - there are no external dependencies.
 - the only supported output is svg.
-- all bars are drawn with the "rect" svg element instead of for example the "path" element.
+- all bars are drawn with the _rect_ svg element instead of for example the _path_ element.
 - even your mom can use the API.
 
 ### But despite being simple you can customize your barchart by
