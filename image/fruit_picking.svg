@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with eb_bars v0.4.3 (https://github.com/emilbratt/eb_bars) -->
+
+<svg width="1600" height="1000" xmlns="http://www.w3.org/2000/svg">
+<rect x="0.000" y="0.000" width="1600.000" height="1000.000" style="fill-opacity: 1.000; fill: Black;" />
+<line x1="203.429" x2="203.429" y1="925.000" y2="934.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="middle" x="203.429" y="959.298" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Monday</text>
+<line x1="386.286" x2="386.286" y1="925.000" y2="934.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="middle" x="386.286" y="959.298" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Tuesday</text>
+<line x1="569.143" x2="569.143" y1="925.000" y2="934.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="middle" x="569.143" y="959.298" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Wednesday</text>
+<line x1="752.000" x2="752.000" y1="925.000" y2="934.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="middle" x="752.000" y="959.298" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Thursday</text>
+<line x1="934.857" x2="934.857" y1="925.000" y2="934.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="middle" x="934.857" y="959.298" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Friday</text>
+<line x1="1117.714" x2="1117.714" y1="925.000" y2="934.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="middle" x="1117.714" y="959.298" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Saturday</text>
+<line x1="1300.571" x2="1300.571" y1="925.000" y2="934.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="middle" x="1300.571" y="959.298" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Sunday</text>
+<line x1="112.000" x2="1392.000" y1="925.000" y2="925.000" stroke="White" stroke-width="1.265" />
+<line x1="98.560" x2="112.000" y1="925.000" y2="925.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="end" x="91.332" y="932.228" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">0</text>
+<line x1="112.000" x2="1392.000" y1="840.000" y2="840.000" stroke="White" stroke-width="1.265" />
+<line x1="98.560" x2="112.000" y1="840.000" y2="840.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="end" x="91.332" y="847.228" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">10</text>
+<line x1="112.000" x2="1392.000" y1="755.000" y2="755.000" stroke="White" stroke-width="1.265" />
+<line x1="98.560" x2="112.000" y1="755.000" y2="755.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="end" x="91.332" y="762.228" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">20</text>
+<line x1="112.000" x2="1392.000" y1="670.000" y2="670.000" stroke="White" stroke-width="1.265" />
+<line x1="98.560" x2="112.000" y1="670.000" y2="670.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="end" x="91.332" y="677.228" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">30</text>
+<line x1="112.000" x2="1392.000" y1="585.000" y2="585.000" stroke="White" stroke-width="1.265" />
+<line x1="98.560" x2="112.000" y1="585.000" y2="585.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="end" x="91.332" y="592.228" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">40</text>
+<line x1="112.000" x2="1392.000" y1="500.000" y2="500.000" stroke="White" stroke-width="1.265" />
+<line x1="98.560" x2="112.000" y1="500.000" y2="500.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="end" x="91.332" y="507.228" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">50</text>
+<line x1="112.000" x2="1392.000" y1="415.000" y2="415.000" stroke="White" stroke-width="1.265" />
+<line x1="98.560" x2="112.000" y1="415.000" y2="415.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="end" x="91.332" y="422.228" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">60</text>
+<line x1="112.000" x2="1392.000" y1="330.000" y2="330.000" stroke="White" stroke-width="1.265" />
+<line x1="98.560" x2="112.000" y1="330.000" y2="330.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="end" x="91.332" y="337.228" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">70</text>
+<line x1="112.000" x2="1392.000" y1="245.000" y2="245.000" stroke="White" stroke-width="1.265" />
+<line x1="98.560" x2="112.000" y1="245.000" y2="245.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="end" x="91.332" y="252.228" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">80</text>
+<line x1="112.000" x2="1392.000" y1="160.000" y2="160.000" stroke="White" stroke-width="1.265" />
+<line x1="98.560" x2="112.000" y1="160.000" y2="160.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="end" x="91.332" y="167.228" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">90</text>
+<line x1="112.000" x2="1392.000" y1="75.000" y2="75.000" stroke="White" stroke-width="1.265" />
+<line x1="98.560" x2="112.000" y1="75.000" y2="75.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
+<text text-anchor="end" x="91.332" y="82.228" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">100</text>
+<text text-anchor="start" transform="translate(40.649, 847.727) rotate(270)" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Total harvested.</text>
+<text text-anchor="start" x="228.364" y="42.649" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">The highest value from each category have its color 'overriden' with a brighter color</text>
+<line x1="0.000" x2="0.000" y1="0.000" y2="1000.000" stroke="White" stroke-width="2.530" />
+<line x1="0.000" x2="1600.000" y1="0.000" y2="0.000" stroke="White" stroke-width="2.530" />
+<line x1="1600.000" x2="1600.000" y1="0.000" y2="1000.000" stroke="White" stroke-width="2.530" />
+<line x1="0.000" x2="1600.000" y1="1000.000" y2="1000.000" stroke="White" stroke-width="2.530" />
+<rect x="125.714" y="678.500" width="51.810" height="246.500" style="fill-opacity: 1.000; fill: Red;" />
+<rect x="308.571" y="576.500" width="51.810" height="348.500" style="fill-opacity: 1.000; fill: Red;" />
+<rect x="491.429" y="381.000" width="51.810" height="544.000" style="fill-opacity: 1.000; fill: Red;" />
+<rect x="674.286" y="219.500" width="51.810" height="705.500" style="fill-opacity: 1.000; fill: Tomato;" />
+<rect x="857.143" y="423.500" width="51.810" height="501.500" style="fill-opacity: 1.000; fill: Red;" />
+<rect x="1040.000" y="568.000" width="51.810" height="357.000" style="fill-opacity: 1.000; fill: Red;" />
+<rect x="1222.857" y="372.500" width="51.810" height="552.500" style="fill-opacity: 1.000; fill: Red;" />
+<rect x="177.524" y="848.500" width="51.810" height="76.500" style="fill-opacity: 1.000; fill: LawnGreen;" />
+<rect x="360.381" y="491.500" width="51.810" height="433.500" style="fill-opacity: 1.000; fill: LawnGreen;" />
+<rect x="543.238" y="355.500" width="51.810" height="569.500" style="fill-opacity: 1.000; fill: LawnGreen;" />
+<rect x="726.095" y="457.500" width="51.810" height="467.500" style="fill-opacity: 1.000; fill: LawnGreen;" />
+<rect x="908.952" y="831.500" width="51.810" height="93.500" style="fill-opacity: 1.000; fill: LawnGreen;" />
+<rect x="1091.810" y="134.500" width="51.810" height="790.500" style="fill-opacity: 1.000; fill: PaleGreen;" />
+<rect x="1274.667" y="559.500" width="51.810" height="365.500" style="fill-opacity: 1.000; fill: LawnGreen;" />
+<rect x="229.333" y="772.000" width="51.810" height="153.000" style="fill-opacity: 1.000; fill: Blue;" />
+<rect x="412.190" y="194.000" width="51.810" height="731.000" style="fill-opacity: 1.000; fill: LightSkyBlue;" />
+<rect x="595.048" y="814.500" width="51.810" height="110.500" style="fill-opacity: 1.000; fill: Blue;" />
+<rect x="777.905" y="670.000" width="51.810" height="255.000" style="fill-opacity: 1.000; fill: Blue;" />
+<rect x="960.762" y="916.500" width="51.810" height="8.500" style="fill-opacity: 1.000; fill: Blue;" />
+<rect x="1143.619" y="840.000" width="51.810" height="85.000" style="fill-opacity: 1.000; fill: Blue;" />
+<rect x="1326.476" y="432.000" width="51.810" height="493.000" style="fill-opacity: 1.000; fill: Blue;" />
+<rect x="1418.053" y="194.702" width="25.298" height="25.298" style="fill-opacity: 1.000; fill: Red;" />
+<text text-anchor="start" x="1456.000" y="216.205" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Tomatoes</text>
+<rect x="1418.053" y="225.060" width="25.298" height="25.298" style="fill-opacity: 1.000; fill: LawnGreen;" />
+<text text-anchor="start" x="1456.000" y="246.563" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Apples</text>
+<rect x="1418.053" y="255.418" width="25.298" height="25.298" style="fill-opacity: 1.000; fill: Blue;" />
+<text text-anchor="start" x="1456.000" y="276.921" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Eggplants</text>
+<line x1="112.000" x2="112.000" y1="75.000" y2="925.000" stroke="White" stroke-width="1.265" />
+<line x1="112.000" x2="1392.000" y1="75.000" y2="75.000" stroke="White" stroke-width="1.265" />
+<line x1="1392.000" x2="1392.000" y1="75.000" y2="925.000" stroke="White" stroke-width="1.265" />
+<line x1="112.000" x2="1392.000" y1="925.000" y2="925.000" stroke="White" stroke-width="1.265" />
+</svg>

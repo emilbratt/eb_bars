@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with eb_bars v0.4.3 (https://github.com/emilbratt/eb_bars) -->
+
+<svg width="1600" height="1000" xmlns="http://www.w3.org/2000/svg">
+<rect x="0.000" y="0.000" width="1600.000" height="1000.000" style="fill-opacity: 1.000; fill: Black;" />
+<line x1="128.000" x2="128.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="128.000" x2="128.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="128.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">0</text>
+<line x1="164.000" x2="164.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="164.000" x2="164.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="200.000" x2="200.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="200.000" x2="200.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="200.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">2</text>
+<line x1="236.000" x2="236.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="236.000" x2="236.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="272.000" x2="272.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="272.000" x2="272.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="272.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">4</text>
+<line x1="308.000" x2="308.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="308.000" x2="308.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="344.000" x2="344.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="344.000" x2="344.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="344.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">6</text>
+<line x1="380.000" x2="380.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="380.000" x2="380.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="416.000" x2="416.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="416.000" x2="416.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="416.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">8</text>
+<line x1="452.000" x2="452.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="452.000" x2="452.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="488.000" x2="488.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="488.000" x2="488.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="488.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">10</text>
+<line x1="524.000" x2="524.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="524.000" x2="524.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="560.000" x2="560.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="560.000" x2="560.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="560.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">12</text>
+<line x1="596.000" x2="596.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="596.000" x2="596.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="632.000" x2="632.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="632.000" x2="632.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="632.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">14</text>
+<line x1="668.000" x2="668.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="668.000" x2="668.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="704.000" x2="704.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="704.000" x2="704.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="704.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">16</text>
+<line x1="740.000" x2="740.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="740.000" x2="740.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="776.000" x2="776.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="776.000" x2="776.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="776.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">18</text>
+<line x1="812.000" x2="812.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="812.000" x2="812.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="848.000" x2="848.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="848.000" x2="848.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="848.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">20</text>
+<line x1="884.000" x2="884.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="884.000" x2="884.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="920.000" x2="920.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="920.000" x2="920.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="920.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">22</text>
+<line x1="956.000" x2="956.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="956.000" x2="956.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="992.000" x2="992.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="992.000" x2="992.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="992.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">24</text>
+<line x1="1028.000" x2="1028.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1028.000" x2="1028.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1064.000" x2="1064.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1064.000" x2="1064.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="1064.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">26</text>
+<line x1="1100.000" x2="1100.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1100.000" x2="1100.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1136.000" x2="1136.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1136.000" x2="1136.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="1136.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">28</text>
+<line x1="1172.000" x2="1172.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1172.000" x2="1172.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1208.000" x2="1208.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1208.000" x2="1208.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="1208.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">30</text>
+<line x1="1244.000" x2="1244.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1244.000" x2="1244.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1280.000" x2="1280.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1280.000" x2="1280.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="1280.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">32</text>
+<line x1="1316.000" x2="1316.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1316.000" x2="1316.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1352.000" x2="1352.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1352.000" x2="1352.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="1352.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">34</text>
+<line x1="1388.000" x2="1388.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1388.000" x2="1388.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1424.000" x2="1424.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1424.000" x2="1424.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="1424.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">36</text>
+<line x1="1460.000" x2="1460.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1460.000" x2="1460.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1496.000" x2="1496.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1496.000" x2="1496.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="middle" x="1496.000" y="973.388" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">38</text>
+<line x1="1532.000" x2="1532.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1532.000" x2="1532.000" y1="915.000" y2="940.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="128.000" x2="1568.000" y1="915.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="89.600" x2="128.000" y1="915.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="end" x="80.204" y="924.396" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">-50</text>
+<line x1="128.000" x2="1568.000" y1="832.000" y2="832.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="89.600" x2="128.000" y1="832.000" y2="832.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="end" x="80.204" y="841.396" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">-40</text>
+<line x1="128.000" x2="1568.000" y1="749.000" y2="749.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="89.600" x2="128.000" y1="749.000" y2="749.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="end" x="80.204" y="758.396" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">-30</text>
+<line x1="128.000" x2="1568.000" y1="666.000" y2="666.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="89.600" x2="128.000" y1="666.000" y2="666.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="end" x="80.204" y="675.396" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">-20</text>
+<line x1="128.000" x2="1568.000" y1="583.000" y2="583.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="89.600" x2="128.000" y1="583.000" y2="583.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="end" x="80.204" y="592.396" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">-10</text>
+<line x1="128.000" x2="1568.000" y1="500.000" y2="500.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="89.600" x2="128.000" y1="500.000" y2="500.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="end" x="80.204" y="509.396" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">0</text>
+<line x1="128.000" x2="1568.000" y1="417.000" y2="417.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="89.600" x2="128.000" y1="417.000" y2="417.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="end" x="80.204" y="426.396" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">10</text>
+<line x1="128.000" x2="1568.000" y1="334.000" y2="334.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="89.600" x2="128.000" y1="334.000" y2="334.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="end" x="80.204" y="343.396" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">20</text>
+<line x1="128.000" x2="1568.000" y1="251.000" y2="251.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="89.600" x2="128.000" y1="251.000" y2="251.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="end" x="80.204" y="260.396" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">30</text>
+<line x1="128.000" x2="1568.000" y1="168.000" y2="168.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="89.600" x2="128.000" y1="168.000" y2="168.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="end" x="80.204" y="177.396" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">40</text>
+<line x1="128.000" x2="1568.000" y1="85.000" y2="85.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="89.600" x2="128.000" y1="85.000" y2="85.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<text text-anchor="end" x="80.204" y="94.396" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">50</text>
+<text text-anchor="start" x="258.909" y="46.194" fill="rgb(197, 197, 197)" font-size="32.888" font-weight="500" font-family="'Open Sans', arial, sans-serif">A set of random values where greatest is light blue and lowest is red.</text>
+<rect x="129.800" y="610.737" width="32.400" height="304.263" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="165.800" y="502.419" width="32.400" height="412.581" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="201.800" y="164.511" width="32.400" height="750.489" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="237.800" y="755.086" width="32.400" height="159.914" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="273.800" y="739.322" width="32.400" height="175.678" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="309.800" y="163.129" width="32.400" height="751.871" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="345.800" y="327.983" width="32.400" height="587.017" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="381.800" y="667.863" width="32.400" height="247.137" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="417.800" y="300.965" width="32.400" height="614.035" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="453.800" y="633.442" width="32.400" height="281.558" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="489.800" y="564.802" width="32.400" height="350.198" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="525.800" y="848.116" width="32.400" height="66.884" style="fill-opacity: 1.000; fill: rgb(250, 107, 91);" />
+<rect x="561.800" y="685.462" width="32.400" height="229.538" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="597.800" y="471.506" width="32.400" height="443.494" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="633.800" y="503.397" width="32.400" height="411.603" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="669.800" y="171.084" width="32.400" height="743.916" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="705.800" y="215.791" width="32.400" height="699.209" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="741.800" y="655.027" width="32.400" height="259.973" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="777.800" y="202.113" width="32.400" height="712.887" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="813.800" y="787.043" width="32.400" height="127.957" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="849.800" y="761.969" width="32.400" height="153.031" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="885.800" y="434.312" width="32.400" height="480.688" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="921.800" y="469.345" width="32.400" height="445.655" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="957.800" y="455.388" width="32.400" height="459.612" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="993.800" y="169.403" width="32.400" height="745.597" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="1029.800" y="792.112" width="32.400" height="122.888" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="1065.800" y="149.714" width="32.400" height="765.286" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="1101.800" y="688.736" width="32.400" height="226.264" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="1137.800" y="620.278" width="32.400" height="294.722" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="1173.800" y="199.733" width="32.400" height="715.267" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="1209.800" y="452.903" width="32.400" height="462.097" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="1245.800" y="233.558" width="32.400" height="681.442" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="1281.800" y="690.830" width="32.400" height="224.170" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="1317.800" y="136.045" width="32.400" height="778.955" style="fill-opacity: 1.000; fill: rgb(107, 235, 255);" />
+<rect x="1353.800" y="773.504" width="32.400" height="141.496" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="1389.800" y="206.651" width="32.400" height="708.349" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="1425.800" y="190.475" width="32.400" height="724.525" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="1461.800" y="209.535" width="32.400" height="705.465" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
+<rect x="1497.800" y="627.151" width="32.400" height="287.849" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<rect x="1533.800" y="582.361" width="32.400" height="332.639" style="fill-opacity: 1.000; fill: rgb(255, 233, 133);" />
+<line x1="128.000" x2="128.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="128.000" x2="1568.000" y1="85.000" y2="85.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="1568.000" x2="1568.000" y1="85.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+<line x1="128.000" x2="1568.000" y1="915.000" y2="915.000" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
+</svg>
