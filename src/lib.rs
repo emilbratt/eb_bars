@@ -218,8 +218,6 @@ impl <'a>BarPlot<'a> {
     /// If you have a `Vec<u32>`, make sure to convert it to a `Vec<f64>` before passing it.
     /// Then you can pass the vector as a reference.
     ///
-    /// There must be at least one set of values to produce a plot. :)
-    ///
     /// # This method is required.
     ///
     /// There must be at least one set of values to produce a plot. :)
@@ -242,17 +240,17 @@ impl <'a>BarPlot<'a> {
     /// let mut plot = BarPlot::new();
     ///
     /// let apples: Vec<f64> = vec![5., 16., 17., 8., 3.];
+    /// // Adding more than one set of values will group the same positional values together.
     /// let oranges: Vec<f64> = vec![7., 6., 7., 16., 9.];
+    /// // The first group contains 5 apples and 7 oranges.
+    /// // The second one 16 and 6 respectively.
+    /// // The last group contains 3 apples and 9 oranges.
     ///
-    /// // Add a set of values.
+    /// // Add the first set of values.
     /// plot.add_values(&apples);
     ///
-    /// // Adding a second set of values. Now each group contains two values.
+    /// // Add the second set of values.
     /// plot.add_values(&oranges);
-    ///
-    /// // The first group contains 5 apples and 7 oranges.
-    /// // The next one 16 and 6.
-    /// // The last group contains 3 apples and 9 oranges.
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
@@ -973,11 +971,20 @@ impl <'a>BarPlot<'a> {
         self.x_axis_tick_length = Some(p);
     }
 
-    /// Anchor bars at zero so that all negative values point downwards.
+    /// Anchor bars at zero instead of the floor.
+    /// This will make negative bars grow downwards.
+    /// If your dataset contains only negative values, then this might not make sense to use.
+    /// Rather, `use this when your dataset is likely to contain both positive and negative values`.
+    ///
+    /// An area where it makes sens is when visualizing temperature differences. :)
     ///
     /// By default, bars are anchored at the floor of the barchart.
     /// However, you might want negative values to stand out by having them point downwards.
-    /// This method will apply that configuration for you.
+    /// This method will apply anchoring bars at the zero line instead of the floor.
+    ///
+    /// # Important
+    /// Call [`BarPlot::set_scale_range`] first, and make sure to set `min < 0` and `max >= 0`.
+    /// Otherwise, you ~might~ will get a barchart that looks goofy. Consider yourself warned.
     ///
     /// # Example
     ///
@@ -989,7 +996,7 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&[5.0, -16.4, 17.1, 13.7, 8.9, 3.9, -6.3, 9.6]);
     ///
     /// // Adding some extra tweaks that makes this example more clear.
-    /// let min = 0;
+    /// let min = -20;
     /// let max = 20;
     /// let step = 2;
     /// plot.set_scale_range(min, max, step);
