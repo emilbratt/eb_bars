@@ -1,6 +1,6 @@
-# EB Bars - It's a Super Simple Barplot Library 🦀
+# EB Bars - It's a Super Simple Barchart Library 🦀
 
-Simple barchart library for Rust with a focus on customizing the chart to look nice.
+* Simple and good looking barcharts for Rust
 
 ### So Simple that
 - you can _only_ create barcharts and or histograms.
@@ -16,7 +16,7 @@ Simple barchart library for Rust with a focus on customizing the chart to look n
 - showing or hiding grid lines (both horizontal and vertical).
 - having bars with negative values be drawn downwards.
 - setting a custom resolution.
-- resizing the plot/figure and move it in all directions for best fit.
+- resizing the chart and move it in all directions for best fit.
 
 ### Showcase
 
@@ -40,7 +40,7 @@ Click on any of the images below to view the code.
 
 ### Getting Started
 
-For now, refer to [crate docs] for how to produce nice looking plots or simply take a look at all the [tests]. :relaxed:
+For now, refer to [crate docs] for how to produce nice looking plots or simply take a look at all the [tests].
 
 [tests]: https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs
 

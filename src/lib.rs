@@ -26,8 +26,8 @@
 //!
 //! # But the above "Quick Start" looks bad and boring
 //!
-//! As the above example stands, the largest number will have its bar take up the whole window.
-//! Also, the lowest value will be a bar of zero length e.g. no bar at all.
+//! As the above example stands, the largest number will have its bar take up the full height of the window.
+//! Also, the lowest value will be a bar of zero height e.g. no bar at all.
 //! The problem is that we have not set a specific scaling for the values.
 //! This means that the bars are all scaled based on the minimum and maximum value.
 //! Let's improve it a bit in the next section by adding a scale.

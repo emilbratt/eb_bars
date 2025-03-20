@@ -52,10 +52,6 @@
 <text text-anchor="end" x="91.332" y="82.228" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">100</text>
 <text text-anchor="start" transform="translate(40.649, 847.727) rotate(270)" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Total harvested.</text>
 <text text-anchor="start" x="228.364" y="42.649" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">The highest value from each category have its color 'overriden' with a brighter color</text>
-<line x1="0.000" x2="0.000" y1="0.000" y2="1000.000" stroke="White" stroke-width="2.530" />
-<line x1="0.000" x2="1600.000" y1="0.000" y2="0.000" stroke="White" stroke-width="2.530" />
-<line x1="1600.000" x2="1600.000" y1="0.000" y2="1000.000" stroke="White" stroke-width="2.530" />
-<line x1="0.000" x2="1600.000" y1="1000.000" y2="1000.000" stroke="White" stroke-width="2.530" />
 <rect x="125.714" y="678.500" width="51.810" height="246.500" style="fill-opacity: 1.000; fill: Red;" />
 <rect x="308.571" y="576.500" width="51.810" height="348.500" style="fill-opacity: 1.000; fill: Red;" />
 <rect x="491.429" y="381.000" width="51.810" height="544.000" style="fill-opacity: 1.000; fill: Red;" />

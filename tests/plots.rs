@@ -181,7 +181,6 @@ fn fruit_picking() {
     plot.set_x_axis_tick_length(12);
     plot.set_y_axis_tick_length(12);
     plot.set_bin_markers_middle();
-    plot.set_show_window_border();
     plot.set_show_plot_border();
     plot.set_show_horizontal_lines();
     plot.set_bin_gap(15);
