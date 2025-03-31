@@ -1,7 +1,7 @@
 [package]
 name = "eb_bars"
 version = "0.5.1"
-edition = "2021"
+edition = "2024"
 
 description = "Tiny plot library for creating barcharts and histograms"
 readme = "README.md"
