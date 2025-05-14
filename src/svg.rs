@@ -13,7 +13,6 @@ use crate::{
     REPOSITORY,
 };
 
-const LF: char = '\n';
 const DEFAULT_SVG_SIZE: (u32, u32) = (1600, 1000);
 
 enum Side {
@@ -388,17 +387,32 @@ impl SvgGenerator {
     }
 
     fn generate_svg(&self) -> String {
-        let doc_declaration = r#"<?xml version="1.0" encoding="UTF-8" standalone="no"?>"#;
-        let created_with = format!("<!-- Created with eb_bars v{VERSION} ({REPOSITORY}) -->");
-        let svg_open = format!(
-            r#"<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">"#,
-            width = self.get_svg_width(),
-            height = self.get_svg_height(),
-        );
-        let svg_content = self.nodes.concat();
-        let svg_close = "</svg>";
+        let mut svg = String::with_capacity(200*200);
 
-        format!("{doc_declaration}{LF}{created_with}{LF}{LF}{svg_open}{LF}{svg_content}{svg_close}{LF}")
+        svg.push_str(
+            format!(r#"<?xml version="1.0" encoding="UTF-8" standalone="no"?>"#).as_str()
+        );
+        svg.push('\n');
+
+        svg.push_str(
+            format!("<!-- Created with eb_bars v{VERSION} ({REPOSITORY}) -->").as_str()
+        );
+        svg.push_str("\n\n");
+
+        svg.push_str(
+            format!(
+                r#"<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">"#,
+                width = self.get_svg_width(),
+                height = self.get_svg_height(),
+            ).as_str()
+        );
+        svg.push('\n');
+
+        svg.push_str(self.nodes.concat().as_str());
+
+        svg.push_str("</svg>\n");
+
+        svg
     }
 }
 

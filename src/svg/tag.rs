@@ -1,4 +1,4 @@
-use super::LF;
+const LF: char = '\n';
 
 const FONT_FAMILY: &str = r#"font-family="'Open Sans', arial, sans-serif""#;
 const FONT_WEIGHT: &str = r#"font-weight="500""#;
