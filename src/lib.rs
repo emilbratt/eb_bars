@@ -85,7 +85,7 @@ mod svg;
 
 type Percentage = i16;
 
-const VERSION: &str = "0.5.2";
+const VERSION: &str = "0.5.3";
 const REPOSITORY: &str = "https://github.com/emilbratt/eb_bars";
 
 const DEFAULT_SIZE: (u32, u32) = (1600, 1000);
