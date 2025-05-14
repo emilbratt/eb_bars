@@ -88,15 +88,17 @@ type Percentage = i16;
 const VERSION: &str = "0.5.2";
 const REPOSITORY: &str = "https://github.com/emilbratt/eb_bars";
 
+const DEFAULT_SIZE: (u32, u32) = (1600, 1000);
+
 const DEFAULT_BAR_COLOR: &str = "rgb(112, 153, 182)";
 const DEFAULT_BASE_COLOR: &str = "rgb(197, 197, 197)";
-const DEFAULT_BIN_GAP: Percentage = 10;
 const DEFAULT_BAR_GAP: Percentage = 0;
+const DEFAULT_BIN_GAP: Percentage = 10;
 
-const DEFAULT_TICK_LENGTH: Percentage = 10;
 const DEFAULT_FONT_SIZE: Percentage = 100;
-const DEFAULT_TEXT_SIDE_OFFSET: Percentage = 35;
 const DEFAULT_LEGEND_POSITION: (Percentage, Percentage) = (90, 20);
+const DEFAULT_TEXT_SIDE_OFFSET: Percentage = 35;
+const DEFAULT_TICK_LENGTH: Percentage = 10;
 
 
 #[derive(Debug, Default)]
@@ -114,17 +116,52 @@ struct PlotLegend<'a> {
 }
 
 #[derive(Debug)]
-enum BarColors<'a> {
+enum BarColorLayout<'a> {
     Category(Vec<&'a str>), // Each category has its own color.
     Indexed(Vec<Vec<&'a str>>), // Every bar has its own selected color.
     Threshold((&'a str, &'a str, &'a str, &'a str)), // Every bar is given its color based on its value.
     Uniform(&'a str), // All bars are the same color.
 }
 
-impl Default for BarColors<'_> {
+impl Default for BarColorLayout<'_> {
     fn default() -> Self {
         Self::Uniform(DEFAULT_BAR_COLOR)
     }
+}
+
+#[derive(Debug, Default)]
+struct BarColors<'a> {
+    layout: BarColorLayout<'a>,
+    overrides: Vec<(usize, usize, &'a str)>,
+}
+
+#[derive(Debug)]
+struct Colors<'a> {
+    background: Option<&'a str>,
+    bars: BarColors<'a>,
+    line: &'a str,
+    text: &'a str,
+    tick: &'a str,
+}
+
+impl Default for Colors<'_> {
+    fn default() -> Self {
+        Self {
+            background: None,
+            bars: BarColors::default(),
+            line: DEFAULT_BASE_COLOR,
+            text: DEFAULT_BASE_COLOR,
+            tick: DEFAULT_BASE_COLOR,
+        }
+    }
+}
+
+#[derive(Debug, Default)]
+struct Show {
+    window_border: bool,
+    plot_border: bool,
+    horizontal_lines: bool,
+    vertical_lines: bool,
 }
 
 #[derive(Debug, Default)]
@@ -143,31 +180,44 @@ struct PlotText<'a> {
 }
 
 #[derive(Debug)]
+struct PlotLayout {
+    bar_gap: Percentage,
+    bin_gap: Percentage,
+    bin_marker_position: BinMarkerPosition,
+    font_size: Percentage,
+    plot_window_scale: Option<(Percentage, Percentage, Percentage, Percentage)>,
+    scale_range: Option<(i64, i64, usize)>,
+    x_axis_tick_length: Percentage,
+    y_axis_tick_length: Percentage,
+    negative_bars_go_down: bool,
+}
+
+impl Default for PlotLayout {
+    fn default() -> Self {
+        Self {
+            bin_gap: DEFAULT_BIN_GAP,
+            bar_gap: DEFAULT_BAR_GAP,
+            bin_marker_position: BinMarkerPosition::default(),
+            font_size: DEFAULT_FONT_SIZE,
+            plot_window_scale: None,
+            scale_range: None,
+            x_axis_tick_length: DEFAULT_TICK_LENGTH,
+            y_axis_tick_length: DEFAULT_TICK_LENGTH,
+            negative_bars_go_down: false,
+        }
+    }
+}
+
+#[derive(Debug)]
 pub struct BarPlot<'a> {
     values: Vec<&'a [f64]>,
-    bin_markers: Option<&'a [String]>,
-    scale_range: Option<(i64, i64, usize)>,
-    size: Option<(u32, u32)>,
-    plot_window_scale: Option<(Percentage, Percentage, Percentage, Percentage)>,
-    x_axis_tick_length: Option<Percentage>,
-    y_axis_tick_length: Option<Percentage>,
-    negative_bars_go_down: bool,
-    show_window_border: bool,
-    show_plot_border: bool,
-    show_horizontal_lines: bool,
-    show_vertical_lines: bool,
-    background_color: Option<&'a str>,
-    line_color: &'a str,
-    text_color: &'a str,
-    tick_color: &'a str,
-    bin_gap: Percentage,
-    bar_gap: Percentage,
-    plot_text: PlotText<'a>,
-    font_size: Percentage,
-    bar_color_variant: BarColors<'a>,
-    bar_colors_override: Vec<(usize, usize, &'a str)>,
-    bin_marker_position: BinMarkerPosition,
+    markers: Option<&'a [String]>,
+    size: (u32, u32),
+    colors: Colors<'a>,
     legend: PlotLegend<'a>,
+    layout: PlotLayout,
+    show: Show,
+    plot_text: PlotText<'a>,
 }
 
 // FIXME: add new with default, allow for now with attribute below..
@@ -186,29 +236,13 @@ impl <'a>BarPlot<'a> {
     pub fn new() -> Self {
         Self {
             values: Vec::new(),
-            bin_markers: None,
-            scale_range: None,
-            size: None,
-            plot_window_scale: None,
-            x_axis_tick_length: None,
-            y_axis_tick_length: None,
-            negative_bars_go_down: false,
-            show_window_border: false,
-            show_plot_border: false,
-            show_horizontal_lines: false,
-            show_vertical_lines: false,
-            background_color: None,
-            line_color: DEFAULT_BASE_COLOR,
-            text_color: DEFAULT_BASE_COLOR,
-            tick_color: DEFAULT_BASE_COLOR,
-            bin_gap: DEFAULT_BIN_GAP,
-            bar_gap: DEFAULT_BAR_GAP,
-            plot_text: PlotText::default(),
-            font_size: DEFAULT_FONT_SIZE,
-            bar_color_variant: BarColors::default(),
-            bar_colors_override: Vec::new(),
-            bin_marker_position: BinMarkerPosition::default(),
+            markers: None,
+            size: DEFAULT_SIZE,
+            colors: Colors::default(),
             legend: PlotLegend::default(),
+            layout: PlotLayout::default(),
+            show: Show::default(),
+            plot_text: PlotText::default(),
         }
     }
 
@@ -230,7 +264,7 @@ impl <'a>BarPlot<'a> {
     /// This means that the first datapoint of each added dataset will be the first group,
     /// the second datapoint of each added dataset will be the second group and so on..
     /// E.g. calling this method 5 times will add groups of 5 bars in each bin.
-    /// 
+    ///
     /// # Short summary
     ///
     /// * Must be called at least once. A plot without values does not make any sense.. :)
@@ -300,7 +334,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_background_color(&mut self, color: &'a str) {
-        self.background_color = Some(color);
+        self.colors.background = Some(color);
     }
 
     /// Set color for the lines.
@@ -329,7 +363,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_line_color(&mut self, color: &'a str) {
-        self.line_color = color;
+        self.colors.line = color;
     }
 
     /// Set color for text/numbers.
@@ -358,7 +392,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_text_color(&mut self, color: &'a str) {
-        self.text_color = color;
+        self.colors.text = color;
     }
 
     /// Set color for x-ticks and y-ticks.
@@ -387,7 +421,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_tick_color(&mut self, color: &'a str) {
-        self.tick_color = color;
+        self.colors.tick = color;
     }
 
     /// Set a single color for all bars.
@@ -416,7 +450,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_bar_colors_by_uniform(&mut self, color: &'a str) {
-        self.bar_color_variant = BarColors::Uniform(color);
+        self.colors.bars.layout = BarColorLayout::Uniform(color);
     }
 
     /// Set bar colors by threshold.
@@ -457,7 +491,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_bar_colors_by_threshold(&mut self, min: &'a str, low: &'a str, high: &'a str, max: &'a str) {
-        self.bar_color_variant = BarColors::Threshold((min, low, high, max));
+        self.colors.bars.layout = BarColorLayout::Threshold((min, low, high, max));
     }
 
     /// Add color to last added values.
@@ -510,10 +544,10 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn add_bar_colors_by_category(&mut self, color: &'a str) {
-        if let BarColors::Category(v) = &mut self.bar_color_variant {
+        if let BarColorLayout::Category(v) = &mut self.colors.bars.layout {
             v.push(color);
         } else {
-            self.bar_color_variant = BarColors::Category(vec![color]);
+            self.colors.bars.layout = BarColorLayout::Category(vec![color]);
         }
     }
 
@@ -563,10 +597,10 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn add_bar_colors_from_vec(&mut self, colors: Vec<&'a str>) {
-        if let BarColors::Indexed(v) = &mut self.bar_color_variant {
+        if let BarColorLayout::Indexed(v) = &mut self.colors.bars.layout {
             v.push(colors);
         } else {
-            self.bar_color_variant = BarColors::Indexed(vec![colors]);
+            self.colors.bars.layout = BarColorLayout::Indexed(vec![colors]);
         }
     }
 
@@ -632,7 +666,7 @@ impl <'a>BarPlot<'a> {
             !self.values.is_empty(),
             "Can't override bar '{bar}' with color '{color}', because no bars (values) have been added yet."
         );
-        self.bar_colors_override.push((category, bar, color));
+        self.colors.bars.overrides.push((category, bar, color));
     }
 
     /// Show horizontal grid lines.
@@ -658,7 +692,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_show_horizontal_lines(&mut self) {
-        self.show_horizontal_lines = true;
+        self.show.horizontal_lines = true;
     }
 
     /// Show vertical grid lines.
@@ -686,7 +720,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_show_vertical_lines(&mut self) {
-        self.show_vertical_lines = true;
+        self.show.vertical_lines = true;
     }
 
     /// Set size of the barplot size (relative to the canvas/frame).
@@ -730,7 +764,7 @@ impl <'a>BarPlot<'a> {
         assert!(x_length <= 100 && x_offset <= 100, "plot window width cannot exceed 100%");
         assert!(y_length <= 100 && y_offset <= 100, "plot window height cannot exceed 100%");
 
-        self.plot_window_scale = Some((x_length, x_offset, y_length, y_offset));
+        self.layout.plot_window_scale = Some((x_length, x_offset, y_length, y_offset));
     }
 
     /// Set a scale for the barchart.
@@ -759,7 +793,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_scale_range(&mut self, min: i64, max: i64, step: u64) {
-        self.scale_range = Some((min, max, step as usize));
+        self.layout.scale_range = Some((min, max, step as usize));
     }
 
     /// Set the labels and markers for each bin/bucket on the x-axis.
@@ -790,8 +824,8 @@ impl <'a>BarPlot<'a> {
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
-    pub fn set_bin_markers(&mut self, bin_markers: &'a [String]) {
-        self.bin_markers = Some(bin_markers);
+    pub fn set_bin_markers(&mut self, markers: &'a [String]) {
+        self.markers = Some(markers);
     }
 
     /// Place the bin markers at the middle of each bin/bucket instead of to the left.
@@ -819,7 +853,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_bin_markers_middle(&mut self) {
-        self.bin_marker_position = BinMarkerPosition::Middle;
+        self.layout.bin_marker_position = BinMarkerPosition::Middle;
     }
 
     /// Place the bin markers to the left of each bin/bucket.
@@ -851,7 +885,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_bin_markers_left(&mut self) {
-        self.bin_marker_position = BinMarkerPosition::Left;
+        self.layout.bin_marker_position = BinMarkerPosition::Left;
     }
 
     /// Place the bin markers to the right of each bin/bucket instead of to the left.
@@ -879,7 +913,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_bin_markers_right(&mut self) {
-        self.bin_marker_position = BinMarkerPosition::Right;
+        self.layout.bin_marker_position = BinMarkerPosition::Right;
     }
 
     /// Introduce a `gap` between every bar.
@@ -907,7 +941,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_bar_gap(&mut self, gap: Percentage) {
-        self.bar_gap = gap;
+        self.layout.bar_gap = gap;
     }
 
     /// Introduce a `gap` between every bin/bucket.
@@ -935,7 +969,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_bin_gap(&mut self, gap: Percentage) {
-        self.bin_gap = gap;
+        self.layout.bin_gap = gap;
     }
 
     /// Set length for ticks on the y axis.
@@ -961,7 +995,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_y_axis_tick_length(&mut self, p: Percentage) {
-        self.y_axis_tick_length = Some(p);
+        self.layout.y_axis_tick_length = p;
     }
 
     /// Set length for ticks on the x axis.
@@ -987,7 +1021,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_x_axis_tick_length(&mut self, p: Percentage) {
-        self.x_axis_tick_length = Some(p);
+        self.layout.x_axis_tick_length = p;
     }
 
     /// Anchor bars at zero instead of the floor.
@@ -1027,7 +1061,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_negative_bars_go_down(&mut self) {
-        self.negative_bars_go_down = true;
+        self.layout.negative_bars_go_down = true;
     }
 
     /// Apply text on the left side of the plot window.
@@ -1383,7 +1417,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_font_size(&mut self, p: Percentage) {
-        self.font_size = p;
+        self.layout.font_size = p;
     }
 
     /// Apply a border around the canvas.
@@ -1405,7 +1439,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_show_window_border(&mut self) {
-        self.show_window_border = true;
+        self.show.window_border = true;
     }
 
     /// Apply a border around the plot.
@@ -1427,7 +1461,7 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn set_show_plot_border(&mut self) {
-        self.show_plot_border = true;
+        self.show.plot_border = true;
     }
 
     /// Generate the final svg image of all applied content.
@@ -1456,9 +1490,11 @@ impl <'a>BarPlot<'a> {
     pub fn to_svg(&mut self, width: u32, height: u32) -> String {
         assert!(!self.values.is_empty(), "Can not generate plot without any values..");
 
+        self.size = (width, height);
+
         let n_categories = self.values.len();
-        match &mut self.bar_color_variant {
-            BarColors::Category(colors) => {
+        match &mut self.colors.bars.layout {
+            BarColorLayout::Category(colors) => {
                 let n_colors = colors.len();
                 assert_eq!(
                     n_categories,
@@ -1466,7 +1502,7 @@ impl <'a>BarPlot<'a> {
                     "Got {n_categories} categories and {n_colors} colors.",
                 );
             }
-            BarColors::Indexed(matrix) => {
+            BarColorLayout::Indexed(matrix) => {
                 let n_color_vectors = matrix.len();
                 assert_eq!(
                     n_categories,
@@ -1488,7 +1524,6 @@ impl <'a>BarPlot<'a> {
             _ => (),
         }
 
-        self.size = Some((width, height));
         svg::render(self)
     }
 }

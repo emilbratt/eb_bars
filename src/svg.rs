@@ -1,19 +1,18 @@
 mod tag;
 
 use crate::{
-    BinMarkerPosition,
-    BarPlot,
+    BarColorLayout,
     BarColors,
+    BarPlot,
+    BinMarkerPosition,
+    Colors,
     Percentage,
     DEFAULT_BAR_COLOR,
-    DEFAULT_TICK_LENGTH,
-    DEFAULT_TEXT_SIDE_OFFSET,
     DEFAULT_LEGEND_POSITION,
-    VERSION,
+    DEFAULT_TEXT_SIDE_OFFSET,
     REPOSITORY,
+    VERSION,
 };
-
-const DEFAULT_SVG_SIZE: (u32, u32) = (1600, 1000);
 
 enum Side {
     Left,
@@ -168,16 +167,14 @@ impl SvgGenerator {
             &mut self,
             bar_values: &BarValues,
             markers: &[String],
-            axis_offset: Percentage,
+            x_axis_tick_length: Percentage,
             bin_marker_position: &BinMarkerPosition,
             show_vertical_lines: bool,
-            line_color: &str,
-            tick_color: &str,
-            text_color: &str,
+            colors: &Colors,
             font_size: Percentage,
         ) {
         let (x1, _, y1, y2) = self.plot_window.unwrap_or(self.svg_window);
-        let y3 = y2 + ((self.get_svg_height() - y2) / 100.0 * axis_offset as f64);
+        let y3 = y2 + ((self.get_svg_height() - y2) / 100.0 * x_axis_tick_length as f64);
 
         let line_width = self.get_base_line_width() / 10.0;
         let font_size = self.get_font_size(font_size);
@@ -198,20 +195,20 @@ impl SvgGenerator {
             let cur_x = x1 + (scale_unit * i as f64) + marker_shift;
 
             if show_vertical_lines {
-                let tag = tag::line(cur_x, cur_x, y1, y2, line_color, line_width);
+                let tag = tag::line(cur_x, cur_x, y1, y2, colors.line, line_width);
                 self.nodes.push(tag);
             }
 
             // If offset is 0, no point in rendering the tick.
-            if axis_offset != 0 {
-                let tag = tag::line(cur_x, cur_x, y2, y3, tick_color, line_width);
+            if x_axis_tick_length != 0 {
+                let tag = tag::line(cur_x, cur_x, y2, y3, colors.tick, line_width);
                 self.nodes.push(tag);
             }
 
             // We can have less markers/labels than bars. Will ignore every nth marker so that it all adds up.
             if i % nth_marker == 0 && markers.len() > mark_index {
                 let text = &markers[mark_index];
-                let tag = tag::text(cur_x, y3 + font_size, text_color, font_size, "middle", text);
+                let tag = tag::text(cur_x, y3 + font_size, colors.text, font_size, "middle", text);
                 self.nodes.push(tag);
                 mark_index += 1;
             }
@@ -226,8 +223,7 @@ impl SvgGenerator {
         negative_bars_go_down: bool,
         bin_gap: Percentage,
         bar_gap: Percentage,
-        bar_color_variant: &BarColors,
-        bar_colors_override: &Vec<(usize, usize, &str)>,
+        bar_colors: &BarColors,
     ) {
         let (y_min, y_max) = match scale_range {
             Some((min, max, _)) => (min as f64, max as f64),
@@ -272,26 +268,26 @@ impl SvgGenerator {
                     (bar_y, bar_height)
                 };
 
-                let mut bar_color = match bar_color_variant {
-                    BarColors::Category(arr) => {
+                let mut bar_color = match &bar_colors.layout {
+                    BarColorLayout::Category(arr) => {
                         arr[category_index]
                     }
-                    BarColors::Indexed(arr) => {
+                    BarColorLayout::Indexed(arr) => {
                         arr[category_index][bar_index]
                     }
-                    BarColors::Threshold((clr_min, clr_low, clr_high, clr_max)) => {
+                    BarColorLayout::Threshold((clr_min, clr_low, clr_high, clr_max)) => {
                         if bar_value == bar_values.max { clr_max }
                         else if bar_value == bar_values.min { clr_min }
                         else if bar_value >= bar_values.mean { clr_high }
                         else { clr_low }
                     }
-                    BarColors::Uniform(color) => {
+                    BarColorLayout::Uniform(color) => {
                         color
                     }
                 };
 
-                if !bar_colors_override.is_empty() {
-                    for (i, j, color) in bar_colors_override.iter().copied() {
+                if !bar_colors.overrides.is_empty() {
+                    for (i, j, color) in bar_colors.overrides.iter().copied() {
                         if category_index == i && bar_index == j {
                             bar_color = color;
                             break;
@@ -305,7 +301,7 @@ impl SvgGenerator {
         }
     }
 
-    fn generate_text(&mut self, text: &str, side: Side, offset: Percentage, text_color: &str, font_size: Percentage) {
+    fn generate_text(&mut self, text: &str, side: Side, offset: Percentage, color: &str, font_size: Percentage) {
         let (x1, x2, y1, y2) = self.plot_window.unwrap_or(self.svg_window);
 
         // FIXME: let user choose the shift offset.
@@ -315,24 +311,24 @@ impl SvgGenerator {
             Side::Left => {
                 let x = (x1 / 100.0 * offset) + (self.get_font_size(font_size) / 2.0);
                 let y = y1 + (self.get_plot_height() / small_offset);
-                tag::text_bottom_up(x, y, text_color, self.get_font_size(font_size), "start", text)
+                tag::text_bottom_up(x, y, color, self.get_font_size(font_size), "start", text)
             }
             Side::Right => {
                 let shift = self.get_svg_width() - x2;
                 let x = x2 + shift - (shift / 100.0 * offset);
                 let y = y2 - (self.get_plot_height() / small_offset);
-                tag::text_top_down(x, y, text_color, self.get_font_size(font_size), "start", text)
+                tag::text_top_down(x, y, color, self.get_font_size(font_size), "start", text)
             }
             Side::Top => {
                 let x = x2 - (self.get_plot_width() / small_offset);
                 let y = (y1 / 100.0 * offset) + (self.get_font_size(font_size) / 2.0);
-                tag::text(x, y, text_color, self.get_font_size(font_size), "start", text)
+                tag::text(x, y, color, self.get_font_size(font_size), "start", text)
             }
             Side::Bottom => {
                 let x = x2 - (self.get_plot_width() / small_offset);
                 let shift = self.get_svg_height() - y2;
                 let y = self.get_svg_height() - (shift / 100.0 * offset);
-                tag::text(x, y, text_color, self.get_font_size(font_size), "start", text)
+                tag::text(x, y, color, self.get_font_size(font_size), "start", text)
             }
         };
 
@@ -341,16 +337,16 @@ impl SvgGenerator {
 
     fn generate_legend(
         &mut self,
-        titles: &[&str],
+        categories: &[&str],
         x: Percentage,
         y: Percentage,
         text_color: &str,
         font_size: Percentage,
-        bar_color_variant: &BarColors,
+        bar_colors: &BarColors,
     ) {
-        let colors: &Vec<&str> = match bar_color_variant {
-            BarColors::Category(colors) => colors,
-            _ => &vec![DEFAULT_BAR_COLOR; titles.len()],
+        let colors: &[&str] = match bar_colors.layout {
+            BarColorLayout::Category(ref colors) => colors,
+            _ => &vec![DEFAULT_BAR_COLOR; categories.len()],
         };
 
         let font_size_len = self.get_font_size(font_size);
@@ -358,7 +354,7 @@ impl SvgGenerator {
         let mut y = self.get_svg_height() / 100.0 * y as f64;
 
         let step = self.get_font_size(font_size) * 1.2;
-        for (title, color) in titles.iter().zip(colors.iter()) {
+        for (title, color) in categories.iter().zip(colors.iter()) {
             let tag = tag::rect(x-(font_size_len*1.5), y-font_size_len, font_size_len, font_size_len, 1.0, color);
             self.nodes.push(tag);
 
@@ -417,93 +413,94 @@ impl SvgGenerator {
 }
 
 pub fn render(bp: &BarPlot) -> String {
-    let svg_window = bp.size.unwrap_or(DEFAULT_SVG_SIZE);
-    let (svg_width, svg_height) = (svg_window.0 as f64, svg_window.1 as f64);
+    let (svg_width, svg_height) = (bp.size.0 as f64, bp.size.1 as f64);
 
     let mut svg = SvgGenerator::new(svg_width, svg_height);
 
     let bar_values = BarValues::from(&bp.values);
 
-    if let Some((x_size, x_offset, y_size, y_offset)) = bp.plot_window_scale {
+    if let Some((x_size, x_offset, y_size, y_offset)) = bp.layout.plot_window_scale {
         svg.set_plot_window(x_size, x_offset, y_size, y_offset);
     }
 
-    if let Some(color) = bp.background_color {
+    if let Some(color) = bp.colors.background {
         svg.set_background_color(color);
     }
 
-    if let Some(markers) = bp.bin_markers {
+    if let Some(markers) = bp.markers {
         assert!(!markers.is_empty());
-        let axis_offset = bp.x_axis_tick_length.unwrap_or(DEFAULT_TICK_LENGTH);
         svg.generate_bin_markers(
             &bar_values,
             markers,
-            axis_offset,
-            &bp.bin_marker_position,
-            bp.show_vertical_lines,
-            bp.line_color,
-            bp.tick_color,
-            bp.text_color,
-            bp.font_size,
+            bp.layout.x_axis_tick_length,
+            &bp.layout.bin_marker_position,
+            bp.show.vertical_lines,
+            &bp.colors,
+            bp.layout.font_size,
         );
     }
 
-    if let Some((min, max, step)) = bp.scale_range {
-        let axis_offset = bp.y_axis_tick_length.unwrap_or(DEFAULT_TICK_LENGTH);
+    if let Some((min, max, step)) = bp.layout.scale_range {
         svg.generate_scale_range(
             min,
             max,
             step,
-            axis_offset,
-            bp.show_horizontal_lines,
-            bp.line_color,
-            bp.tick_color,
-            bp.text_color,
-            bp.font_size,
+            bp.layout.y_axis_tick_length,
+            bp.show.horizontal_lines,
+            bp.colors.line,
+            bp.colors.tick,
+            bp.colors.text,
+            bp.layout.font_size,
         );
     }
 
     if let Some(text) = bp.plot_text.left {
         let offset = bp.plot_text.left_offset.unwrap_or(DEFAULT_TEXT_SIDE_OFFSET);
-        svg.generate_text(text, Side::Left, offset, bp.text_color, bp.font_size);
+        svg.generate_text(text, Side::Left, offset, bp.colors.text, bp.layout.font_size);
     }
 
     if let Some(text) = bp.plot_text.right {
         let offset = bp.plot_text.right_offset.unwrap_or(DEFAULT_TEXT_SIDE_OFFSET);
-        svg.generate_text(text, Side::Right, offset, bp.text_color, bp.font_size);
+        svg.generate_text(text, Side::Right, offset, bp.colors.text, bp.layout.font_size);
     }
 
     if let Some(text) = bp.plot_text.top {
         let offset = bp.plot_text.top_offset.unwrap_or(DEFAULT_TEXT_SIDE_OFFSET);
-        svg.generate_text(text, Side::Top, offset, bp.text_color, bp.font_size);
+        svg.generate_text(text, Side::Top, offset, bp.colors.text, bp.layout.font_size);
     }
 
     if let Some(text) = bp.plot_text.bottom {
         let offset = bp.plot_text.bottom_offset.unwrap_or(DEFAULT_TEXT_SIDE_OFFSET);
-        svg.generate_text(text, Side::Bottom, offset, bp.text_color, bp.font_size);
+        svg.generate_text(text, Side::Bottom, offset, bp.colors.text, bp.layout.font_size);
     }
 
-    if bp.show_window_border {
-        svg.generate_svg_border(bp.line_color);
+    if bp.show.window_border {
+        svg.generate_svg_border(bp.colors.line);
     }
 
     svg.generate_bars(
         &bar_values,
-        bp.scale_range,
-        bp.negative_bars_go_down,
-        bp.bin_gap,
-        bp.bar_gap,
-        &bp.bar_color_variant,
-        &bp.bar_colors_override,
+        bp.layout.scale_range,
+        bp.layout.negative_bars_go_down,
+        bp.layout.bin_gap,
+        bp.layout.bar_gap,
+        &bp.colors.bars,
     );
 
     if let Some(categories) = bp.legend.categories {
         let (x, y) = bp.legend.position.unwrap_or(DEFAULT_LEGEND_POSITION);
-        svg.generate_legend(categories, x, y, bp.text_color, bp.font_size, &bp.bar_color_variant);
+        svg.generate_legend(
+            categories,
+            x,
+            y,
+            bp.colors.text,
+            bp.layout.font_size,
+            &bp.colors.bars
+        );
     }
 
-    if bp.show_plot_border {
-        svg.generate_plot_border(bp.line_color);
+    if bp.show.plot_border {
+        svg.generate_plot_border(bp.colors.line);
     }
 
     svg.generate_svg()
