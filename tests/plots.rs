@@ -36,17 +36,17 @@ fn bar_colors() {
     plot.add_bar_colors_from_vec(colors_a.to_vec());
     plot.add_bar_colors_from_vec(colors_b.to_vec());
     plot.set_background_color("Black");
-    plot.set_bar_gap(5);
-    plot.set_plot_window_size(90, 50, 90, 35);
+    plot.set_bar_gap(5.0);
+    plot.set_plot_window_size(90.0, 50.0, 90.0, 35.0);
     plot.set_scale_range(0, 10, 1);
-    plot.set_x_axis_tick_length(10);
-    plot.set_y_axis_tick_length(10);
+    plot.set_x_axis_tick_length(10.0);
+    plot.set_y_axis_tick_length(10.0);
     plot.set_show_horizontal_lines();
     plot.set_show_plot_border();
     plot.set_text_color("LightGoldenRodYellow");
     plot.set_text_right("Look at these beautiful colored bars.");
-    plot.set_font_size(150); // Increase font size by 150%.
-    plot.set_text_right_offset(50); // Set offset from side to plot border to 50%
+    plot.set_font_size(150.0); // Increase font size by 150%.
+    plot.set_text_right_offset(50.0); // Set offset from side to plot border to 50%
 
     let contents = plot.to_svg(1600, 1000);
     if let Err(e) = fs::write(&output, contents) {
@@ -66,7 +66,7 @@ fn temperature() {
     plot.set_background_color("Black");
     plot.set_show_horizontal_lines();
     plot.add_values(&recordings);
-    plot.set_bin_gap(0);
+    plot.set_bin_gap(0.0);
 
     let min_color = "rgb(107, 235, 255)";
     let low_color = "rgb(126, 255, 165)";
@@ -78,11 +78,11 @@ fn temperature() {
     plot.set_bin_markers(&markers);
 
     plot.set_text_top("Mean temperature °C every month in some particular place for some particular year :)");
-    plot.set_text_top_offset(40);
+    plot.set_text_top_offset(40.0);
 
-    plot.set_plot_window_size(95, 80, 87, 55);
+    plot.set_plot_window_size(95.0, 80.0, 87.0, 55.0);
     plot.set_scale_range(-20, 30, 10);
-    plot.set_y_axis_tick_length(0);
+    plot.set_y_axis_tick_length(0.0);
 
     let contents = plot.to_svg(1600, 1000);
     if let Err(e) = fs::write(output, contents) {
@@ -107,12 +107,12 @@ fn random_values() {
     plot.set_bin_markers_left();
     plot.set_show_vertical_lines();
 
-    plot.set_font_size(130);
+    plot.set_font_size(130.0);
     plot.set_background_color("Black");
-    plot.set_plot_window_size(90, 80, 83, 50);
+    plot.set_plot_window_size(90.0, 80.0, 83.0, 50.0);
     plot.set_scale_range(-50, 50, 10);
-    plot.set_x_axis_tick_length(30);
-    plot.set_y_axis_tick_length(30);
+    plot.set_x_axis_tick_length(30.0);
+    plot.set_y_axis_tick_length(30.0);
     plot.set_show_plot_border();
     plot.set_show_horizontal_lines();
     plot.set_text_top("A set of random values where greatest is light blue and lowest is red.");
@@ -165,25 +165,25 @@ fn fruit_picking() {
 
     let categories = ["Tomatoes", "Apples", "Eggplants"];
     plot.set_legend(&categories);
-    plot.set_legend_position(91, 22);
+    plot.set_legend_position(91.2, 22.2);
 
     plot.set_text_top("The highest value from each category have its color 'overriden' with a brighter color");
-    plot.set_text_top_offset(40);
+    plot.set_text_top_offset(40.0);
     plot.set_text_left("Total harvested.");
-    plot.set_text_left_offset(25);
+    plot.set_text_left_offset(25.0);
 
     plot.set_background_color("Black");
-    plot.set_plot_window_size(80, 35, 85, 50);
+    plot.set_plot_window_size(80.0, 35.0, 85.0, 50.0);
     plot.set_scale_range(0, 100, 10);
     plot.set_line_color("White");
     plot.set_text_color("LightGoldenRodYellow");
     plot.set_tick_color("LightGoldenRodYellow");
-    plot.set_x_axis_tick_length(12);
-    plot.set_y_axis_tick_length(12);
+    plot.set_x_axis_tick_length(12.0);
+    plot.set_y_axis_tick_length(12.0);
     plot.set_bin_markers_middle();
     plot.set_show_plot_border();
     plot.set_show_horizontal_lines();
-    plot.set_bin_gap(15);
+    plot.set_bin_gap(15.0);
 
     let contents = plot.to_svg(1600, 1000);
     if let Err(e) = fs::write(&output, contents) {

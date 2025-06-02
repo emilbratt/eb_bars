@@ -49,7 +49,7 @@
 //! // Same goes for the height.
 //!
 //! // Let's shrink the plot size.
-//! plot.set_plot_window_size(95, 85, 93, 50);
+//! plot.set_plot_window_size(95.0, 85.0, 93.0, 50.0);
 //! // We have now set the width at 95% and moved it 85% right from the left side.
 //! // We also set the height at 93% and moved it 50% down from the top.
 //! // First two parameters affect the width and the left/right offset respectively.
@@ -83,7 +83,7 @@
 
 mod svg;
 
-type Percentage = i16;
+type Percentage = f64;
 
 const VERSION: &str = "0.5.3";
 const REPOSITORY: &str = "https://github.com/emilbratt/eb_bars";
@@ -92,13 +92,13 @@ const DEFAULT_SIZE: (u32, u32) = (1600, 1000);
 
 const DEFAULT_BAR_COLOR: &str = "rgb(112, 153, 182)";
 const DEFAULT_BASE_COLOR: &str = "rgb(197, 197, 197)";
-const DEFAULT_BAR_GAP: Percentage = 0;
-const DEFAULT_BIN_GAP: Percentage = 10;
+const DEFAULT_BAR_GAP: Percentage = 0.0;
+const DEFAULT_BIN_GAP: Percentage = 10.0;
 
-const DEFAULT_FONT_SIZE: Percentage = 100;
-const DEFAULT_LEGEND_POSITION: (Percentage, Percentage) = (90, 20);
-const DEFAULT_TEXT_SIDE_OFFSET: Percentage = 35;
-const DEFAULT_TICK_LENGTH: Percentage = 10;
+const DEFAULT_FONT_SIZE: Percentage = 100.0;
+const DEFAULT_LEGEND_POSITION: (Percentage, Percentage) = (90.0, 20.0);
+const DEFAULT_TEXT_SIDE_OFFSET: Percentage = 35.0;
+const DEFAULT_TICK_LENGTH: Percentage = 10.0;
 
 
 #[derive(Debug, Default)]
@@ -746,10 +746,10 @@ impl <'a>BarPlot<'a> {
     ///
     /// plot.add_values(&[1., 2., 3.,]);
     ///
-    /// let width = 90; // Set width to 90%,
-    /// let horizontal_offset = 65; // Move 65% right
-    /// let height = 85; // Set height to 85%
-    /// let vertical_offset = 40; // Move 40% down.
+    /// let width = 90.0; // Set width to 90%,
+    /// let horizontal_offset = 65.0; // Move 65% right
+    /// let height = 85.0; // Set height to 85%
+    /// let vertical_offset = 40.0; // Move 40% down.
     /// plot.set_plot_window_size(width, horizontal_offset, height, vertical_offset);
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
@@ -761,8 +761,8 @@ impl <'a>BarPlot<'a> {
         y_length: Percentage,
         y_offset: Percentage
     ) {
-        assert!(x_length <= 100 && x_offset <= 100, "plot window width cannot exceed 100%");
-        assert!(y_length <= 100 && y_offset <= 100, "plot window height cannot exceed 100%");
+        assert!(x_length <= 100.0 && x_offset <= 100.0, "plot window width cannot exceed 100%");
+        assert!(y_length <= 100.0 && y_offset <= 100.0, "plot window height cannot exceed 100%");
 
         self.layout.plot_window_scale = Some((x_length, x_offset, y_length, y_offset));
     }
@@ -935,7 +935,7 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&[1., 2., 3.]);
     /// plot.add_values(&[4., 5., 6.]);
     ///
-    /// let gap = 30; // The gap will take up 30% of the space, leaving 70% for bar.
+    /// let gap = 30.0; // The gap will take up 30% of the space, leaving 70% for bar.
     /// plot.set_bar_gap(gap);
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
@@ -963,7 +963,7 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&[1., 2., 3.]);
     /// plot.add_values(&[4., 5., 6.]);
     ///
-    /// let gap = 30; // The gap will take up 30% of the space, leaving 70% for bin.
+    /// let gap = 30.0; // The gap will take up 30% of the space, leaving 70% for bin.
     /// plot.set_bin_gap(gap);
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
@@ -989,7 +989,7 @@ impl <'a>BarPlot<'a> {
     ///
     /// plot.add_values(&[1., 2., 3.]);
     ///
-    /// let len = 20; // The tick length will be of considerate length.
+    /// let len = 20.0; // The tick length will be of considerate length.
     /// plot.set_y_axis_tick_length(len);
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
@@ -1015,7 +1015,7 @@ impl <'a>BarPlot<'a> {
     ///
     /// plot.add_values(&[1., 2., 3.]);
     ///
-    /// let len = 20; // The tick length will be of considerate length.
+    /// let len = 20.0; // The tick length will be of considerate length.
     /// plot.set_x_axis_tick_length(len);
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
@@ -1053,7 +1053,7 @@ impl <'a>BarPlot<'a> {
     /// let max = 20;
     /// let step = 2;
     /// plot.set_scale_range(min, max, step);
-    /// plot.set_plot_window_size(90, 80, 83, 50);
+    /// plot.set_plot_window_size(90.0, 80.0, 83.0, 50.0);
     ///
     /// // Negative bars will now grow downwards instead of upwards. :)
     /// plot.set_negative_bars_go_down();
@@ -1082,7 +1082,7 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&[1., 2., 3.]);
     ///
     /// // Scale down the plot figure size so text can become be visible.
-    /// plot.set_plot_window_size(85, 65, 80, 40);
+    /// plot.set_plot_window_size(85.0, 65.0, 80.0, 40.0);
     ///
     /// plot.set_text_left("This is some text.");
     ///
@@ -1109,11 +1109,11 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&[1., 2., 3.]);
     ///
     /// // Scale down the plot figure size so text can become be visible.
-    /// plot.set_plot_window_size(85, 65, 80, 40);
+    /// plot.set_plot_window_size(85.0, 65.0, 80.0, 40.0);
     ///
     /// plot.set_text_left("This is some text.");
     ///
-    /// let percent = 30;
+    /// let percent = 30.0;
     /// plot.set_text_left_offset(percent);
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
@@ -1140,7 +1140,7 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&[1., 2., 3.]);
     ///
     /// // Scale down the plot figure size so text can become be visible.
-    /// plot.set_plot_window_size(85, 65, 80, 40);
+    /// plot.set_plot_window_size(85.0, 65.0, 80.0, 40.0);
     ///
     /// plot.set_text_right("This is some text.");
     ///
@@ -1167,11 +1167,11 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&[1., 2., 3.]);
     ///
     /// // Scale down the plot figure size so text can become be visible.
-    /// plot.set_plot_window_size(85, 65, 80, 40);
+    /// plot.set_plot_window_size(85.0, 65.0, 80.0, 40.0);
     ///
     /// plot.set_text_right("This is some text.");
     ///
-    /// let percent = 30;
+    /// let percent = 30.0;
     /// plot.set_text_right_offset(percent);
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
@@ -1198,7 +1198,7 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&[1., 2., 3.]);
     ///
     /// // Scale down the plot figure size so text can become be visible.
-    /// plot.set_plot_window_size(85, 65, 80, 40);
+    /// plot.set_plot_window_size(85.0, 65.0, 80.0, 40.0);
     ///
     /// plot.set_text_bottom("This is some text.");
     ///
@@ -1225,11 +1225,11 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&[1., 2., 3.]);
     ///
     /// // Scale down the plot figure size so text can become be visible.
-    /// plot.set_plot_window_size(85, 65, 80, 40);
+    /// plot.set_plot_window_size(85.0, 65.0, 80.0, 40.0);
     ///
     /// plot.set_text_bottom("This is some text.");
     ///
-    /// let percent = 30;
+    /// let percent = 30.0;
     /// plot.set_text_bottom_offset(percent);
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
@@ -1256,7 +1256,7 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&[1., 2., 3.]);
     ///
     /// // Scale down the plot figure size so text can become be visible.
-    /// plot.set_plot_window_size(85, 65, 80, 40);
+    /// plot.set_plot_window_size(85.0, 65.0, 80.0, 40.0);
     ///
     /// plot.set_text_top("This is some text.");
     ///
@@ -1283,11 +1283,11 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&[1., 2., 3.]);
     ///
     /// // Scale down the plot figure size so text can become be visible.
-    /// plot.set_plot_window_size(85, 65, 80, 40);
+    /// plot.set_plot_window_size(85.0, 65.0, 80.0, 40.0);
     ///
     /// plot.set_text_top("This is some text.");
     ///
-    /// let percent = 30;
+    /// let percent = 30.0;
     /// plot.set_text_top_offset(percent);
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
@@ -1376,10 +1376,10 @@ impl <'a>BarPlot<'a> {
     /// plot.set_legend(&categories);
     ///
     /// // Make room for legend on the right side by shrinking plot window.
-    /// plot.set_plot_window_size(80, 30, 85, 40);
+    /// plot.set_plot_window_size(80.0, 30.0, 85.0, 40.0);
     ///
-    /// let offset_x = 90;
-    /// let offset_y = 22;
+    /// let offset_x = 90.0;
+    /// let offset_y = 22.0;
     /// plot.set_legend_position(offset_x, offset_y);
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
@@ -1405,13 +1405,13 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&[1., 2., 3.,]);
     ///
     /// // Scale down the plot figure size so text can become be visible.
-    /// plot.set_plot_window_size(85, 65, 80, 40);
+    /// plot.set_plot_window_size(85.0, 65.0, 80.0, 40.0);
     ///
     /// // Apply some text.
     /// plot.set_text_left("This is some text.");
     ///
     /// // Increase font-size using a percentage greater than 100%.
-    /// let size = 130;
+    /// let size = 130.0;
     /// plot.set_font_size(size);
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
@@ -1432,7 +1432,7 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&[1., 2., 3.]);
     ///
     /// // Shrink plot so that it becomes clear that the border goes around the canvas.
-    /// plot.set_plot_window_size(80, 30, 85, 40);
+    /// plot.set_plot_window_size(80.0, 30.0, 85.0, 40.0);
     ///
     /// plot.set_show_window_border();
     ///
@@ -1454,7 +1454,7 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&[1., 2., 3.]);
     ///
     /// // Shrink plot so that it becomes clear that the border goes around the plot window.
-    /// plot.set_plot_window_size(80, 30, 85, 40);
+    /// plot.set_plot_window_size(80.0, 30.0, 85.0, 40.0);
     ///
     /// plot.set_show_plot_border();
     ///
@@ -1482,7 +1482,7 @@ impl <'a>BarPlot<'a> {
     /// let mut svg: String = plot.to_svg(1600, 1000);
     ///
     /// // Add a new configuration (just resize plot window).
-    /// plot.set_plot_window_size(80, 30, 85, 40);
+    /// plot.set_plot_window_size(80.0, 30.0, 85.0, 40.0);
     ///
     /// // Lets overwrite the old plot with this new configuration.
     /// svg = plot.to_svg(1600, 1000);

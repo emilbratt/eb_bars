@@ -101,11 +101,8 @@ impl SvgGenerator {
 
     fn set_plot_window(&mut self, x_size: Percentage, x_offset: Percentage, y_size: Percentage, y_offset: Percentage) {
         // Calculate the plot window size and offset from given percentage.
-        assert!(x_size <= 100 && x_offset <= 100, "x_size and or x_offset cannot exceed 100%");
-        assert!(y_size <= 100 && y_offset <= 100, "y_size and or y_offset cannot exceed 100%");
-
-        let (x_size, x_offset) = (x_size as f64, x_offset as f64);
-        let (y_size, y_offset) = (y_size as f64, y_offset as f64);
+        assert!(x_size <= 100.0 && x_offset <= 100.0, "x_size and or x_offset cannot exceed 100%");
+        assert!(y_size <= 100.0 && y_offset <= 100.0, "y_size and or y_offset cannot exceed 100%");
 
         let x_length = self.get_svg_width() * x_size / 100.0;
         let x_offset = ((self.get_svg_width() * (1.0 - x_size / 100.0)) / 100.0) * x_offset;
@@ -132,7 +129,7 @@ impl SvgGenerator {
         font_size: Percentage,
     ) {
         let (x1, x2, _, y2) = self.plot_window.unwrap_or(self.svg_window);
-        let x3 = (x1 / 100.0) * (100 - axis_offset) as f64; // tick left end
+        let x3 = (x1 / 100.0) * (100. - axis_offset) as f64; // tick left end
         let range = max as f64 - min as f64;
         let vertical_move = self.get_plot_height() / range;
         let line_width = self.get_base_line_width() / 10.0;
@@ -151,7 +148,7 @@ impl SvgGenerator {
             }
 
             // If offset is 0, no point in rendering the tick.
-            if axis_offset != 0 {
+            if axis_offset != 0. {
                 let tag = tag::line(x3, x1, cur_y, cur_y, tick_color, line_width);
                 self.nodes.push(tag);
             }
@@ -200,7 +197,7 @@ impl SvgGenerator {
             }
 
             // If offset is 0, no point in rendering the tick.
-            if x_axis_tick_length != 0 {
+            if x_axis_tick_length != 0. {
                 let tag = tag::line(cur_x, cur_x, y2, y3, colors.tick, line_width);
                 self.nodes.push(tag);
             }
