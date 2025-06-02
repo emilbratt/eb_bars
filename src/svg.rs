@@ -86,7 +86,7 @@ impl SvgGenerator {
     }
 
     fn get_font_size(&self, font_size: Percentage) -> f64 {
-        (self.get_svg_width() * self.get_svg_height()).sqrt() / 50.0 * (font_size as f64 / 100.0)
+        (self.get_svg_width() * self.get_svg_height()).sqrt() / 50.0 * (font_size / 100.0)
     }
 
     fn get_base_line_width(&self) -> f64 {
@@ -129,7 +129,7 @@ impl SvgGenerator {
         font_size: Percentage,
     ) {
         let (x1, x2, _, y2) = self.plot_window.unwrap_or(self.svg_window);
-        let x3 = (x1 / 100.0) * (100. - axis_offset) as f64; // tick left end
+        let x3 = (x1 / 100.0) * (100.0 - axis_offset); // tick left end
         let range = max as f64 - min as f64;
         let vertical_move = self.get_plot_height() / range;
         let line_width = self.get_base_line_width() / 10.0;
@@ -148,7 +148,7 @@ impl SvgGenerator {
             }
 
             // If offset is 0, no point in rendering the tick.
-            if axis_offset != 0. {
+            if axis_offset != 0.0 {
                 let tag = tag::line(x3, x1, cur_y, cur_y, tick_color, line_width);
                 self.nodes.push(tag);
             }
@@ -171,7 +171,7 @@ impl SvgGenerator {
             font_size: Percentage,
         ) {
         let (x1, _, y1, y2) = self.plot_window.unwrap_or(self.svg_window);
-        let y3 = y2 + ((self.get_svg_height() - y2) / 100.0 * x_axis_tick_length as f64);
+        let y3 = y2 + ((self.get_svg_height() - y2) / 100.0 * x_axis_tick_length);
 
         let line_width = self.get_base_line_width() / 10.0;
         let font_size = self.get_font_size(font_size);
@@ -180,7 +180,7 @@ impl SvgGenerator {
         let remainder = bar_values.len() % markers.len();
         let nth_marker = (bar_values.len() + remainder) / markers.len();
 
-        let scale_unit = (self.get_plot_width()) / bar_values.len() as f64;
+        let scale_unit = self.get_plot_width() / bar_values.len() as f64;
         let marker_shift = match bin_marker_position {
             BinMarkerPosition::Middle => scale_unit / 2.0,
             BinMarkerPosition::Left => 0.0,
@@ -233,13 +233,13 @@ impl SvgGenerator {
         let scale_unit = self.get_plot_height() / range;
 
         let bin_width = self.get_plot_width() / bar_values.len() as f64;
-        let bin_margin = bin_width * (bin_gap as f64 / 100.0);
+        let bin_margin = bin_width * (bin_gap / 100.0);
 
         let margined_bin_width = (bin_width - bin_margin) / bar_values.values.len() as f64;
-        let bar_margin = (bin_width - bin_margin) / bar_values.values.len() as f64 * (bar_gap as f64 / 100.0);
+        let bar_margin = (bin_width - bin_margin) / bar_values.values.len() as f64 * (bar_gap / 100.0);
         let bar_width = margined_bin_width - bar_margin;
 
-        let x3 = x1 + bin_margin - (bin_margin/2.0) + (bar_margin/2.0);
+        let x3 = x1 + bin_margin - (bin_margin / 2.0) + (bar_margin / 2.0);
         // FIXME: Let user set custom opacity.
         let opacity = 1.0;
         for (category_index, values) in bar_values.values.iter().enumerate() {
@@ -303,7 +303,7 @@ impl SvgGenerator {
 
         // FIXME: let user choose the shift offset.
         let small_offset = 1.1; // Moves text away from the plot corner by a small distance. (1 = no offset).
-        let offset = offset as f64;
+        let offset = offset;
         let tag = match side {
             Side::Left => {
                 let x = (x1 / 100.0 * offset) + (self.get_font_size(font_size) / 2.0);
@@ -347,8 +347,8 @@ impl SvgGenerator {
         };
 
         let font_size_len = self.get_font_size(font_size);
-        let x = self.get_svg_width() / 100.0 * x as f64;
-        let mut y = self.get_svg_height() / 100.0 * y as f64;
+        let x = self.get_svg_width() / 100.0 * x;
+        let mut y = self.get_svg_height() / 100.0 * y;
 
         let step = self.get_font_size(font_size) * 1.2;
         for (title, color) in categories.iter().zip(colors.iter()) {
