@@ -424,7 +424,7 @@ impl <'a>BarPlot<'a> {
     ///
     /// plot.add_values(&[1., 2., 3.,]);
     ///
-    /// plot.set_text_color("LightBlue");
+    /// plot.set_tick_color("LightBlue");
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
