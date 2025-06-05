@@ -134,7 +134,6 @@ fn wind_forecast() {
     }
 
     // Pretend this is the current time of day.
-    // let dt = chrono_tz::Europe::Oslo.with_ymd_and_hms(2025, 3, 30, 15, 32, 17).unwrap();
     let dt = Local::now();
     let (hour_marks, wind_values, percent_of_day) = __prepare_data(dt);
 

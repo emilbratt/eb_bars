@@ -20,29 +20,29 @@
 
 ### Showcase
 
-Click on any of the images below to view the code.
+Click the images below to have a look at the code behind each.
 
-<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L231">
+<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L226">
     <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/fruit_picking.svg" width=400px></img>
 </a>
 
-<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L14">
+<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L10">
     <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/bar_colors.svg" width=400px></img>
 </a>
 
-<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L57">
+<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L53">
     <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/temperature_year.svg" width=400px></img>
 </a>
 
-<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L184">
-    <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/random_values.svg" width=400px></img>
-</a>
-
-<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L100">
+<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L96">
     <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/wind_forecast.svg" width=400px></img>
 </a>
 
-### Getting Started
+<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L179">
+    <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/random_values.svg" width=400px></img>
+</a>
+
+### Documentation
 
 Refer to [crate docs] for how to produce nice looking plots or simply take a look at all the [tests].
 
