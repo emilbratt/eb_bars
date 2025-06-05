@@ -22,7 +22,7 @@
 
 Click on any of the images below to view the code.
 
-<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L133">
+<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L231">
     <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/fruit_picking.svg" width=400px></img>
 </a>
 
@@ -30,18 +30,22 @@ Click on any of the images below to view the code.
     <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/bar_colors.svg" width=400px></img>
 </a>
 
-<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L58">
-    <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/temperature.svg" width=400px></img>
+<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L57">
+    <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/temperature_year.svg" width=400px></img>
 </a>
 
-<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L94">
+<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L184">
     <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/random_values.svg" width=400px></img>
+</a>
+
+<a href="https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs#L100">
+    <img src="https://raw.githubusercontent.com/emilbratt/eb_bars/refs/heads/main/image/wind_forecast.svg" width=400px></img>
 </a>
 
 ### Getting Started
 
-For now, refer to [crate docs] for how to produce nice looking plots or simply take a look at all the [tests].
-
-[tests]: https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs
+Refer to [crate docs] for how to produce nice looking plots or simply take a look at all the [tests].
 
 [crate docs]: https://docs.rs/eb_bars/latest/eb_bars/
+
+[tests]: https://github.com/emilbratt/eb_bars/blob/main/tests/plots.rs

@@ -6,6 +6,7 @@ use crate::{
     BarPlot,
     BinMarkerPosition,
     Colors,
+    LinesAt,
     Percentage,
     DEFAULT_BAR_COLOR,
     DEFAULT_LEGEND_POSITION,
@@ -163,7 +164,7 @@ impl SvgGenerator {
     fn generate_bin_markers(
             &mut self,
             bar_values: &BarValues,
-            markers: &[String],
+            markers: &[&str],
             x_axis_tick_length: Percentage,
             bin_marker_position: &BinMarkerPosition,
             show_vertical_lines: bool,
@@ -176,10 +177,6 @@ impl SvgGenerator {
         let line_width = self.get_base_line_width() / 10.0;
         let font_size = self.get_font_size(font_size);
 
-        // FIXME: This is not thoroughly tested yet.
-        let remainder = bar_values.len() % markers.len();
-        let nth_marker = (bar_values.len() + remainder) / markers.len();
-
         let scale_unit = self.get_plot_width() / bar_values.len() as f64;
         let marker_shift = match bin_marker_position {
             BinMarkerPosition::Middle => scale_unit / 2.0,
@@ -187,8 +184,7 @@ impl SvgGenerator {
             BinMarkerPosition::Right => scale_unit,
         };
 
-        let mut mark_index = 0;
-        for i in 0..bar_values.len() {
+        for i in 0..markers.len() {
             let cur_x = x1 + (scale_unit * i as f64) + marker_shift;
 
             if show_vertical_lines {
@@ -202,13 +198,9 @@ impl SvgGenerator {
                 self.nodes.push(tag);
             }
 
-            // We can have less markers/labels than bars. Will ignore every nth marker so that it all adds up.
-            if i % nth_marker == 0 && markers.len() > mark_index {
-                let text = &markers[mark_index];
-                let tag = tag::text(cur_x, y3 + font_size, colors.text, font_size, "middle", text);
-                self.nodes.push(tag);
-                mark_index += 1;
-            }
+            let text = &markers[i];
+            let tag = tag::text(cur_x, y3 + font_size, colors.text, font_size, "middle", text);
+            self.nodes.push(tag);
         }
     }
 
@@ -303,7 +295,6 @@ impl SvgGenerator {
 
         // FIXME: let user choose the shift offset.
         let small_offset = 1.1; // Moves text away from the plot corner by a small distance. (1 = no offset).
-        let offset = offset;
         let tag = match side {
             Side::Left => {
                 let x = (x1 / 100.0 * offset) + (self.get_font_size(font_size) / 2.0);
@@ -379,11 +370,31 @@ impl SvgGenerator {
         self.nodes.push(tag::line(x1, x2, y2, y2, color, width)); // bottom
     }
 
+    fn generate_lines_at(&mut self, lines_at: &Vec<LinesAt>) {
+        let width = self.get_base_line_width() / 5.0;
+        let base_x = self.get_plot_width() / 100.0;
+        let base_y = self.get_plot_height() / 100.0;
+        let (x1, x2, y1, y2) = self.plot_window.unwrap_or(self.svg_window);
+        for line in lines_at {
+            let tag = match line {
+                LinesAt::Horizontal(f, color) => {
+                    let y = f * base_y + y1;
+                    tag::line(x1, x2, y, y, color, width)
+                },
+                LinesAt::Vertical(f, color) => {
+                    let x = f * base_x + x1;
+                    tag::line(x, x, y1, y2, color, width)
+                },
+            };
+            self.nodes.push(tag);
+        }
+    }
+
     fn generate_svg(&self) -> String {
         let mut svg = String::with_capacity(200*200);
 
         svg.push_str(
-            format!(r#"<?xml version="1.0" encoding="UTF-8" standalone="no"?>"#).as_str()
+            r#"<?xml version="1.0" encoding="UTF-8" standalone="no"?>"#
         );
         svg.push('\n');
 
@@ -498,6 +509,10 @@ pub fn render(bp: &BarPlot) -> String {
 
     if bp.show.plot_border {
         svg.generate_plot_border(bp.colors.line);
+    }
+
+    if !bp.lines_at.is_empty() {
+        svg.generate_lines_at(&bp.lines_at);
     }
 
     svg.generate_svg()

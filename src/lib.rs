@@ -209,9 +209,16 @@ impl Default for PlotLayout {
 }
 
 #[derive(Debug)]
+enum LinesAt<'a> {
+    Horizontal(f64, &'a str),
+    Vertical(f64, &'a str),
+}
+
+#[derive(Debug)]
 pub struct BarPlot<'a> {
     values: Vec<&'a [f64]>,
-    markers: Option<&'a [String]>,
+    markers: Option<&'a [&'a str]>,
+    lines_at: Vec<LinesAt<'a>>,
     size: (u32, u32),
     colors: Colors<'a>,
     legend: PlotLegend<'a>,
@@ -237,6 +244,7 @@ impl <'a>BarPlot<'a> {
         Self {
             values: Vec::new(),
             markers: None,
+            lines_at: Vec::new(),
             size: DEFAULT_SIZE,
             colors: Colors::default(),
             legend: PlotLegend::default(),
@@ -695,6 +703,30 @@ impl <'a>BarPlot<'a> {
         self.show.horizontal_lines = true;
     }
 
+    /// Add custom horizontal grid lines.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// let values = [5.0, 16.4, 17.1, 13.7, 8.9, 3.9, 6.3, 9.6];
+    /// plot.add_values(&values);
+    ///
+    /// // Add a horizontal lines.
+    /// let line_color = "rgb(126, 255, 165)";
+    /// plot.add_horizontal_line_at(25.0, line_color);
+    /// plot.add_horizontal_line_at(50.0, line_color);
+    /// plot.add_horizontal_line_at(75.0, line_color);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
+    pub fn add_horizontal_line_at(&mut self, p: Percentage, color: &'a str) {
+        self.lines_at.push(LinesAt::Horizontal(p, color));
+    }
+
     /// Show vertical grid lines.
     ///
     /// # Important
@@ -713,6 +745,7 @@ impl <'a>BarPlot<'a> {
     ///
     /// // Needed for vertical (x-grid) lines.
     /// let markers: Vec<String> = (0..values.len()).map(|i| (i).to_string()).collect();
+    /// let markers = markers.iter().map(|s| s.as_str()).collect::<Vec<&str>>();
     /// plot.set_bin_markers(&markers);
     ///
     /// plot.set_show_vertical_lines();
@@ -721,6 +754,31 @@ impl <'a>BarPlot<'a> {
     /// ```
     pub fn set_show_vertical_lines(&mut self) {
         self.show.vertical_lines = true;
+    }
+
+    /// Add custom vertical grid lines.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use eb_bars::BarPlot;
+    ///
+    /// let mut plot = BarPlot::new();
+    ///
+    /// let values = [5.0, 16.4, 17.1, 13.7, 8.9, 3.9, 6.3, 9.6];
+    /// plot.add_values(&values);
+    ///
+    /// // Add vertical lines.
+    /// let line_color = "rgb(126, 255, 165)";
+    /// plot.add_vertical_line_at(25.0, line_color);
+    /// plot.add_vertical_line_at(50.0, line_color);
+    /// plot.add_vertical_line_at(75.0, line_color);
+    ///
+    /// let svg: String = plot.to_svg(1600, 1000);
+    /// ```
+    pub fn add_vertical_line_at(&mut self, p: Percentage, color: &'a str) {
+
+        self.lines_at.push(LinesAt::Vertical(p, color));
     }
 
     /// Set size of the barplot size (relative to the canvas/frame).
@@ -810,13 +868,7 @@ impl <'a>BarPlot<'a> {
     ///
     /// let absence_boys = [5., 3., 8., 4., 7.];
     /// let absence_girls = [4., 1., 2., 3., 1.];
-    /// let weekdays = vec![
-    ///     "Monday".to_string(),
-    ///     "Tuesday".to_string(),
-    ///     "Wednesday".to_string(),
-    ///     "Thursday".to_string(),
-    ///     "Friday".to_string(),
-    /// ];
+    /// let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday",];
     ///
     /// plot.add_values(&absence_boys);
     /// plot.add_values(&absence_girls);
@@ -824,7 +876,7 @@ impl <'a>BarPlot<'a> {
     ///
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
-    pub fn set_bin_markers(&mut self, markers: &'a [String]) {
+    pub fn set_bin_markers(&mut self, markers: &'a [&'a str]) {
         self.markers = Some(markers);
     }
 
@@ -846,6 +898,7 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&values);
     ///
     /// let markers: Vec<String> = (0..values.len()).map(|i| (i).to_string()).collect();
+    /// let markers = markers.iter().map(|s| s.as_str()).collect::<Vec<&str>>();
     /// plot.set_bin_markers(&markers);
     ///
     /// plot.set_bin_markers_middle();
@@ -875,6 +928,7 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&values);
     ///
     /// let markers: Vec<String> = (0..values.len()).map(|i| (i).to_string()).collect();
+    /// let markers = markers.iter().map(|s| s.as_str()).collect::<Vec<&str>>();
     /// plot.set_bin_markers(&markers);
     ///
     /// // Setting markers at middle.
@@ -906,6 +960,7 @@ impl <'a>BarPlot<'a> {
     /// plot.add_values(&values);
     ///
     /// let markers: Vec<String> = (0..values.len()).map(|i| (i).to_string()).collect();
+    /// let markers = markers.iter().map(|s| s.as_str()).collect::<Vec<&str>>();
     /// plot.set_bin_markers(&markers);
     ///
     /// plot.set_bin_markers_right();
