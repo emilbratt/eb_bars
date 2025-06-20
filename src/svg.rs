@@ -240,7 +240,7 @@ impl SvgGenerator {
                 let bar_x = x4 + (bin_width * bar_index as f64);
 
                 // FIXME: Can this be written in a more compact and simple way?
-                let (bar_y, bar_height) = if negative_bars_go_down && bar_values.min < 0.0 {
+                let (bar_y, bar_height) = if negative_bars_go_down {
                     if bar_value >= 0.0 {
                         let bar_height = bar_value * scale_unit;
                         let bar_y = y2 + top_offset - bar_height;
