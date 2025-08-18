@@ -669,11 +669,13 @@ impl <'a>BarPlot<'a> {
     /// let svg: String = plot.to_svg(1600, 1000);
     /// ```
     pub fn add_bar_color_override(&mut self, category: usize, bar: usize, color: &'a str) {
-        // Will always select the bar from the last added category e.g. after most recent BarPlot.add_values() call.
         assert!(
-            !self.values.is_empty(),
-            "Can't override bar '{bar}' with color '{color}', because no bars (values) have been added yet."
+            category < self.values.len(),
+            "{}\n{}",
+            format!("Can not add category index '{category}' as there are not enough categories added yet."),
+            "This may result in current override being ignored.",
         );
+
         self.colors.bars.overrides.push((category, bar, color));
     }
 
