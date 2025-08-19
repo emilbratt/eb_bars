@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with eb_bars v0.4.3 (https://github.com/emilbratt/eb_bars) -->
+<!-- Created with eb_bars v0.7.2 (https://github.com/emilbratt/eb_bars) -->
 
 <svg width="1600" height="1000" xmlns="http://www.w3.org/2000/svg">
 <rect x="0.000" y="0.000" width="1600.000" height="1000.000" style="fill-opacity: 1.000; fill: Black;" />
@@ -51,7 +51,7 @@
 <line x1="98.560" x2="112.000" y1="75.000" y2="75.000" stroke="LightGoldenRodYellow" stroke-width="1.265" />
 <text text-anchor="end" x="91.332" y="82.228" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">100</text>
 <text text-anchor="start" transform="translate(40.649, 847.727) rotate(270)" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Total harvested.</text>
-<text text-anchor="start" x="228.364" y="42.649" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">The highest value from each category have its color 'overriden' with a brighter color</text>
+<text text-anchor="start" x="228.364" y="42.649" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">The highest value from each category have its color 'overridden' with a brighter color</text>
 <rect x="125.714" y="678.500" width="51.810" height="246.500" style="fill-opacity: 1.000; fill: Red;" />
 <rect x="308.571" y="576.500" width="51.810" height="348.500" style="fill-opacity: 1.000; fill: Red;" />
 <rect x="491.429" y="381.000" width="51.810" height="544.000" style="fill-opacity: 1.000; fill: Red;" />
@@ -73,12 +73,12 @@
 <rect x="960.762" y="916.500" width="51.810" height="8.500" style="fill-opacity: 1.000; fill: Blue;" />
 <rect x="1143.619" y="840.000" width="51.810" height="85.000" style="fill-opacity: 1.000; fill: Blue;" />
 <rect x="1326.476" y="432.000" width="51.810" height="493.000" style="fill-opacity: 1.000; fill: Blue;" />
-<rect x="1418.053" y="194.702" width="25.298" height="25.298" style="fill-opacity: 1.000; fill: Red;" />
-<text text-anchor="start" x="1456.000" y="216.205" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Tomatoes</text>
-<rect x="1418.053" y="225.060" width="25.298" height="25.298" style="fill-opacity: 1.000; fill: LawnGreen;" />
-<text text-anchor="start" x="1456.000" y="246.563" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Apples</text>
-<rect x="1418.053" y="255.418" width="25.298" height="25.298" style="fill-opacity: 1.000; fill: Blue;" />
-<text text-anchor="start" x="1456.000" y="276.921" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Eggplants</text>
+<rect x="1421.253" y="196.702" width="25.298" height="25.298" style="fill-opacity: 1.000; fill: Red;" />
+<text text-anchor="start" x="1459.200" y="218.205" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Tomatoes</text>
+<rect x="1421.253" y="227.060" width="25.298" height="25.298" style="fill-opacity: 1.000; fill: LawnGreen;" />
+<text text-anchor="start" x="1459.200" y="248.563" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Apples</text>
+<rect x="1421.253" y="257.418" width="25.298" height="25.298" style="fill-opacity: 1.000; fill: Blue;" />
+<text text-anchor="start" x="1459.200" y="278.921" fill="LightGoldenRodYellow" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Eggplants</text>
 <line x1="112.000" x2="112.000" y1="75.000" y2="925.000" stroke="White" stroke-width="1.265" />
 <line x1="112.000" x2="1392.000" y1="75.000" y2="75.000" stroke="White" stroke-width="1.265" />
 <line x1="1392.000" x2="1392.000" y1="75.000" y2="925.000" stroke="White" stroke-width="1.265" />

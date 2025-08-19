@@ -39,7 +39,7 @@
 <text text-anchor="end" x="56.772" y="252.728" fill="rgb(197, 197, 197)" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">20</text>
 <line x1="64.000" x2="1584.000" y1="71.500" y2="71.500" stroke="rgb(197, 197, 197)" stroke-width="1.265" />
 <text text-anchor="end" x="56.772" y="78.728" fill="rgb(197, 197, 197)" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">30</text>
-<text text-anchor="start" x="202.182" y="41.249" fill="rgb(197, 197, 197)" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Mean temperature °C every month in some particular place for some particular year :)</text>
+<text text-anchor="start" x="202.182" y="41.249" fill="rgb(197, 197, 197)" font-size="25.298" font-weight="500" font-family="'Open Sans', arial, sans-serif">Monthly mean temperature °C in some particular place for some particular year :)</text>
 <rect x="64.000" y="593.500" width="126.667" height="200.100" style="fill-opacity: 1.000; fill: rgb(107, 235, 255);" />
 <rect x="190.667" y="593.500" width="126.667" height="60.900" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />
 <rect x="317.333" y="570.880" width="126.667" height="22.620" style="fill-opacity: 1.000; fill: rgb(126, 255, 165);" />

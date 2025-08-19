@@ -10,26 +10,20 @@ use eb_bars::BarPlot;
 fn bar_colors() {
     let output = Path::new("bar_colors.test.svg");
 
-    let values_a = [3.6, 6.9, 6.5, 3.7];
-    // Different ways to express colors :)
-    let red = "Red"; // color-name
-    let yellow = "rgb(244, 244, 32)"; // rgb value
-    let blue = r"#1111FA"; // hex-value
-    let green = "hsl(115, 90.50%, 50.30%)"; // hsl value
-    // Putting them in an array with same length as our values.
-    let colors_a = [red, yellow, blue , green];
+    let values = [3.6, 6.9, 6.5, 3.7];
+    let labels = ["A", "B", "C", "D"];
 
-    let values_b = [5.7, 3.9, 8.2, 7.0];
-    let colors_b = ["Pink", "Orange", "Purple" , "Cyan"];
-
-    let labels = ["Red and Pink", "Yellow and Orange", "Blue and Purple", "Green and Cyan"];
+    // Four different ways to express colors
+    let red = "Red"; // ..by name,
+    let yellow = "rgb(244, 244, 32)"; // ..by rgb,
+    let blue = r"#1111FA"; // ..by hex,
+    let green = "hsl(115, 90.50%, 50.30%)"; // ..by hsl.
+    let colors = [red, yellow, blue , green];
 
     let mut plot = BarPlot::new();
-    plot.add_values(&values_a);
-    plot.add_values(&values_b);
+    plot.add_values(&values);
     plot.set_bin_markers(&labels);
-    plot.add_bar_colors_from_vec(colors_a.to_vec());
-    plot.add_bar_colors_from_vec(colors_b.to_vec());
+    plot.add_bar_colors_from_vec(colors.to_vec());
     plot.set_background_color("Black");
     plot.set_bar_gap(5.0);
     plot.set_plot_window_size(90.0, 50.0, 90.0, 35.0);
@@ -79,7 +73,7 @@ fn temperature_year() {
 
     plot.set_bin_markers(&months);
 
-    plot.set_text_top("Monthly mean temperature °C some particular place for some particular year :)");
+    plot.set_text_top("Monthly mean temperature °C in some particular place for some particular year :)");
     plot.set_text_top_offset(40.0);
 
     plot.set_plot_window_size(95.0, 80.0, 87.0, 55.0);
@@ -259,7 +253,7 @@ fn fruit_picking() {
     plot.set_legend(&categories);
     plot.set_legend_position(91.2, 22.2);
 
-    plot.set_text_top("The highest value from each category have its color 'overriden' with a brighter color");
+    plot.set_text_top("The highest value from each category have its color 'overridden' with a brighter color");
     plot.set_text_top_offset(40.0);
     plot.set_text_left("Total harvested.");
     plot.set_text_left_offset(25.0);
